@@ -1,0 +1,356 @@
+version: 3
+profiles:
+  - type: local
+    options:
+      command: /opt/homebrew/bin/fish
+      args:
+        - '-l'
+      env: {}
+      cwd: /Users/rcool
+    name: General
+    group: Generic
+    icon: fas fa-face-smile-beam
+    id: local:custom:General:c19369de-681f-42af-a3c6-7b47e36be251
+    color: magenta
+  - options:
+      command: /opt/homebrew/bin/fish
+      cwd: /Users/rcool/qoedash
+      env: {}
+      args:
+        - '-C'
+        - nvim
+    name: QOE Editor
+    type: local
+    icon: fas fa-notes-medical
+    disableDynamicTitle: true
+    color: '#5cb85c'
+    group: qoedash
+    id: local:custom:QOE-Editor:395aa595-2bec-474b-9cde-9d071bcbdb8b
+  - options:
+      command: /opt/homebrew/bin/fish
+      cwd: /Users/rcool/qoedash
+      env: {}
+      args:
+        - '-C'
+        - npm run start:dev
+    type: local
+    disableDynamicTitle: true
+    name: QOE Server
+    icon: fab fa-hashnode
+    color: '#d9534f'
+    group: qoedash
+    id: local:custom:QOE-Server:3ba6710c-7bdd-4ad3-b0dd-ee71f81548d7
+  - options:
+      command: /opt/homebrew/bin/fish
+      cwd: /Users/rcool/qoedash
+      env: {}
+      args:
+        - '-C'
+        - lazygit
+    type: local
+    disableDynamicTitle: true
+    group: qoedash
+    icon: fab fa-git
+    color: '#f0ad4e'
+    name: QOE Git
+    id: local:custom:QOE-Git:7d61c389-d829-4442-af4b-db26241a7a37
+  - options:
+      command: /opt/homebrew/bin/fish
+      cwd: /Users/rcool/qoedash
+      env: {}
+      args:
+        - '-C'
+        - ls
+    type: local
+    disableDynamicTitle: true
+    group: qoedash
+    icon: fas fa-plane-departure
+    color: '#613d7c'
+    name: QOE Scratch
+    id: local:custom:QOE-Scratch:bdef6c55-cec0-4c33-8cdd-99c518acd8ba
+  - options:
+      command: /opt/homebrew/bin/fish
+      cwd: /Users/rcool/sessionWiz
+      env: {}
+      args:
+        - '-C'
+        - ls
+    type: local
+    disableDynamicTitle: true
+    group: sessionwiz
+    icon: fas fa-plane-departure
+    color: '#613d7c'
+    id: local:custom:Git-copy:092a65a5-86fa-46ce-bf4d-ca303eab78d8
+    name: SW Scratch
+  - options:
+      command: /opt/homebrew/bin/fish
+      cwd: /Users/rcool/sessionWiz
+      env: {}
+      args:
+        - '-C'
+        - lazygit
+    type: local
+    disableDynamicTitle: true
+    group: sessionwiz
+    name: SW Git
+    icon: fab fa-git
+    color: '#f0ad4e'
+    id: local:custom:Git:75b4e78a-4e2b-435d-9839-d7ae27a1232f
+  - options:
+      command: /opt/homebrew/bin/fish
+      cwd: /Users/rcool/sessionWiz
+      env: {}
+      args:
+        - '-C'
+        - npm run start:dev
+    type: local
+    disableDynamicTitle: true
+    group: sessionwiz
+    name: SW Server
+    icon: fab fa-hashnode
+    color: '#d9534f'
+    id: local:custom:Server:fa6f2e25-410f-4d6a-b14f-a34f42c2d173
+  - options:
+      command: /opt/homebrew/bin/fish
+      cwd: /Users/rcool/sessionWiz
+      env: {}
+      args:
+        - '-C'
+        - nvim
+    name: SW Editor
+    type: local
+    icon: fas fa-notes-medical
+    disableDynamicTitle: true
+    color: '#5cb85c'
+    group: sessionwiz
+hotkeys:
+  toggle-window:
+    - Ctrl-Space
+  copy-current-path: []
+  ctrl-c:
+    - Ctrl-C
+  copy:
+    - ⌘-C
+  paste:
+    - ⌘-V
+  clear:
+    - ⌘-K
+  select-all:
+    - ⌘-A
+  zoom-in:
+    - ⌘-=
+    - ⌘-Shift-=
+  zoom-out:
+    - ⌘--
+    - ⌘-Shift--
+  reset-zoom:
+    - ⌘-0
+  home:
+    - ⌘-Left
+    - Home
+  end:
+    - ⌘-Right
+    - End
+  previous-word:
+    - ⌥-Left
+  next-word:
+    - ⌥-Right
+  delete-previous-word:
+    - ⌥-Backspace
+  delete-line:
+    - ⌘-Backspace
+  delete-next-word:
+    - ⌥-Delete
+  search:
+    - ⌘-F
+  pane-focus-all:
+    - ⌘-Shift-I
+  scroll-to-top:
+    - Shift-PageUp
+  scroll-up:
+    - ⌥-PageUp
+  scroll-down:
+    - ⌥-PageDown
+  scroll-to-bottom:
+    - Shift-PageDown
+  restart-telnet-session: []
+  restart-ssh-session: []
+  launch-winscp: []
+  settings-tab: {}
+  settings:
+    - ⌘-,
+  serial:
+    - Alt-K
+  restart-serial-session: []
+  new-window:
+    - ⌘-N
+  new-tab:
+    - ⌘-T
+  profile: {}
+  profile-selectors: {}
+  toggle-fullscreen:
+    - Ctrl+⌘+F
+  close-tab:
+    - ⌘-W
+  reopen-tab:
+    - ⌘-Shift-T
+  toggle-last-tab: []
+  rename-tab:
+    - ⌘-R
+  next-tab:
+    - Ctrl-Tab
+  previous-tab:
+    - Ctrl-Shift-Tab
+  move-tab-left:
+    - ⌘-Shift-Left
+  move-tab-right:
+    - ⌘-Shift-Right
+  rearrange-panes:
+    - ⌘-Shift
+  tab-1:
+    - ⌘-1
+  tab-2:
+    - ⌘-2
+  tab-3:
+    - ⌘-3
+  tab-4:
+    - ⌘-4
+  tab-5:
+    - ⌘-5
+  tab-6:
+    - ⌘-6
+  tab-7:
+    - ⌘-7
+  tab-8:
+    - ⌘-8
+  tab-9:
+    - ⌘-9
+  tab-10:
+    - ⌘-0
+  duplicate-tab: []
+  restart-tab: []
+  explode-tab:
+    - ⌘-Shift-.
+  combine-tabs:
+    - ⌘-Shift-,
+  tab-11: []
+  tab-12: []
+  tab-13: []
+  tab-14: []
+  tab-15: []
+  tab-16: []
+  tab-17: []
+  tab-18: []
+  tab-19: []
+  tab-20: []
+  split-right:
+    - - Ctrl-Shift-V
+  split-bottom:
+    - - Ctrl-Shift-S
+  split-left: []
+  split-top: []
+  pane-nav-right:
+    - - Ctrl-L
+  pane-nav-down:
+    - - Ctrl-J
+  pane-nav-up:
+    - - Ctrl-K
+  pane-nav-left:
+    - - Ctrl-H
+  pane-nav-previous:
+    - - Ctrl-Shift-]
+  pane-nav-next:
+    - - Ctrl-Shift-[
+  pane-nav-1:
+    - - Ctrl-Shift
+  pane-nav-2: []
+  pane-nav-3: []
+  pane-nav-4: []
+  pane-nav-5: []
+  pane-nav-6: []
+  pane-nav-7: []
+  pane-nav-8: []
+  pane-nav-9: []
+  pane-maximize:
+    - - Ctrl-Shift-Enter
+  close-pane:
+    - ⌘-Shift-W
+  pane-increase-vertical:
+    - - Ctrl-Shift-Up
+  pane-decrease-vertical:
+    - - Ctrl-Shift-Down
+  pane-increase-horizontal:
+    - - Ctrl-Shift-Right
+  pane-decrease-horizontal:
+    - - Ctrl-Shift-Left
+  profile-selector:
+    - ⌘-E
+  switch-profile: []
+  workspace-profile-1:
+    - - ⌥-Shift-F6
+  workspace-profile-3:
+    - - ⌥-Shift-F5
+  workspace-profile-4: []
+  workspace-profile-5: []
+  quick-restart:
+    - Ctrl-R
+  qc:
+    - Alt-Q
+  workspace-profile-2:
+    - - ⌥-Shift-F7
+terminal:
+  searchOptions: {}
+  colorScheme:
+    name: Chalk
+    foreground: '#d2d8d9'
+    background: '#2b2d2e'
+    cursor: '#708284'
+    colors:
+      - '#7d8b8f'
+      - '#b23a52'
+      - '#789b6a'
+      - '#b9ac4a'
+      - '#2a7fac'
+      - '#bd4f5a'
+      - '#44a799'
+      - '#d2d8d9'
+      - '#888888'
+      - '#f24840'
+      - '#80c470'
+      - '#ffeb62'
+      - '#4196ff'
+      - '#fc5275'
+      - '#53cdbd'
+      - '#d2d8d9'
+  font: OperatorMonoLig Nerd Font
+  ligatures: true
+  altIsMeta: true
+  copyOnSelect: true
+  customColorSchemes: []
+  fontSize: 20
+  profile: local:opthomebrewbinfish
+  drawBoldTextInBrightColors: false
+  scrollOnInput: false
+  rightClick: paste
+  pasteOnMiddleClick: false
+  showTabProfileIcon: true
+  paneResizeStep: 0.3
+  background: colorScheme
+ssh: {}
+configSync:
+  parts: {}
+clickableLinks: {}
+accessibility: {}
+appearance:
+  theme: Altair
+  frame: native
+hacks: {}
+language: en-US
+enableWelcomeTab: false
+pluginBlacklist: []
+profileDefaults: {}
+workspaceManager:
+  runOnStartup: true
+  defaultWorkspaceProfile: 2
+qc:
+  cmds: []

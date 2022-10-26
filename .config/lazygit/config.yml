@@ -1,0 +1,28 @@
+gui:
+  showIcons: true
+  notARepository: skip
+  # theme:
+  #   selectedLineBgColor:
+  #     - reverse
+  #   selectedRangeBgColor:
+  #     - reverse
+  theme:
+    activeBorderColor:
+      - magenta
+      - bold
+    inactiveBorderColor:
+      - black
+    selectedLineBgColor:
+      - default
+      - bold
+      - underline
+    selectedRangeBgColor:
+      - default
+      - boldA
+    optionsTextColor:
+      - yellow
+    unstagedChangesColor:
+      - cyan
+os:
+  openCommand: "nvim"
+  editCommand: "{{editor }} +{{line}} -- {{filename}}"
