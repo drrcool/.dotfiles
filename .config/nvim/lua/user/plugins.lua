@@ -70,16 +70,7 @@ return packer.startup({ function(use)
   use({ "gennaro-tedesco/nvim-peekup" })
   use({ "stevearc/dressing.nvim" })
   use({ "goolord/alpha-nvim" })
-  use({ "rcarriga/nvim-notify" })
-  --[[ use({ "rcarriga/nvim-notify" }) ]]
-  use({
-    "Pocco81/true-zen.nvim",
-    config = function()
-      require("true-zen").setup {}
-    end,
-  })
-
-  -- Navigation
+  -- nav
   use({ "folke/which-key.nvim" })
   use({ "mrjones2014/legendary.nvim" })
   use({ "karb94/neoscroll.nvim" })
@@ -119,12 +110,9 @@ return packer.startup({ function(use)
       { "nvim-lua/plenary.nvim" },
     },
   })
-    config = function()
   use({ "ggandor/leap.nvim",
     config = function()
-
       require('leap').add_default_mappings()
-
     end
   })
 
@@ -307,7 +295,8 @@ return packer.startup({ function(use)
     "kyazdani42/nvim-tree.lua",
     requires = "kyazdani42/nvim-web-devicons",
     config = function()
-      require('user.nvimtree').setup()
+      require('user.nvim-tree').setup()
+
     end
   })
 

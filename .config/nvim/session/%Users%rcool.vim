@@ -13,8 +13,15 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
+badd +1 testapp/test.js
 argglobal
 %argdel
+$argadd .
+let s:save_splitbelow = &splitbelow
+let s:save_splitright = &splitright
+set splitbelow splitright
+let &splitbelow = s:save_splitbelow
+let &splitright = s:save_splitright
 wincmd t
 let s:save_winminheight = &winminheight
 let s:save_winminwidth = &winminwidth
