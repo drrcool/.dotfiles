@@ -49,7 +49,7 @@ return packer.startup({ function(use)
   use({ "kyazdani42/nvim-web-devicons" })
   use({ "nvim-lualine/lualine.nvim" })
   use({ "altercation/vim-colors-solarized" })
-
+  use({ "EdenEast/nightfox.nvim" })
   -- color
   use({ "folke/tokyonight.nvim" })
   use({ "tiagovla/tokyodark.nvim" })
@@ -71,6 +71,7 @@ return packer.startup({ function(use)
   use({ "stevearc/dressing.nvim" })
   use({ "goolord/alpha-nvim" })
   use({ "rcarriga/nvim-notify" })
+  --[[ use({ "rcarriga/nvim-notify" }) ]]
   use({
     "Pocco81/true-zen.nvim",
     config = function()
@@ -81,13 +82,7 @@ return packer.startup({ function(use)
   -- Navigation
   use({ "folke/which-key.nvim" })
   use({ "mrjones2014/legendary.nvim" })
-  use({ "christoomey/vim-tmux-navigator" })
   use({ "karb94/neoscroll.nvim" })
-  use({
-
-    "aserowy/tmux.nvim",
-    config = function() require("tmux").setup() end
-  })
   -- Editor Utils
   use({ "nvim-treesitter/nvim-treesitter" })
   use({ "lukas-reineke/indent-blankline.nvim" })
@@ -124,35 +119,7 @@ return packer.startup({ function(use)
       { "nvim-lua/plenary.nvim" },
     },
   })
-  use({ 'nvim-neo-tree/neo-tree.nvim',
-    branch = "v2.x",
-    requires = { 'kyazdani42/nvim-web-devicons', "nvim-lua/plenary.nvim", "MunifTanjim/nui.nvim", {
-      -- only needed if you want to use the commands with "_with_window_picker" suffix
-      's1n7ax/nvim-window-picker',
-      tag = "v1.*",
-      config = function()
-        require 'window-picker'.setup({
-          autoselect_one = true,
-          include_current = false,
-          filter_rules = {
-            -- filter using buffer options
-            bo = {
-              -- if the file type is one of following, the window will be ignored
-              filetype = { 'neo-tree', "neo-tree-popup", "notify" },
-
-              -- if the buffer type is one of following, the window will be ignored
-              buftype = { 'terminal', "quickfix" },
-            },
-          },
-          other_win_hl_color = '#e35e4f',
-        })
-      end,
-    }
-    },
     config = function()
-      require('user.neo-tree').setup()
-    end
-  })
   use({ "ggandor/leap.nvim",
     config = function()
 
@@ -238,15 +205,21 @@ return packer.startup({ function(use)
   -- Development Plugins --
   -------------------------------
   -- LSP
-  use({ "neovim/nvim-lspconfig" }) -- enable LSP
-  use({ "jose-elias-alvarez/null-ls.nvim" }) -- for formatters and linters
-  use({ "williamboman/nvim-lsp-installer" })
-  use({ "ray-x/lsp_signature.nvim" })
+  use({
+    'ray-x/navigator.lua',
+    requires = {
+      { 'ray-x/guihua.lua', run = 'cd lua/fzy && make' },
+      { 'neovim/nvim-lspconfig' },
+    },
+    config = function()
+      require 'navigator'.setup()
+    end
+  })
+
   use({
     "folke/trouble.nvim",
     requires = "kyazdani42/nvim-web-devicons",
   })
-
   use {
     "ThePrimeagen/refactoring.nvim",
     requires = {
@@ -316,6 +289,29 @@ return packer.startup({ function(use)
       require("user.package-info").setup()
     end,
   })
+
+  -- Harpoon
+  use({ "ThePrimeagen/harpoon" })
+
+  -- Undo
+  use({ "mbbill/undotree", cmd = { "UndoTreeToggle" } })
+  --- Better quickfix
+  use({
+    "https://gitlab.com/yorickpeterse/nvim-pqf.git",
+    config = function()
+      require('pqf').setup()
+    end
+  })
+  -- nvim tree
+  use({
+    "kyazdani42/nvim-tree.lua",
+    requires = "kyazdani42/nvim-web-devicons",
+    config = function()
+      require('user.nvimtree').setup()
+    end
+  })
+
+
 
 
   if PACKER_BOOTSTRAP then

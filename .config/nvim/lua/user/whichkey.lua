@@ -84,15 +84,17 @@ local mappings = {
   ["L"] = { "<cmd>Legendary<cr>", "Legendary" },
   ["C"] = { "<cmd>lua require('telescope').extensions.neoclip.default()<cr>", "Neoclip" },
   ["a"] = { "<cmd>Alpha<cr>", "Alpha" },
-  ["e"] = { "<cmd>Neotree float reveal_force_cwd<cr>", "Explorer" },
+  ["e"] = { "<cmd>NvimTreeToggle<cr>", "Explore" },
   ["w"] = { "<cmd>w!<CR>", "Save" },
   ["q"] = { "<cmd>q!<CR>", "Quit" },
   ["c"] = { "<cmd>Bdelete!<CR>", "Close Buffer" },
-  ["h"] = { "<cmd>nohlsearch<CR>", "No Highlight" },
+  ["H"] = { "<cmd>nohlsearch<CR>", "No Highlight" },
   ["P"] = { "<cmd>lua require('telescope').load_extension('projects').projects()<cr>", "Projects" },
   ["R"] = { "<cmd>source $MYVIMRC<cr>", "Reload" },
   ["?"] = { "<cmd>Cheatsheet<cr>", "Cheatsheet" },
-
+  d = {
+    name = "Debug"
+  },
   f = {
     name = "Find",
     a = { '<cmd>lua require(\'telescope.builtin\').commands()<cr>', 'Commands' },
@@ -171,7 +173,16 @@ local mappings = {
       c = { "<cmd>DiffviewClose<CR>", "Diffview Close" }
     }
   },
-
+  h = {
+    name = "Harpoon",
+    j    = { "<cmd>lua require('harpoon.mark').add_file()<cr>", "Add" },
+    m    = { "<cmd>lua require('harpoon.ui').toggle_quick_menu()<cr>", "Menu" },
+    a    = { "<cmd>lua require('harpoon.ui').nav_file(1)<cr>", "Goto Mark 1" },
+    s    = { "<cmd>lua require('harpoon.ui').nav_file(2)<cr>", "Goto Mark 2" },
+    d    = { "<cmd>lua require('harpoon.ui').nav_file(3)<cr>", "Goto Mark 3" },
+    h    = { "<cmd>lua require('harpoon.ui').nav_prev()", "Goto Previous" },
+    l    = { "<cmd>lua require('harpoon.ui').nav_next()<cr>", "Goto Next" },
+  },
   s = {
     name = "Search",
     h = { '<C-w>h', "Move Left" },
@@ -293,6 +304,22 @@ local mappings = {
     s = { "<cmd>OverseerSaveBundle<cr>", "OverseerSaveBundle" },
     t = { "<cmd>OverseerToggle!<cr>", "OverseerToggle" },
   },
+  r = {
+    name = "Refactor",
+    i = { [[<cmd>lua require('refactoring').refactor('Inline Variable')<cr>]], "Inline Variable" },
+    b = { [[<cmd>lua require('refactoring').refactor('Exract Block')<cr>]], "Extract Block" },
+    B = { [[<cmd>lua require('refactoring').refactor('Exract Block To File')<cr>]], "Extract Block to File" },
+    P = {
+      [[<cmd>lua require('refactoring').debug.printf({below = false})<cr>]],
+      "Debug Print",
+    },
+    p = {
+      [[<cmd>lua require('refactoring').debug.print_var({normal = true})<cr>]],
+      "Debug Print Variable",
+    },
+    c = { [[<cmd>lua require('refactoring').debug.cleanup({})<cr>]], "Debug Cleanup" },
+  },
+
   S = {
     name = "Session",
     c = { "<cmd>lua require('persistence').load()<cr>", "Restore last session for current dir" },
@@ -300,18 +327,6 @@ local mappings = {
     Q = { "<cmd>lua require('persistence').stop()<cr>", "Quit without saving session" },
   },
 
-  d = {
-    name = "Debug",
-    b = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", "Breakpoint" },
-    c = { "<cmd>lua require'dap'.continue()<cr>", "Continue" },
-    i = { "<cmd>lua require'dap'.step_into()<cr>", "Into" },
-    o = { "<cmd>lua require'dap'.step_over()<cr>", "Over" },
-    O = { "<cmd>lua require'dap'.step_out()<cr>", "Out" },
-    r = { "<cmd>lua require'dap'.repl.toggle()<cr>", "Repl" },
-    l = { "<cmd>lua require'dap'.run_last()<cr>", "Last" },
-    u = { "<cmd>lua require'dapui'.toggle()<cr>", "UI" },
-    x = { "<cmd>lua require'dap'.terminate()<cr>", "Exit" },
-  },
   v = {
     name = "Versions (PackageJSON)",
     s = { "<cmd>lua require'package-info'.show<CR>", "Toggle Package Versions" },

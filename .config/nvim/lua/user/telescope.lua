@@ -98,4 +98,3 @@ telescope.setup {
 pcall(telescope.load_extension("file_browser"))
 pcall(telescope.load_extension("fzf"))
 pcall(telescope.load_extension("ultisnips"))
-pcall(telescope.load_extension("notify"))

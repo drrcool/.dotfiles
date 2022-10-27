@@ -21,6 +21,12 @@ vim.g.maplocalleader = " "
 -- Better window navigation
 keymap('n', '<leader>ss', '<C-w>ss', opts)
 keymap('n', '<leader>sv', '<C-w>v', opts)
+keymap('n', '<C-h>', '<C-w>h', opts)
+keymap('n', '<C-j>', '<C-w>j', opts)
+keymap('n', '<C-k>', '<C-w>k', opts)
+keymap('n', '<C-l>', '<C-w>l', opts)
+
+
 keymap("n", "<leader>sh", "<C-w>h", opts)
 keymap("n", "<leader>sj", "<C-w>j", opts)
 keymap("n", "<leader>sk", "<C-w>k", opts)

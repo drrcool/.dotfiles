@@ -1,20 +1,15 @@
---[[ vim.g.moonflyTransparent = true ]]
---[[ vim.g.moonflyUnderlineMatchParen = true ]]
---[[ vim.opt.fillchars = { horiz = '━', horizup = '┻', horizdown = '┳', vert = '┃', vertleft = '┫', vertright = '┣', ]]
---[[   verthoriz = '╋', } ]]
---[[ vim.g.moonflyWinSeparator = 2 ]]
---[[ vim.g.moonflyNormalFloat = true ]]
---[[ vim.lsp.handlers['textDocument/hover'] = vim.lsp.with( ]]
---[[   vim.lsp.handlers.hover, { ]]
---[[   border = "single" ]]
---[[ } ]]
---[[ ) ]]
---[[ vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with( ]]
---[[   vim.lsp.handlers.signatureHelp, { ]]
---[[   border = "single" ]]
---[[ } ]]
---[[ ) ]]
---[[ vim.diagnostic.config({ float = { border = "single" } }) ]]
---[[]]
-vim.cmd [[
-  colorscheme dark ]]
+local status_ok, nightfox = pcall(require, 'nightfox')
+if not status_ok then
+  return
+end
+
+nightfox.setup({
+  options = {
+    transparent = true,
+    dim_inactive = true,
+    terminal_colors = true,
+
+  }
+})
+vim.cmd('colorscheme carbonfox')
+
