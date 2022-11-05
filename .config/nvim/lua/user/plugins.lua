@@ -232,7 +232,10 @@ return packer.startup({ function(use)
   use({ "mattn/vim-gist" })
   use({ "mattn/webapi-vim" })
   use({ "sindrets/diffview.nvim", requires = "nvim-lua/plenary.nvim" })
-  --
+  use({
+    "microsoft/vscode-js-debug",
+    run = "npm install --legacy-peer-deps && npm run compile"
+  })
   -- -- Debugging
   --
   use({
@@ -245,10 +248,6 @@ return packer.startup({ function(use)
       { "leoluz/nvim-dap-go", module = "dap-go" },
       { "jbyuki/one-small-step-for-vimkind", module = "osv" },
       { "mxsdev/nvim-dap-vscode-js" },
-      {
-        "microsoft/vscode-js-debug",
-        run = "npm install --legacy-peer-deps && npm run compile",
-      },
     },
     config = function()
       require("user.dap").setup()

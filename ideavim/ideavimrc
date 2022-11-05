@@ -1,0 +1,114 @@
+let mapleader = " "
+
+set which-key
+set notimeout
+set timeoutlen = 5000
+let g:WhichKey_ShowVimActions = "true"
+set commentary
+set ignorecase
+Plug 'machakann/vim-highlightedyank'
+let g:highlightedyank_highlight_duration = "1000"
+
+set smartcase
+set hlsearch
+set ideajoin
+set idearefactormode=keep
+set surround
+set easymotion
+set NERDTree
+set number relativenumber
+set clipboard+=unnamed
+set clipboard+=ideaput
+
+nnoremap <leader>e :NERDTreeToggle<CR>
+
+xnoremap J :move '>+1<CR>gv-gv
+xnoremap K :move '<-2<CR>gv-gv
+xnoremap <a-k> :move '<-2<CR>gv-gv
+xnoremap <a-j> :move '>+1<CR>gv-gv
+
+" Clipboard
+vmap <leader>y "+y
+vmap <leader>p "+p
+vmap <leader>d "+d
+vmap <leader>P "+P
+
+nmap <leader>y "+y
+nmap <leader>p "+p
+nmap <leader>P "+P
+
+
+" scrolling
+nmap <leader>d <C-d>
+nmap <leader>u <C-u>
+vmap <leader>u <C-u>
+vmap <leader>d <C-d>
+
+" actions
+nmap <leader>h <action>(PreviousTab)
+nmap <leader>l <action>(NextTab)
+nmap <leader>bd <action>(CloseEditor)
+nmap <leader>i <action>(Generator)
+nmap <leader>m <action>(Git.Menu)
+nmap <leader>s <action>(QuickChangeSchema)
+nmap <leader>/ <action>(ShowErrorDescription)
+nmap <leader>[d <action>(GotoNextError)
+nnoremap <leader><leader> <C-Tab>
+
+set NERDTree
+let g:NERDTreeMapActivateNode='l'
+let g:NERDTreeMapJumpParent='h'
+
+vnoremap < <gv
+vnoremap > >gv
+nnoremap zc :action CollapseRegion<CR>
+nnoremap zo :action ExpandRegion<CR>
+nnoremap <leader>zc :action CollapseAllRegions<CR>
+nnoremap <leader>zo :action ExpandAllRegions<CR>
+nnoremap <leader>c :action CommentByLineComment<CR>
+noremap <leader>r :action Refactorings.QuickListPopupAction<CR>
+nnoremap <Leader>lf  :action ReformatCode<CR>
+nnoremap <leader>o :action OptimizeImports<CR>
+nnoremap <c-r> :action RecentFiles<CR>
+nnoremap <leader>l :action RecentLocations<CR>
+nnoremap <leader>h  :action LocalHistory.ShowHistory<CR>
+nnoremap ge :action GotoNextError<CR>
+nnoremap gE :action GotoPreviousError<CR>
+
+set incsearch
+nnoremap <c-a> :action GotoAction<CR>
+nnoremap <leader>f :action GotoFile<CR>
+nnoremap <leader>g :action FindInPath<CR>
+nnoremap <leader>u :action FindUsages<CR>
+nnoremap <leader>s :action GotoRelated<CR>
+nnoremap <leader>h :action CallHierarchy<CR>
+nnoremap <leader>b <Action>(Switcher)
+nnoremap gt :action GotoTest<CR>
+nnoremap gb :action Back<CR>
+nnoremap gf :action Forward<CR>
+
+""" Running and Debugging
+nnoremap ,r :action ContextRun<CR>
+nnoremap ,c :action RunClass<CR>
+nnoremap ,f :action ChooseRunConfiguration<CR>
+nnoremap ,t :action ActivateRunToolWindow<CR>
+nnoremap ,u :action Rerun<CR>
+nnoremap ,f :action RerunFailedTests<CR>
+nnoremap ,b :action ToggleLineBreakpoint<CR>
+nnoremap ,d :action ContextDebug<CR>
+nnoremap ,n :action ActivateDebugToolWindow<CR>
+
+nnoremap <leader>t :action Terminal.OpenInTerminal<CR>
+nnoremap <leader>sv :action SplitVertically<CR>
+nnoremap <leader>ss :action SplitHorizontally<CR>
+sethandler <c-j> a:vim
+sethandler <c-k> a:vim
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <TAB> :action PreviousTab<CR>
+nnoremap <s-TAB> :action NextTab<CR>
+nnoremap <Leader>n :action NextWindow<CR>
+nnoremap <Leader>q :action CloseContent<CR>
+nnoremap <Leader>qa :action CloseAllEditors<CR>
