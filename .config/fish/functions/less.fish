@@ -1,3 +1,3 @@
-function less --wraps=bat --description 'alias less bat'
-  bat $argv; 
+function less --wraps=bat --wraps='bat -p' --description 'alias less=bat -p'
+  bat -p $argv; 
 end

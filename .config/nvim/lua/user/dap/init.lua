@@ -81,8 +81,8 @@ M.setup_other = function()
 end
 
 local function configure_debuggers()
-  require("user.dap.lua").setup()
-  require("user.dap.python").setup()
+  -- require("user.dap.lua").setup()
+  -- require("user.dap.python").setup()
   require("user.dap.javascript").setup()
   --[[ require("user.dap.typescript").setup() ]]
 end

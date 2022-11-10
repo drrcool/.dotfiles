@@ -87,11 +87,13 @@ cmp.setup {
     })
   },
   sources = {
-    { name = 'copilot' },
-    { name = "nvim_lsp" },
-    { name = "luasnip" },
-    { name = "buffer" },
-    { name = "path" },
+    { name = 'copilot', max_item_count = 2 },
+    { name = "nvim_lsp", max_item_count = 5 },
+    { name = "nvim_lua", max_item_count = 5 },
+    { name = "luasnip", max_item_count = 5 },
+    { name = "omni" },
+    { name = "buffer", max_item_count = 5 },
+    { name = "path", max_item_count = 5 },
   },
   confirm_opts = {
     behavior = cmp.ConfirmBehavior.Replace,

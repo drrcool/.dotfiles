@@ -4,7 +4,7 @@ if not status_ok then
 end
 
 local status_ok, actions = pcall(require, "telescope.actions")
-if not status_ok then 
+if not status_ok then
   return
 end
 
@@ -98,6 +98,6 @@ telescope.setup {
     -- please take a look at the readme of the extension you want to configure
   },
 }
-pcall(telescope.load_extension("file_browser"))
-pcall(telescope.load_extension("fzf"))
-pcall(telescope.load_extension("ultisnips"))
+telescope.load_extension("file_browser")
+telescope.load_extension("fzf")
+telescope.load_extension('git_worktree')
