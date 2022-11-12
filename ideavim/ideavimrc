@@ -1,4 +1,11 @@
 let mapleader = " "
+set number relativenumber
+set clipboard+=unnamed
+set clipboard+=ideaput
+set scrolloff=5
+set incsearch
+
+
 
 set which-key
 set notimeout
@@ -16,11 +23,16 @@ set idearefactormode=keep
 set surround
 set easymotion
 set NERDTree
-set number relativenumber
-set clipboard+=unnamed
-set clipboard+=ideaput
+set sneak
+let g:NERDTreeMapActivateNode='l'
+let g:NERDTreeMapJumpParent='h'
 
-nnoremap <leader>e :NERDTreeToggle<CR>
+map <leader>F <Plug>(easymotion-s)
+map <leader>f <Plug>(easymotion-f)
+
+
+
+
 
 xnoremap J :move '>+1<CR>gv-gv
 xnoremap K :move '<-2<CR>gv-gv
@@ -53,11 +65,12 @@ nmap <leader>m <action>(Git.Menu)
 nmap <leader>s <action>(QuickChangeSchema)
 nmap <leader>/ <action>(ShowErrorDescription)
 nmap <leader>[d <action>(GotoNextError)
-nnoremap <leader><leader> <C-Tab>
 
-set NERDTree
-let g:NERDTreeMapActivateNode='l'
-let g:NERDTreeMapJumpParent='h'
+""" Tool windows
+nnoremap <c-p> :action JumpToLastWindow<CR>
+nnoremap <c-x> :action HideAllWindows<CR>
+
+
 
 vnoremap < <gv
 vnoremap > >gv
@@ -67,21 +80,14 @@ nnoremap <leader>zc :action CollapseAllRegions<CR>
 nnoremap <leader>zo :action ExpandAllRegions<CR>
 nnoremap <leader>c :action CommentByLineComment<CR>
 noremap <leader>r :action Refactorings.QuickListPopupAction<CR>
-nnoremap <Leader>lf  :action ReformatCode<CR>
+nnoremap <Leader>F  :action ReformatCode<CR>
 nnoremap <leader>o :action OptimizeImports<CR>
 nnoremap <c-r> :action RecentFiles<CR>
-nnoremap <leader>l :action RecentLocations<CR>
-nnoremap <leader>h  :action LocalHistory.ShowHistory<CR>
 nnoremap ge :action GotoNextError<CR>
 nnoremap gE :action GotoPreviousError<CR>
 
 set incsearch
 nnoremap <c-a> :action GotoAction<CR>
-nnoremap <leader>f :action GotoFile<CR>
-nnoremap <leader>g :action FindInPath<CR>
-nnoremap <leader>u :action FindUsages<CR>
-nnoremap <leader>s :action GotoRelated<CR>
-nnoremap <leader>h :action CallHierarchy<CR>
 nnoremap <leader>b <Action>(Switcher)
 nnoremap gt :action GotoTest<CR>
 nnoremap gb :action Back<CR>
@@ -107,8 +113,8 @@ nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 nnoremap <c-j> <c-w>j
 nnoremap <c-k> <c-w>k
-nnoremap <TAB> :action PreviousTab<CR>
-nnoremap <s-TAB> :action NextTab<CR>
+nnoremap <leader>l :action PreviousTab<CR>
+nnoremap <leader>h :action NextTab<CR>
 nnoremap <Leader>n :action NextWindow<CR>
 nnoremap <Leader>q :action CloseContent<CR>
 nnoremap <Leader>qa :action CloseAllEditors<CR>
