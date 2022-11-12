@@ -93,7 +93,8 @@ local mappings = {
   ["R"] = { "<cmd>source $MYVIMRC<cr>", "Reload" },
   ['X'] = { "<cmd>TodoTelescope<CR>", "Todo" },
   ["?"] = { "<cmd>Cheetsheet<CR>", "Cheetsheet" },
-
+  ["cn"] = { "<cmd>NextCS<CR>", "Next Colorscheme" },
+  ["cp"] = { "<cmd>previousCS<CR>", "Previous Colorscheme" },
   p = {
     name = "Packer",
     c = { "<cmd>PackerCompile<cr>", "Compile" },
@@ -165,9 +166,9 @@ local mappings = {
     f = { "<cmd>ToggleTerm direction=float<cr>", "Float" },
     h = { "<cmd>ToggleTerm size=10 direction=horizontal<cr>", "Horizontal" },
     v = { "<cmd>ToggleTerm size=80 direction=vertical<cr>", "Vertical" },
-    n = {"<cmd>tabnext<cr>", "Next Tab"},
-    p = {"<cmd>tabprev<cr>", "Prev Tab"},
-    c = {"<cmd>tabclose<CR> | <cmd>tabprev<CR>", "Close Tab"}
+    n = { "<cmd>tabnext<cr>", "Next Tab" },
+    p = { "<cmd>tabprev<cr>", "Prev Tab" },
+    c = { "<cmd>tabclose<CR> | <cmd>tabprev<CR>", "Close Tab" }
   },
 
   l = {
@@ -219,8 +220,8 @@ local mappings = {
     j = { '<C-w>j', "Move Down" },
     k = { '<C-w>k', "Move Up" },
     l = { '<C-w>l', "Move right" },
-    s = { '<C-w>s', 'Split Below'},
-    v = {' <C-w>v', 'Split Right'},
+    s = { '<C-w>s', 'Split Below' },
+    v = { ' <C-w>v', 'Split Right' },
   },
 
 
@@ -288,8 +289,8 @@ local mappings = {
       "Sort by language",
     },
 
-  ["W"] = { "<cmd>Bwipeout<CR>", "Wipe out buffer" },
-  ["c"] = { "<cmd>Bdelete!<CR>", "Close Buffer" },
+    ["W"] = { "<cmd>Bwipeout<CR>", "Wipe out buffer" },
+    ["c"] = { "<cmd>Bdelete!<CR>", "Close Buffer" },
   },
 
   m = {
@@ -318,8 +319,8 @@ local mappings = {
   },
   q = {
     name = 'Quokka (aka sniprun)',
-    r = {"<cmd>SnipRun<CR>", 'Run'}, 
-    o = {"<cmd>SnipRunOperator<CR>", "Operator"}
+    r = { "<cmd>SnipRun<CR>", 'Run' },
+    o = { "<cmd>SnipRunOperator<CR>", "Operator" }
 
   },
   o = {

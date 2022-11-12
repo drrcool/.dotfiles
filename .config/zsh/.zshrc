@@ -1,10 +1,6 @@
-
-[[ -f ~/.config/zsh/appsetup.zsh ]] && source ~/.config/zsh/appsetup.zsh
-[[ -f ~/.config/zsh/aliases.zsh ]] && source ~/.config/zsh/aliases.zsh
-[[ -f ~/.config/zsh/functions.zsh ]] && source ~/.config/zsh/functions.zsh
-[[ -f ~/.config/zsh/starship.zsh ]] && source ~/.config/zsh/starship.zsh
-[[ -f ~/.config/zsh/nvm.zsh ]] && source ~/.config/zsh/nvm.zsh
-
-source ~/.zprofile
-eval "$(starship init zsh)"
-
+# Fig pre block. Keep at the top of this file.
+[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
+export PATH=$HOME/.fig/bin:$HOME/.local/bin:$PATH
+source $HOME/.config/zsh/zshrc.core.zsh
+# Fig post block. Keep at the bottom of this file.
+[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"

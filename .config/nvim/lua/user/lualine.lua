@@ -30,7 +30,7 @@ lualine.setup({
   "branch",
   options = {
     icons_enabled = true,
-    theme = "tokyonight",
+    theme = "auto",
     component_separators = "|",
     section_separators = { left = "", right = "" },
     disabled_filetypes = { "alpha", "dashboard", "NvimTree", "Outline", "dapui*", "dap-repl" },

@@ -1,0 +1,64 @@
+live_config_reload: true
+env:
+  TERM: xterm-256color
+shell:
+  program: /opt/homebrew/bin/zsh
+  alt_send_esc: true
+  args: 
+    - --login
+window:
+  dimensions: 
+    columns: 100
+    lines: 40
+  opacity: 0.95
+  padding:
+    x: 10
+    y: 10
+  dynamic_padding: false
+  decorations:  buttonless
+
+font:
+  normal:
+    family: "PragmataProMonoLiga Nerd Font" 
+    style: Regular
+  bold:
+    family: "PragmataProMonoLiga Nerd Font"
+    style: Bold
+  italic:
+    family: "PragmataProMonoLiga Nerd Font"
+    style: Italic
+  size: 20.0
+  use_thin_strokes: false
+  offset:
+    x: 1
+    y: 1
+
+mouse:
+  hide_when_typing: true
+
+
+  key_bindings:
+      - { key: T,        mods: Command,       chars: "\x02c"                       }  # new tab
+scrolling:
+  # Specifying '0' will disable scrolling.
+  history: 100000
+  # Number of lines the viewport will move for every line scrolled when
+  # scrollback is enabled (history > 0).
+  multiplier: 3
+bell:
+  animation: EaseOutExpo
+  duration: 300
+  color: '0xffffff'
+selection:
+  # This string contains all characters that are used as separators for
+  # "semantic words" in Alacritty.
+  semantic_escape_chars: ",│`|:\"' ()[]{}<>\t"
+  # When set to `true`, selected text will be copied to the primary clipboard.
+  save_to_clipboard: true
+# Allow terminal applications to change Alacritty’s window title.
+window.dynamic_title: true
+cursor:
+  style: Block
+  unfocused_hollow: true
+# Live config reload (changes require restart)
+live_config_reload: true

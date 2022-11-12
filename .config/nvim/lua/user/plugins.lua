@@ -86,6 +86,8 @@ return packer.startup({ function(use)
       require("user.colorizer")
     end,
   })
+  use({ 'flazz/vim-colorschemes' })
+  use({ 'javier-lopez/nextCS.vim' })
   use({ "nanotech/jellybeans.vim" })
   use({ "bluz71/vim-moonfly-colors" })
   use({ "bignimbus/pop-punk.vim" })
@@ -257,7 +259,8 @@ return packer.startup({ function(use)
       require('user.telescope')
     end
   })
-
+  use({ 'MunifTanjim/eslint.nvim' })
+  use({ 'MunifTanjim/prettier.nvim' })
 
 
   -- -------------------------------
