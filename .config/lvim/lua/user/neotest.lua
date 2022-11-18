@@ -10,7 +10,7 @@ neotest.setup({
       runner = 'unittest'
     },
     require("neotest-jest")({
-      jestCommand = "newt exec npx jest"
+      jestCommand = "newt exec yarn run test",
     })
 
 

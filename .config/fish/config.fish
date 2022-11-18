@@ -1,8 +1,7 @@
 if status is-interactive
-     bass /Library/Ruby/Gems/2.6.0/gems/colorls-1.4.6/lib/tab_complete.sh     
      zoxide init fish | source
      thefuck --alias | source
-     bass $(dirname $(gem which colorls))/tab_complete.sh
+     bass ~/.local/bin/tab_complete.sh
      eval $(/opt/homebrew/bin/brew shellenv)
 end
 

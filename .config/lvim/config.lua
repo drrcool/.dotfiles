@@ -1,4 +1,4 @@
---[[
+--[[ 
 lvim is the global options object
 
 Linters should be
@@ -7,31 +7,43 @@ a global executable or a path to
 an executable
 ]]
 -- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
-
+local colorscheme = require 'user.colorscheme'
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save = true
-lvim.colorscheme = "carbonfox"
+lvim.colorscheme = colorscheme.randomSchemeName()
 lvim.transparent_window = true
 vim.opt.relativenumber = true
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
-lvim.leader = "space"
+lvim.leader                         = "space"
 -- add your own keymapping
-lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
-lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
-lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
+lvim.keys.normal_mode["<C-s>"]      = ":w<cr>"
+lvim.keys.normal_mode["<S-l>"]      = ":BufferLineCycleNext<CR>"
+lvim.keys.normal_mode["<S-h>"]      = ":BufferLineCyclePrev<CR>"
 lvim.keys.normal_mode["<leader>ss"] = "<C-w>ss"
 lvim.keys.normal_mode["<leader>sv"] = "<C-w>v"
-lvim.keys.normal_mode["<C-Up>"] = ":resize -2<CR>"
-lvim.keys.normal_mode["<C-Down>"] = ":resize +2<CR>"
-lvim.keys.normal_mode["<C-Left>"] = ":vertical resize -2<CR>"
-lvim.keys.normal_mode["<C-Right>"] = ":vertical resize -2<CR>"
-lvim.keys.normal_mode["<A-j>"] = "<Esc>:m .+1<CR>"
-lvim.keys.normal_mode["<A-k>"] = "<Esc>:m .-2<CR>"
-
+lvim.keys.normal_mode["<C-Up>"]     = ":resize -2<CR>"
+lvim.keys.normal_mode["<C-Down>"]   = ":resize +2<CR>"
+lvim.keys.normal_mode["<C-Left>"]   = ":vertical resize -2<CR>"
+lvim.keys.normal_mode["<C-Right>"]  = ":vertical resize -2<CR>"
+lvim.keys.normal_mode["<A-j>"]      = "<Esc>:m .+1<CR>"
+lvim.keys.normal_mode["<A-k>"]      = "<Esc>:m .-2<CR>"
+lvim.keys.normal_mode["<leader>ss"] = ":split<Return><C-w>w"
+lvim.keys.normal_mode["<leader>sv"] = ":vsplit<Return><C-w>w"
+lvim.keys.normal_mode["<leader>sh"] = "<C-w>h"
+lvim.keys.normal_mode["<leader>sj"] = "<C-w>j"
+lvim.keys.normal_mode["<leader>sk"] = "<C-w>k"
+lvim.keys.normal_mode["<leader>sl"] = "<C-w>l"
+lvim.keys.normal_mode["<leader>sq"] = "<C-w>q"
+lvim.keys.normal_mode["<C-h>"]      = "<C-w>h"
+lvim.keys.normal_mode["<C-j>"]      = "<C-w>j"
+lvim.keys.normal_mode["<C-k>"]      = "<C-w>k"
+lvim.keys.normal_mode["<C-l>"]      = "<C-w>l"
+lvim.keys.normal_mode['<M-h>']      = ":bprevious<CR>"
+lvim.keys.normal_mode['<M-l>']      = ":bnext<CR>"
 
 -- Insert --
 -- Press jk fast to exit insert mode
@@ -41,7 +53,7 @@ lvim.keys.insert_mode["jk"] = "<ESC>"
 -- Stay in indent mode
 lvim.keys.visual_mode["<"] = "<gv"
 lvim.keys.visual_mode[">"] = ">gv"
-
+lvim.keys.visual_mode["p"] = "_dP"
 lvim.keys.visual_mode["<A-j>"] = "<Esc>:m .+1<CR>"
 lvim.keys.visual_mode["<A-k>"] = "<Esc>:m .-2<CR>"
 
@@ -52,11 +64,18 @@ lvim.keys.visual_mode["K"] = ":move '<-2<CR>gv-gv"
 
 -- }
 
--- Change theme settings
-lvim.builtin.theme.options.dim_inactive = true
-lvim.builtin.theme.options.style = "storm"
+lvim.keys.insert_mode["<leader>/"] = "<cmd>Commentary<CR>"
+lvim.keys.normal_mode["<leader>/"] = "<cmd>Commentary<CR>"
+lvim.keys.visual_mode["<leader>/"] = "<cmd>Commentary<CR>"
 
-lvim.builtin.lualine.theme = 'nightfox'
+local term_opts = { silent = true }
+local keymap = vim.api.nvim_set_keymap
+keymap("t", "<leader>sh", "<C-\\><C-N><C-w>h", term_opts)
+keymap("t", "<leader>sj", "<C-\\><C-N><C-w>j", term_opts)
+keymap("t", "<leader>sk", "<C-\\><C-N><C-w>k", term_opts)
+keymap("t", "<leader>sl", "<C-\\><C-N><C-w>l", term_opts)
+
+
 
 
 lvim.builtin.which_key.mappings = {
@@ -66,10 +85,10 @@ lvim.builtin.which_key.mappings = {
   ["e"] = { "<cmd>Neotree float reveal_force_cwd<cr>", "Explorer" },
   ["w"] = { "<cmd>w!<CR>", "Save" },
   ["q"] = { "<cmd>q!<CR>", "Quit" },
-  ["c"] = { "<cmd>Bdelete!<CR>", "Close Buffer" },
   ["h"] = { "<cmd>nohlsearch<CR>", "No Highlight" },
   ["P"] = { "<cmd>lua require('telescope').load_extension('projects').projects()<cr>", "Projects" },
   ["R"] = { "<cmd>source $MYVIMRC<cr>", "Reload" },
+  ['cc'] = { "<cmd>lua require('user.colorscheme').randomColorScheme()<CR>", "Random Colo" },
   ["?"] = { "<cmd>Cheatsheet<cr>", "Cheatsheet" },
 
   f = {
@@ -90,11 +109,6 @@ lvim.builtin.which_key.mappings = {
     o = {
       '<cmd>lua require(\'telescope.builtin\').oldfiles()<cr>',
       'Old Files',
-    },
-    r = {
-      '<cmd>lua require\'telescope\'.extensions.file_browser.file_browser()<cr>'
-      ,
-      'File Browser',
     },
     w = {
       '<cmd>lua require(\'telescope.builtin\').current_buffer_fuzzy_find()<cr>',
@@ -418,14 +432,6 @@ lvim.plugins = {
     cmd = "TroubleToggle",
   },
 
-  { "ggandor/leap.nvim",
-    config = function()
-
-      require('leap').add_default_mappings()
-
-    end
-  },
-
   {
     "nvim-neotest/neotest",
     requires = {
@@ -450,6 +456,34 @@ lvim.plugins = {
     config = function()
       require('user.nightfox').setup()
     end
+  }, { 'catppuccin/nvim', as = 'catppuccin' },
+  {
+    'flazz/vim-colorschemes'
+  },
+  { "bignimbus/pop-punk.vim" },
+  { "krfl/fleetish-vim" },
+  { "tomasr/molokai" },
+  { "mrjones2014/legendary.nvim" },
+  { 'ggandor/lightspeed.nvim' },
+  {
+    "wakatime/vim-wakatime",
+  },
+  {
+    "tpope/vim-surround",
+    keys = { "c", "d", "y" },
+    config = function()
+      vim.cmd("nmap ds       <Plug>Dsurround")
+      vim.cmd("nmap cs       <Plug>Csurround")
+      vim.cmd("nmap cS       <Plug>CSurround")
+      vim.cmd("nmap ys       <Plug>Ysurround")
+      vim.cmd("nmap yS       <Plug>YSurround")
+      vim.cmd("nmap yss      <Plug>Yssurround")
+      vim.cmd("nmap ySs      <Plug>YSsurround")
+      vim.cmd("nmap ySS      <Plug>YSsurround")
+      vim.cmd("xmap gs       <Plug>VSurround")
+      vim.cmd("xmap gS       <Plug>VgSurround")
+      vim.o.timeoutlen = 1000
+    end,
   },
   {
     "kevinhwang91/nvim-bqf",
@@ -490,7 +524,6 @@ lvim.plugins = {
 
   { "nvim-telescope/telescope-file-browser.nvim" },
   { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
-  { "fhill2/telescope-ultisnips.nvim" },
 
   { "github/copilot.vim" },
   { 'rcarriga/nvim-notify' },
@@ -522,10 +555,7 @@ lvim.plugins = {
 
 lvim.builtin.telescope.on_config_done = function(telescope)
   pcall(telescope.load_extension, "neoclip")
-  pcall(telescope.load_extension("file_browser"))
   pcall(telescope.load_extension("fzf"))
-  pcall(telescope.load_extension("ultisnips"))
-  pcall(telescope.load_extension("notify"))
 end
 
 

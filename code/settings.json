@@ -8,7 +8,7 @@
   "editor.inlineSuggest.enabled": true,
   "editor.minimap.enabled": false,
   "git.ignoredRepositories": [
-    "/Users/rcool/.vscode/extensions/stepsize.stepsize-0.69.3/resources/demo-repository"
+    "/Users/rcool/.vscode/extensions/stepsize.stepsize-0.69.4/resources/demo-repository"
   ],
   "remote.WSL.debug": true,
   "remote.WSL.fileWatcher.polling": true,

@@ -15,20 +15,20 @@ window:
     x: 10
     y: 10
   dynamic_padding: false
-  decorations:  buttonless
+  
 
 font:
   normal:
-    family: "PragmataProMonoLiga Nerd Font" 
+    family: Anonymice Nerd Font Mono #"PragmataProMonoLiga Nerd Font" 
     style: Regular
   bold:
-    family: "PragmataProMonoLiga Nerd Font"
+    family: Anonymice Nerd Font Mono #"PragmataProMonoLiga Nerd Font"
     style: Bold
   italic:
-    family: "PragmataProMonoLiga Nerd Font"
+    family:  Anonymice Nerd Font Mono  # "PragmataProMonoLiga Nerd Font"
     style: Italic
-  size: 20.0
-  AppleFontSmoothing: false
+  size: 18.0
+  AppleFontSmoothing: true
   offset:
     x: 1
     y: 1
@@ -62,3 +62,13 @@ cursor:
   unfocused_hollow: true
 # Live config reload (changes require restart)
 live_config_reload: true
+
+# Keybindings
+alt_send_esc: true
+key_bindings:
+  - { key: J,        mods: Alt,     chars: "\x1bj"                       }
+  - { key: K,        mods: Alt,     chars: "\x1bk"                       }
+  - { key: H,        mods: Alt,     chars: "\x1bh"                       }
+  - { key: L,        mods: Alt,     chars: "\x1bl"                       }
+  - { key: N,        mods: Alt,     chars: "\x1bn"                       }
+  - { key: P,        mods: Alt,     chars: "\x1bp"}

@@ -62,11 +62,6 @@ return packer.startup({ function(use)
       require("user.bufferline")
     end,
   })
-  use({ 'alvarosevilla95/luatab.nvim', requires = 'kyazdani42/nvim-web-devicons',
-    config = function()
-      require('user.luatab').setup()
-    end
-  })
 
   use({ "nvim-lualine/lualine.nvim",
     config = function()
@@ -79,6 +74,11 @@ return packer.startup({ function(use)
 
   -- color
   use({ "EdenEast/nightfox.nvim" })
+  use({ "bluz71/vim-nightfly-guicolors" })
+  use({"christoomey/vim-tmux-navigator"})
+  use({"szw/vim-maximizer"})
+  use({"inkarkat/vim-ReplaceWithRegister"})
+
   use({ "catppuccin/nvim", as = "catppuccin" })
   use({ "folke/tokyonight.nvim" })
   use({ "norcalli/nvim-colorizer.lua",
@@ -267,7 +267,7 @@ return packer.startup({ function(use)
   -- -- Development Plugins --
   -- -------------------------------
   -- LSP
-
+use({"glepnir/lspsaga.nvim", branch="main"})
   use({ 'williamboman/mason.nvim',
     config = function()
       require('mason').setup()
@@ -278,7 +278,6 @@ return packer.startup({ function(use)
   use({ "williamboman/mason-lspconfig.nvim" })
 
   use("neovim/nvim-lspconfig")
-  use({ 'lukas-reineke/lsp-format.nvim' })
 
 
   use "Pocco81/DAPInstall.nvim"
@@ -402,7 +401,7 @@ return packer.startup({ function(use)
       "MunifTanjim/nui.nvim",
       "rcarriga/nvim-notify"
     },
-    disable = false
+    disable = true
   })
 
   use({ "rcarriga/nvim-notify",

@@ -1,22 +1,15 @@
 local cmp_nvim_lsp_status, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
 local mason_status, mason = pcall(require, "mason")
 local mason_lspconfig_status, mason_lspconfig = pcall(require, 'mason-lspconfig')
-local lsp_format_status, lsp_format = pcall(require, 'lsp-format')
 local mason_null_ls_status, mason_null_ls = pcall(require, 'mason-null-ls')
 local mason_update_status, mason_update_all = pcall(require, 'mason-update-all')
-if not (mason_null_ls_status and cmp_nvim_lsp_status and mason_status and mason_lspconfig_status and lsp_format_status) then
+require('user.lsp.lspsaga')
+if not (mason_null_ls_status and cmp_nvim_lsp_status and mason_status and mason_lspconfig_status ) then
 
   print("One of Mason, Mason LSP Config, Completion or LSP Format is not installed")
   return
 end
 
-lsp_format.setup({
-  order = {
-    'tsserver',
-    'prettier',
-    'eslint',
-  }
-})
 
 -- After the LSOP attached set key map
 local on_attach = function(client, bufnr)
@@ -31,9 +24,6 @@ local on_attach = function(client, bufnr)
 
   client.server_capabilities.documentFormattingProvider = true
 
-  if (client.name ~= 'tsserver') then
-    lsp_format.on_attach(client)
-  end
 end
 local normal_capabilities = vim.lsp.protocol.make_client_capabilities()
 
