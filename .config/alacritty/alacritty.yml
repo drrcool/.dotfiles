@@ -2,7 +2,7 @@ live_config_reload: true
 env:
   TERM: xterm-256color
 shell:
-  program: /opt/homebrew/bin/zsh
+  program: /opt/homebrew/bin/fish
   alt_send_esc: true
   args: 
     - --login
@@ -19,15 +19,15 @@ window:
 
 font:
   normal:
-    family: Anonymice Nerd Font Mono #"PragmataProMonoLiga Nerd Font" 
+    family: "PragmataProMonoLiga Nerd Font" 
     style: Regular
   bold:
-    family: Anonymice Nerd Font Mono #"PragmataProMonoLiga Nerd Font"
+    family: "PragmataProMonoLiga Nerd Font"
     style: Bold
   italic:
-    family:  Anonymice Nerd Font Mono  # "PragmataProMonoLiga Nerd Font"
+    family:  "PragmataProMonoLiga Nerd Font"
     style: Italic
-  size: 18.0
+  size: 20.0
   AppleFontSmoothing: true
   offset:
     x: 1
@@ -72,3 +72,34 @@ key_bindings:
   - { key: L,        mods: Alt,     chars: "\x1bl"                       }
   - { key: N,        mods: Alt,     chars: "\x1bn"                       }
   - { key: P,        mods: Alt,     chars: "\x1bp"}
+
+  # Purify Colors
+# Selection colors
+selection:
+  text:       '0xFAFAFA'
+  background: '0x252834'
+
+# Normal colors
+primary:
+  background: '0x313440'
+  foreground: '0xFAFAFA'
+normal:
+  black:   '0x282C34'
+  red:     '0xFF6059'
+  green:   '0x5FFF87'
+  yellow:  '0xFFFF87'
+  blue:    '0x5FAFFF'
+  magenta: '0xAF87FF'
+  cyan:    '0x5FAFFF'
+  white:   '0xFAFAFA'
+
+# Bright colors
+bright:
+  black:   '0x282C34'
+  red:     '0xFF6059'
+  green:   '0x5FFF87'
+  yellow:  '0xFFFF87'
+  blue:    '0x5FAFFF'
+  magenta: '0xAF87FF'
+  cyan:    '0x5FAFFF'
+  white:   '0xFAFAFA'

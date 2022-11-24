@@ -1,88 +1,23 @@
 {
-  "dashboard.projectData": null,
-  "editor.accessibilitySupport": "off",
-  "editor.fontFamily": "PragmataProMonoLiga Nerd Font",
-  "editor.Size": 16,
+  // Terminal
+
+  // Formatters
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
-  "editor.formatOnType": true,
-  "editor.inlineSuggest.enabled": true,
-  "editor.minimap.enabled": false,
-  "git.ignoredRepositories": [
-    "/Users/rcool/.vscode/extensions/stepsize.stepsize-0.69.4/resources/demo-repository"
-  ],
-  "remote.WSL.debug": true,
-  "remote.WSL.fileWatcher.polling": true,
-  "vim.easymotion": true,
-  "vim.highlightedyank.enable": true,
-  "vim.insertModeKeyBindings": [
-    {
-      "after": [
-        "<Esc>"
-      ],
-      "before": [
-        "j",
-        "k"
-      ]
-    }
-  ],
-  "vim.leader": " ",
-  "vim.normalModeKeyBindings": [
-    {
-      "before": [
-        "leader",
-        "w"
-      ],
-      "commands": [
-        "workbench.action.files.save"
-      ]
-    }
-  ],
-  "vim.showMarksInGutter": true,
-  "vim.sneak": true,
-  "vim.statusBarColorControl": true,
-  "vim.statusBarColors.commandlineinprogress": "#007ACC",
-  "vim.statusBarColors.easymotioninputmode": "#007ACC",
-  "vim.statusBarColors.easymotionmode": "#007ACC",
-  "vim.statusBarColors.insert": "#BF616A",
-  "vim.statusBarColors.normal": [
-    "#8FBCBB",
-    "#434C5E"
-  ],
-  "vim.statusBarColors.replace": "#D08770",
-  "vim.statusBarColors.searchinprogressmode": "#007ACC",
-  "vim.statusBarColors.surroundinputmode": "#007ACC",
-  "vim.statusBarColors.visual": "#B48EAD",
-  "vim.statusBarColors.visualblock": "#A3BE8C",
-  "vim.statusBarColors.visualline": "#B48EAD",
-  "vim.visualModeKeyBindings": [
-    {
-      "before": [
-        ">"
-      ],
-      "commands": [
-        "editor.action.indentLines"
-      ]
-    },
-    {
-      "before": [
-        "<"
-      ],
-      "commands": [
-        "editor.action.outdentLines"
-      ]
-    }
-  ],
-  "wallaby.useWsl": true,
-  "window.zoomLevel": 2,
+  "editor.formatOnPaste": true,
+  "editor.actionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // Themes + Icons
+  "workbench.iconTheme": "icons",
+  "workbench.colorTheme": "One Dark Vibrant",
   "workbench.colorCustomizations": {
-    "[Default Dark+]": {
-      "statusBar.background": "#2E2E2E",
-      "statusBar.foreground": "#568CD6",
-      "activityBar.background": "#2E2E2E",
-      "tab.inactiveBackground": "#2E2E2E",
-    },
-    "[One Dark Pro Darker]": {
-      "editor.background": "#1e2127",
+    "[One Dark Vibrant]": {
+      "editor.background": "#000000",
+      "editor.lineHighlightBackground": "#211f1f",
       "terminal.foreground": "#abb2bf",
       "terminal.ansiBlack": "#1e2127",
       "terminal.ansiBlue": "#61afef",
@@ -100,33 +35,27 @@
       "terminal.ansiBrightRed": "#e06c75",
       "terminal.ansiBrightWhite": "#ffffff",
       "terminal.ansiBrightYellow": "#d19a66",
+      "statusBar.background": "#2E2E2e",
+      "statusBar.foreground": "#569CD6",
+      "statusBarItem.remoteBackground": "#2E2E2E",
+      "statusBarItem.remoteForeground": "#569CD6",
+      "activityBar.background": "#2E2E2E",
+      "tab.inactiveBackground": "#2E2E2E"
     }
   },
-  "workbench.colorTheme": "One Dark Pro Darker",
-  "workbench.iconTheme": "seti",
-  "workbench.sideBar.location": "right",
-  "terminal.integrated.env.osx": {
-    "FIG_NEW_SESSION": "1"
-  },
-  "vscode-neovim.highlightGroups.highlights": {
-  // 
-    "Directory": "vim",
-    "IncSearch": {
-      "backgroundColor": "theme.editor.findMatchBackground",
-      "borderColor": "theme.editor.findMatchBorder"
-    },
-    "Search": {
-      "backgroundColor": "theme.editor.findMatchHighlightBackground",
-      "borderColor": "theme.editor.findMatchHighlightBorder"
-    },
-    "Visual": {
-      "backgroundColor": "theme.editor.selectionBackground"
-    },
-    "Conceal": "vim",
-    "Substitute": "vim"
-  },
-  "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
-  "vscode-neovim.neovimInitVimPaths.darwin": "$HOME/.config/nvim/vscode.init.vim",
+
+  // Gitlens
+  "gitlens.currentLine.enabled": false,
+  "gitlens.hovers.currentLine.over": "line",
+  //FONTS
+  "editor.fontSize": 16,
+  "editor.fontFamily": "Anonymice Nerd Font",
+  "editor.fontLigatures": true,
+  "editor.fontWeight": "400",
+  "editor.lineHeight": 24,
+  "editor.letterSpacing": 0.5,
+
+  //WHICH KEY
   "whichkey.sortOrder": "alphabetically",
   "whichkey.bindings": [
     {
@@ -134,7 +63,8 @@
       "name": "commands",
       "type": "command",
       "command": "workbench.action.showCommands"
-    },   {
+    },
+    {
       "key": "/",
       "name": "comment",
       "type": "command",
@@ -699,24 +629,142 @@
       "command": "workbench.action.toggleZenMode"
     }
   ],
-  "gitlens.currentLine.enabled": false,
-  "gitlens.hovers.currentLine.over": "line",
+
+  // Editor Setup
   "editor.suggestSelection": "first",
-  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
-  "oneDarkPro.editorTheme":"onedarkPro",
-  "editor.scrollbar.hoirizontal":"hidden",
-  "editor.scrollbar.vertical":"hidden",
-  "editor.cursorBlinking": "expand",
-  "files.exclude":{
-    "**/node_modules/":true
-  }, 
-  "terminal.external.osxExec": "iTerm.app",
-  "workbench.activityBar.visible":false,
-  "window.menuBarVisibility": "toggle",
-  "[jsonc]": {
-    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  "editor.scrollbar.horizontal": "hidden",
+  "editor.scrollbar.vertical": "hidden",
+  "editor.cursorBlinking": "solid",
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true
   },
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnPaste": true,
-  
+  "editor.minimap.enabled": false,
+
+  /// VERY RAW BASICS
+  "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
+  "vscode-neovim.neovimInitVimPaths.darwin": "/Users/rcool2/.config/vscode.init.vim",
+  "git.ignoredRepositories": [
+    "/Users/rcool2/.vscode/extensions/stepsize.stepsize-0.69.7/resources/demo-repository"
+  ],
+  "terminal.integrated.env.osx": {
+    "FIG_NEW_SESSION": "1"
+  },
+  "editor.inlineSuggest.enabled": true,
+  "editor.accessibilitySupport": "off",
+  "cSpell.showAutocompleteSuggestions": true,
+  "window.zoomLevel": 1,
+  "p42.feature.dependencyVisualization.enabled": true,
+  "workbench.startupEditor": "none",
+  "cSpell.userWords": [
+    "datepicker",
+    "dattepicker",
+    "esbenp",
+    "fontawesome",
+    "fortawesome",
+    "testid"
+  ],
+  "terminal.integrated.fontFamily": "PragmataProMonoLiga Nerd Font",
+  "terminal.integrated.fontSize": 15,
+  "terminal.integrated.macOptionIsMeta": true,
+  "editor.lineNumbers": "relative",
+  "editor.renderLineHighlight": "gutter",
+  "javascript.format.semicolons": "insert",
+  "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "javascript.inlayHints.parameterNames.enabled": "literals",
+  "javascript.inlayHints.parameterTypes.enabled": true,
+  "javascript.inlayHints.propertyDeclarationTypes.enabled": true,
+  "javascript.inlayHints.variableTypes.enabled": true,
+  "javascript.referencesCodeLens.enabled": true,
+  "javascript.referencesCodeLens.showOnAllFunctions": true,
+  "javascript.suggest.completeFunctionCalls": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "wallaby.codeLensFeature.runTest": true,
+  "wallaby.node": "/opt/homebrew/bin/node",
+  "whichkey.useFullWidthCharacters": true,
+  "quokka.automaticRestart": true,
+  "quokka.automaticStartRegex": "*.ts,*js",
+  "quokka.showValueOnMultilineSelection": true,
+  "path-intellisense.autoSlashAfterDirectory": true,
+  "path-intellisense.autoTriggerNextSuggestion": true,
+  "oneDarkPro.bold": true,
+  "oneDarkPro.vivid": true,
+  "p42.refactoring.convertArrayFilterToFind.suggestion": "information",
+  "p42.refactoring.collapsePropertyIntoShorthand.suggestion": "information",
+  "p42.refactoring.convertAndAndGuardToIfStatement.suggestion": "information",
+  "p42.refactoring.convertApplyToSpreadSyntax.suggestion": "information",
+  "p42.refactoring.convertArrayIndexOfToArrayIncludes.suggestion": "information",
+  "p42.refactoring.convertArrayTypeToGenericArray.suggestion": "information",
+  "p42.refactoring.convertBracketNotationPropertyAccessToDotNotation.suggestion": "information",
+  "p42.refactoring.convertComparisonChainToArrayIncludes.suggestion": "information",
+  "p42.refactoring.convertConditionalExpressionToIfElse.suggestion": "information",
+  "p42.refactoring.convertFunctionToArrowFunction.suggestion": "information",
+  "p42.refactoring.convertFunctionToObjectMethod.suggestion": "information",
+  "p42.refactoring.convertIfElseToConditionalExpression.suggestion": "information",
+  "p42.refactoring.convertLetToConst.suggestion": "warning",
+  "p42.refactoring.convertLoopToForOf.suggestion": "warning",
+  "p42.refactoring.convertMathPowToExponentiation.suggestion": "information",
+  "p42.refactoring.convertToDestructuringAssignment.suggestion": "warning",
+  "p42.refactoring.convertToIncrement.suggestion": "error",
+  "p42.refactoring.convertToOptionalChaining.suggestion": "error",
+  "p42.refactoring.flattenArrayRestProperty.suggestion": "information",
+  "p42.refactoring.inlineIntoTemplate.suggestion": "warning",
+  "p42.refactoring.inlineReturn.suggestion": "information",
+  "p42.refactoring.inlineVariable.suggestion": "warning",
+  "p42.refactoring.introduceEarlyReturn.suggestion": "information",
+  "p42.refactoring.invertCondition.suggestion": "error",
+  "p42.refactoring.liftDefaultIntoParameter.suggestion": "error",
+  "p42.refactoring.mergeIntoPrecedingDestructuringAssignment.suggestion": "warning",
+  "p42.refactoring.mergeIntoPrecedingIfStatement.suggestion": "warning",
+  "p42.refactoring.mergeNestedElseIf.suggestion": "warning",
+  "p42.refactoring.mergeVariableDeclarationAndInitialization.suggestion": "warning",
+  "p42.refactoring.mergeNestedIf.suggestion": "warning",
+  "p42.refactoring.moveConstToOuterScope.suggestion": "error",
+  "p42.refactoring.moveFirstStatementOutOfIfElse.suggestion": "warning",
+  "p42.refactoring.moveLastStatementOutOfIfElse.suggestion": "warning",
+  "p42.refactoring.pushDownNegation.suggestion": "error",
+  "p42.refactoring.pushParameterIntoIife.suggestion": "error",
+  "p42.refactoring.removeBracesFromArrowFunction.suggestion": "error",
+  "p42.refactoring.removeConsoleLog.suggestion": "error",
+  "p42.refactoring.removeDoubleNegation.suggestion": "error",
+  "p42.refactoring.removeEmptyElseBlock.suggestion": "error",
+  "p42.refactoring.removeEmptyIfBlock.suggestion": "error",
+  "p42.refactoring.removeIife.suggestion": "information",
+  "p42.refactoring.removeRedundantElse.suggestion": "warning",
+  "p42.refactoring.removeUnnecessaryConditionalExpression.suggestion": "warning",
+  "p42.refactoring.removeUnnecessaryElse.suggestion": "warning",
+  "p42.refactoring.removeUnnecessaryJsxFragment.suggestion": "warning",
+  "p42.refactoring.removeUnnecessaryExpressionStatement.suggestion": "error",
+  "p42.refactoring.removeUnnecessaryTemplate.suggestion": "warning",
+  "p42.refactoring.removeUnusedVariable.suggestion": "error",
+  "p42.refactoring.replaceLodashForeach.suggestion": "warning",
+  "p42.refactoring.replaceVarWithLetAndConst.suggestion": "warning",
+  "p42.refactoring.replaceVoid0WithUndefined.suggestion": "warning",
+  "p42.refactoring.simplifyBinaryExpression.suggestion": "error",
+  "p42.refactoring.simplifySwitch.suggestion": "error",
+  "p42.refactoring.splitVariableDeclaration.suggestion": "error",
+  "p42.refactoring.useEqEqNull.suggestion": "error",
+  "p42.refactoring.useNullishCoalescenceInDefaultExpression.suggestion": "error",
+  "p42.refactoring.useStringEndsWith.suggestion": "information",
+  "p42.refactoring.useStringStartsWith.suggestion": "error",
+  "p42.refactoring.useTemplateLiteral.suggestion": "warning",
+  "errorLens.enabledDiagnosticLevels": ["error", "warning", "info", "hint"],
+  "customizeUI.activityBar": "regular",
+  "customizeUI.font.monospace": "fira code mono",
+  "customizeUI.font.regular": "mononoki nerd font",
+  "customizeUI.titleBar": "inline",
+  "window.titleBarStyle": "native",
+  "colorize.languages": [
+    "css",
+    "sass",
+    "scss",
+    "less",
+    "postcss",
+    "sss",
+    "stylus",
+    "xml",
+    "svg",
+    "javascript",
+    "typescript"
+  ]
 }

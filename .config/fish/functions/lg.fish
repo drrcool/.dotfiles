@@ -1,3 +1,3 @@
-function lg --wraps=lazygit --description 'alias lg lazygit'
-  lazygit $argv; 
+function lg --wraps=lazygit --wraps='exa $EXA_STANDARD_OPTIONS $EXA_LG_OPTIONS' --description 'alias lg exa $EXA_STANDARD_OPTIONS $EXA_LG_OPTIONS'
+  exa $EXA_STANDARD_OPTIONS $EXA_LG_OPTIONS $argv; 
 end

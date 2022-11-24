@@ -1,0 +1,17 @@
+snippet #!
+	#! /usr/bin/env node
+
+snippet ex 
+	module.exports = ${1};
+
+snippet re
+	const ${1} = require('${2:module_name}')'snippet #!
+
+snippet qtapi  Quey Tools api route
+	app.post(
+		'${1:URL}',
+		${2:DBType}Proxy({{
+			queryTempalte: ${3:queryTemplate}
+			...dbOptions,	
+			})
+	)

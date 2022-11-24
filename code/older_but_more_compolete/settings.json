@@ -1,0 +1,139 @@
+{
+  /**
+   * Better Defaults
+   **/
+  "editor.copyWithSyntaxHighlighting": false,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.emptySelectionClipboard": true,
+  "window.newWindowDimensions": "inherit",
+  "editor.multiCursorModifier": "Cmd",
+  "files.trimTrailingWhitespace": true,
+  "diffEditor.renderSideBySide": false,
+  "editor.snippetSuggestions": "top",
+  "editor.detectIndentation": false,
+  "window.nativeFullScreen": false,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "workbench.sideBar.location": "right",
+  "tabnine.experimentalAutoImports": true,
+  "workbench.statusBar.visible": false,
+  "editor.minimap.enabled": false,
+
+  /**
+   * Finds
+   **/
+  "search.useIgnoreFiles": true,
+  "search.exclude": {
+    // Hide everything in /vendor
+    "**/vendor/{[^l],?[^ai]}*": true,
+    // Hide everything in /public, except "index.php"
+    "**/public/{[^i],?[^n]}*": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/_ide_helper.php": true,
+    "**/composer.lock": true,
+    "**/package-lock.json": true,
+    "storage": true,
+    ".phpunit.result.cache": true
+  },
+
+  /**
+   * Look and feel
+   **/
+
+  "editor.fontFamily": "Victor Mono",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "editor.cursorSmoothCaretAnimation": true,
+  "editor.smoothScrolling": true,
+  "workbench.list.smoothScrolling": true,
+  "editor.cursorBlinking": "phase",
+  "editor.cursorStyle": "block",
+
+  /**
+   * Formattings
+   **/
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "reactSnippets.settings.prettierEnabled": true,
+  "Prettier-SQL.SQLFlavourOverride": "hive",
+  "Prettier-SQL.uppercaseKeywords": true,
+  "workbench.activityBar.visible": false,
+  "window.nativeTabs": false,
+  "workbench.editor.showTabs": false,
+  "window.zoomLevel": 2,
+  "workbench.colorTheme": "Dracula Pro (Van Helsing)",
+  "http.systemCertificates": false,
+  "workbench.colorCustomizations": {},
+  "emmet.showSuggestionsAsSnippets": true,
+  "files.associations": {
+    "*.json": "json"
+  },
+  "editor.suggest.showCustomcolors": false,
+  "editor.suggest.showDeprecated": false,
+
+  /**
+   * Silence t he Noise
+   **/
+  "breadcrumbs.enabled": false,
+  "scm.diffDecorations": "none",
+  //   "editor.hover.enabled": false,
+  //   "workbench.tips.enabled": false,
+  //   "editor.colorDecorators": true,
+  "git.decorations.enabled": false,
+  "workbench.startupEditor": "none",
+  //   "editor.lightbulb.enabled": false,
+  "editor.selectionHighlight": false,
+  "editor.overviewRulerBorder": false,
+  "editor.renderLineHighlight": "none",
+  "problems.decorations.enabled": false,
+  "editor.renderControlCharacters": false,
+  "editor.hideCursorInOverviewRuler": true,
+  "editor.gotoLocation.multipleReferences": "goto",
+  "editor.gotoLocation.multipleDeclarations": "goto",
+  "editor.gotoLocation.multipleDefinitions": "goto",
+  "workbench.editor.enablePreviewFromQuickOpen": false,
+  "editor.gotoLocation.multipleImplementations": "goto",
+  "editor.gotoLocation.multipleTypeDefinitions": "goto",
+
+  /**
+   * Typography
+   **/
+  "editor.fontSize": 20,
+  "editor.lineHeight": 35,
+  "editor.suggestFontSize": 20,
+  "editor.suggestLineHeight": 28,
+  "terminal.integrated.fontSize": 18,
+  "terminal.integrated.lineHeight": 1.5,
+  "customizeUI.titleBar": "inline",
+  "window.titleBarStyle": "native",
+
+  /**
+   * Full Bleed
+   **/
+  "customizeUI.stylesheet": {
+    ".editor .title": "background: transparent !important;",
+    ".editor .title .label-container": "visibility: hidden;",
+    // Hide top-right buttons
+    ".editor .title .actions-container .action-item a": "visibility: hidden;",
+    // Show top-right "settings goto icon"
+    ".editor .title .actions-container .action-item a[title=\"Open Settings (UI)\"]": "visibility: initial;",
+    ".editor .title .actions-container .action-item a[title=\"Open Settings (JSON)\"]": "visibility: initial;",
+    // Make it the "right-most" icon.
+    ".editor .title .actions-container": "flex-direction: row-reverse;",
+    // Only show the scrollbar on hover.
+    ".editor .scrollbar .slider": "visibility: hidden",
+    ".editor .scrollbar:hover .slider": "visibility: initial",
+    // Change cursor color.
+    ".monaco-editor .cursor": "background: linear-gradient(to bottom, #7f00ff, #e100ff) !important; color: #292D3E !important"
+  },
+
+  "ponicode.token": "7e657b22-f6bc-4c3d-944c-df8591079af9",
+  "code-runner.runInTerminal": true,
+  "workbench.iconTheme": "easy-icons",
+  "code-runner.clearPreviousOutput": true,
+  "python.formatting.provider": "black",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python"
+  }
+}

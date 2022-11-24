@@ -17,3 +17,5 @@ for dir in $config_dirs; do
 	ln -s $PWD/.config/$dir $HOME/.config/$dir
 done
 
+ln -s $PWD/bin/* $HOME/.local/bin/
+

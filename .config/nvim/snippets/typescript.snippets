@@ -1,0 +1,20 @@
+extends javascript
+
+snippet int "interface"
+	interface ${1} {
+				${2}: ${3:any};
+				${0}
+		}
+
+snippet intx "interface extends"
+	interface ${1} extends ${2} {
+			${3}: ${4:any};
+			${0}
+		}
+
+snippet tfun "fs function"
+	function ${1}(${2}): ${3:any} {
+			${0}
+		}
+
+

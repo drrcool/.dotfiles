@@ -1,3 +1,3 @@
-function l --wraps='colorls -1' --description 'alias l colorls -1'
-  colorls -1 $argv; 
+function l --wraps='exa $EXA_STANDARD_OPTIONS $EXA_L_OPTIONS' --description 'alias l exa $EXA_STANDARD_OPTIONS $EXA_L_OPTIONS'
+  exa $EXA_STANDARD_OPTIONS $EXA_L_OPTIONS $argv; 
 end

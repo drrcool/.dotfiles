@@ -1,0 +1,25 @@
+theme = "doom_acario_dark"
+
+[editor]
+line-number = "relative"
+cursorline = true
+color-modes = true
+idle-timeout = 0
+true-color = true
+auto-format = false
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.indent-guides]
+render = true
+
+[editor.statusline]
+left = ["mode", "file-name"]
+center = ["diagnostics", "spinner"]
+right = ["selections","position", "file-type"]
+separator = '|'
+
+[editor.lsp]
+display-messages=true

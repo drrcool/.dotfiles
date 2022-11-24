@@ -15,14 +15,21 @@ M.applyColorScheme = function(color)
 end
 
 M.randomSchemeName = function()
-
-  local options = { 'nightfox', 'tokyonight', 'catppuccin',
-    'bubblegum', 'prmths', 'burnttoast256', 'SerialExperimentsLain', 'stereokai', 'wellsokai',
-    'cobalt', 'deep-space', 'seti', 'skittles_berry', 'gryffin', 'heroku-terminal',
-    'jellybeans', 'lanox', 'monokai', 'liquidcarbon', 'smarties', 'spacemacs-theme', 'materialtheme',
-    'minimalist', 'molokai', 'monokai-chris', 'monokain', 'mrkn256', 'nightflight2', 'PerfectDark',
-    'srcery', 'moonfly', 'murphy', 'trivial256' }
-
+  local options = {
+    'nvcode',
+    'onedark',
+    'palenight',
+    'snazzy',
+    'nvim-hybrid',
+    'space-vim',
+    'darker',
+    'dark ocean',
+    'oceanic',
+    'codedark',
+    'nightfly',
+    'darksolar',
+    'aurora',
+  }
   local color = options[math.random(#options)]
   print('Random color scheme: ' .. color)
   return color

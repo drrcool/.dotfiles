@@ -1,0 +1,19 @@
+extends sh
+
+snippet #!
+	#!/user/bin/env bash
+
+snippet if
+	if [[ $1 ]]; then 
+		${0:${VISUAL}}
+	fi
+
+snippet elif
+	elif [[ $1 ]]; then
+		${0:${VISUAL}}
+
+snippet wh 
+	while [[ $1 ]]; then 
+			${0:${VISUAL}}
+
+

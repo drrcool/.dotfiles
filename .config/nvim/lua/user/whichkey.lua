@@ -133,7 +133,7 @@ local mappings = {
     name = "Find",
     a = { '<cmd>lua require(\'telescope.builtin\').commands()<cr>', 'Commands' },
     b = { '<cmd>lua require(\'telescope.builtin\').buffers()<cr>', 'Buffers' },
-    c = { "<cmd>lua require('telescope.builtin').colorscheme()<cr>", "Colorscheme" },
+    c = { "<cmd>lua require('telescope.builtin').colorscheme({enable_preview=true})<cr>", "Colorscheme" },
     f = { "<cmd>lua require(\'telescope.builtin\').find_files({find_command = {'rg', '--files', '--hidden', '-g', '!.git' }})<cr>",
       'Files' },
     g = {

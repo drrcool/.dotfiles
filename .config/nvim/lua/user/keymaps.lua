@@ -12,32 +12,9 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 
--- SPlits
 vim.keymap.set("n", "<leader>ss", ":split<Return><C-w>w")
 vim.keymap.set("n", "<leader>sv", ":vsplit<Return><C-w>w")
 vim.keymap.set("n", "<leader>sh", "<C-w>h")
-vim.keymap.set("n", "<leader>sj", "<C-w>j")
-vim.keymap.set("n", "<leader>sk", "<C-w>k")
-vim.keymap.set("n", "<leader>sl", "<C-w>l")
-vim.keymap.set("n", "<leader>sq", "<C-w>q")
-vim.keymap.set("n", "<leader>sx", ":close<CR>")
-vim.keymap.set("n", "<C-h>", "<C-w>h")
-vim.keymap.set("n", "<C-j>", "<C-w>j")
-vim.keymap.set("n", "<C-k>", "<C-w>k")
-vim.keymap.set("n", "<C-l>", "<C-w>l")
-vim.keymap.set("n", "<C-x>", ":close<CR>")
-vim.keymap.set('n', '<M-h>', ":bprevious<CR>")
-vim.keymap.set('n', '<M-l>', ":bnext<CR>")
-vim.keymap.set('n', '<leader>sm', ':MaximizerToggle<CR>')
-vim.keymap.set('n', '<leader>ll', ':LspRestart<CR>')
-
-
--- Resize with arrows
-keymap("n", "<C-Up>", ":resize -2<CR>", opts)
-keymap("n", "<C-Down>", ":resize +2<CR>", opts)
-keymap("n", "<C-Left>", ":vertical resize -2<CR>", opts)
-keymap("n", "<C-Right>", ":vertical resize +2<CR>", opts)
-
 vim.keymap.set("n", "<C-n>", ":BufSurfForward<CR>", { silent = true, noremap = true })
 vim.keymap.set("n", "<C-p>", ":BufSurfBack<CR>", { silent = true, noremap = true })
 vim.keymap.set("n", "<C-t>", "<C-^>")
@@ -47,9 +24,6 @@ vim.keymap.set("n", "<C-x>", ":bp <bar> bd#<CR>")
 keymap("n", "<C-]>", ":bnext<CR>", opts)
 keymap("n", "<C-[>", ":bprevious<CR>", opts)
 
--- Move text up and down
-keymap("n", "<A-j>", "<Esc>:m .+1<CR>==gi", opts)
-keymap("n", "<A-k>", "<Esc>:m .-2<CR>==gi", opts)
 
 -- Insert --
 -- Press jk fast to: exit insert mode
@@ -61,8 +35,6 @@ keymap("v", "<", "<gv", opts)
 keymap("v", ">", ">gv", opts)
 
 -- Move text up and downj
-keymap("v", "<A-j>", ":m .+1<CR>==", opts)
-keymap("v", "<A-k>", ":m .-2<CR>==", opts)
 keymap("v", "p", '"_dP', opts)
 
 -- Visual Block --

@@ -1,21 +1,24 @@
 local cmp_status_ok, cmp = pcall(require, "cmp")
 if not cmp_status_ok then
-  return
+  print("CMP failed to load")
 end
 
 local snip_status_ok, luasnip = pcall(require, "luasnip")
 if not snip_status_ok then
+  print("Luasnip couldn't load")
   return
 end
 
 local lspkind_status_ok, lspkind = pcall(require, 'lspkind')
 if not lspkind_status_ok then
+  print("lspkind couldn't load")
   return
 end
 
 
-
-require("luasnip/loaders/from_vscode").lazy_load()
+luasnip.filetype_extend('all', {'_'})
+require('luasnip.loaders.from_vscode').lazy_load()
+require('luasnip.loaders.from_snipmate').lazy_load()
 
 local check_backspace = function()
   local col = vim.fn.col "." - 1
@@ -49,12 +52,12 @@ cmp.setup {
     -- Set `select` to `false` to only confirm explicitly selected items.
     ["<CR>"] = cmp.mapping.confirm { select = true },
     ["<Tab>"] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expandable() then
+      if luasnip.expandable() then
         luasnip.expand()
       elseif luasnip.expand_or_jumpable() then
         luasnip.expand_or_jump()
+      elseif cmp.visible() then
+        cmp.select_next_item()
       elseif check_backspace() then
         fallback()
       else
@@ -65,10 +68,10 @@ cmp.setup {
       "s",
     }),
     ["<S-Tab>"] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.jumpable(-1) then
+      if luasnip.jumpable(-1) then
         luasnip.jump(-1)
+      elseif cmp.visible() then
+        cmp.select_prev_item()
       else
         fallback()
       end
@@ -91,9 +94,9 @@ cmp.setup {
     { name = "nvim_lsp", max_item_count = 5 },
     { name = "nvim_lua", max_item_count = 5 },
     { name = "luasnip", max_item_count = 5 },
-    { name = "omni" },
     { name = "buffer", max_item_count = 5 },
     { name = "path", max_item_count = 5 },
+    { name = 'cmdline', max_item_count = 2},
   },
   confirm_opts = {
     behavior = cmp.ConfirmBehavior.Replace,

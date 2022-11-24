@@ -19,15 +19,6 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "FileType" }, {
-  pattern = { "Jaq" },
-  callback = function()
-    vim.cmd [[
-      nnoremap <silent> <buffer> <m-r> :close<CR>
-      set nobuflisted 
-    ]]
-  end,
-})
 
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
   pattern = { "" },
@@ -121,12 +112,6 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
-  pattern = { "*" },
-  callback = function()
-    vim.cmd "checktime"
-  end,
-})
 
 vim.api.nvim_create_autocmd({ "CursorHold" }, {
   callback = function()
@@ -140,12 +125,12 @@ vim.api.nvim_create_autocmd({ "CursorHold" }, {
   end,
 })
 
--- vim.api.nvim_create_autocmd({ "BufWritePost" }, {
---   pattern = { "*.ts" },
---   callback = function()
---     vim.lsp.buf.format { async = true }
---   end,
--- })
+ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+   pattern = { "*.ts" },
+   callback = function()
+     vim.lsp.buf.format { async = true }
+   end,
+ })
 
 vim.api.nvim_create_autocmd({ 'BufEnter' }, {
   pattern = { "" },
@@ -179,9 +164,9 @@ vim.cmd([[augroup highlight_yank
     au TextYankPost * silent! lua vim.highlight.on_yank{higroup="IncSearch", timeout=700}
 augroup END]])
 
---vim.api.nvim_create_autocmd("FileType", {
---  pattern = "dapui*",
---  callback = function()
---    vim.cmd "set laststatus=3"
---  end,
---})
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "dapui*",
+  callback = function()
+    vim.cmd "set laststatus=3"
+  end,
+})

@@ -1,0 +1,27 @@
+# Import
+snippet irc import React and Hook
+	import react, {use$1} from 'react'
+	
+# Hooks
+snippet uses useState
+	const [${1:state}, set${2}] -- useState(${3:initialState})
+	
+snippet usee useEffect
+	useEffet(() => {
+		${1}
+	})
+	
+snippet userf useRef
+	const ${1:refContainer} = useRef(${2:initialValue});
+	
+snippet usect useContext
+	const ${1:value} = useContext(${2:MyContext});
+	
+snippet usecb useCallback
+	const ${1:memoizedCallback} = useCallback(
+		() => {
+			${2}(${3})
+		},
+		[$3]
+	);
+	

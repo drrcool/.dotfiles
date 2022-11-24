@@ -1,1 +1,1 @@
-/Users/rcool/.local/share/omf/themes/harleen/fish_prompt.fish
+/Users/rcool2/.local/share/omf/themes/purify.fish/fish_prompt.fish
