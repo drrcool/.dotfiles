@@ -1,6 +1,6 @@
 lvim.leader = "space"
-lvim.keys.normal_mode['<C-[>'] = ":BufferLineCyclePrev<CR>"
-lvim.keys.normal_mode['<C-]>'] = ":BufferLineCycleNext<CR>"
+lvim.keys.normal_mode['<C-[>'] = ":bprev<CR>"
+lvim.keys.normal_mode['<C-]>'] = ":bnext<CR>"
 
 -- Splits
 lvim.keys.normal_mode['<leader>ss'] = '<C-w>ss'
@@ -9,8 +9,8 @@ lvim.keys.normal_mode['<leader>sh'] = '<C-w>h'
 lvim.keys.normal_mode['<leader>sj'] = '<C-w>j'
 lvim.keys.normal_mode['<leader>sk'] = '<C-w>k'
 lvim.keys.normal_mode['<leader>sl'] = '<C-w>l'
-lvim.keys.normal_mode['<A-h>'] = ":BufferLineCyclePrev<CR>"
-lvim.keys.normal_mode['<A-l>'] = ":BufferLineCycleNext<CR>"
+lvim.keys.normal_mode['<A-h>'] = ":bprev<CR>"
+lvim.keys.normal_mode['<A-l>'] = ":bnext<CR>"
 lvim.keys.normal_mode['<leader>sq'] = '<C-w>q'
 lvim.keys.normal_mode['<leader>sx '] = ':close<CR>'
 

@@ -56,19 +56,19 @@ local results = packer.startup({ function(use)
       require('user.whichkey')
     end
   })
-  ----  Status Line
-  --use({ "akinsho/bufferline.nvim",
-  --  config = function()
-  --    require("user.bufferline")
-  --  end,
-  --})
+  --  Status Line
+  use({ "akinsho/bufferline.nvim",
+    config = function()
+      require("user.bufferline")
+    end,
+  })
 
-  --use({ "nvim-lualine/lualine.nvim",
-  --  config = function()
-  --    require("user.lualine")
-  --  end,
-  --})
-  ---- })
+  use({ "nvim-lualine/lualine.nvim",
+    config = function()
+      require("user.lualine")
+    end,
+  })
+  -- })
 
   ------ Icons
   use({ "kyazdani42/nvim-web-devicons" })
@@ -183,19 +183,13 @@ use({ "goolord/alpha-nvim",
     end
   })
 
-
-  use({ 'CosmicNvim/cosmic-ui',
-    requires = { 'MunifTanjim/nui.nvim', 'nvim-lua/plenary.nvim' },
-    config   = function()
-      require('user.cosmic')
+  use({'nvim-zh/better-escape.vim'})
+  use({ "moll/vim-bbye" })
+  use({ "tiagovla/scope.nvim",
+    config = function()
+      require('user.scope')
     end
   })
-  use({ "moll/vim-bbye" })
-  --use({ "tiagovla/scope.nvim",
-  --  config = function()
-  --    require('user.scope')
-  --  end
-  --})
   use({ 'ggandor/lightspeed.nvim' })
   use({
     "wakatime/vim-wakatime",
@@ -252,7 +246,8 @@ use({ "goolord/alpha-nvim",
     end,
   }
 
-  -- completion plugins use({ "hrsh7th/cmp-buffer" }) -- buffer completions
+  -- completion plugins 
+  use({ "hrsh7th/cmp-buffer" }) -- buffer completions
   use({ "hrsh7th/cmp-omni" })
   use({ "hrsh7th/cmp-cmdline" }) -- cmdline completions
   use({ "hrsh7th/cmp-nvim-lsp" })
@@ -390,6 +385,7 @@ use({ 'edluffy/specs.nvim',
 
   use({
     "folke/noice.nvim",
+    
     config = function()
       require("user.noice").setup()
     end,
@@ -397,14 +393,14 @@ use({ 'edluffy/specs.nvim',
       "muniftanjim/nui.nvim",
       "rcarriga/nvim-notify"
     },
-    disable = true
+    disable = false
   })
 
   use({ "rcarriga/nvim-notify",
     config = function()
       require("user.notify")
     end,
-    disable = true })
+    disable = false })
   use({
     "folke/twilight.nvim",
     config = function()

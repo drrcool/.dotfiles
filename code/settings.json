@@ -645,7 +645,7 @@
   "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
   "vscode-neovim.neovimInitVimPaths.darwin": "/Users/rcool2/.config/vscode.init.vim",
   "git.ignoredRepositories": [
-    "/Users/rcool2/.vscode/extensions/stepsize.stepsize-0.69.7/resources/demo-repository"
+    "/Users/rcool2/.vscode/extensions/stepsize.stepsize-0.70.0/resources/demo-repository"
   ],
   "terminal.integrated.env.osx": {
     "FIG_NEW_SESSION": "1"

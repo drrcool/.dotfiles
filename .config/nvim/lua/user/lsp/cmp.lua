@@ -52,10 +52,8 @@ cmp.setup {
     -- Set `select` to `false` to only confirm explicitly selected items.
     ["<CR>"] = cmp.mapping.confirm { select = true },
     ["<Tab>"] = cmp.mapping(function(fallback)
-      if luasnip.expandable() then
-        luasnip.expand()
-      elseif luasnip.expand_or_jumpable() then
-        luasnip.expand_or_jump()
+     if luasnip.jumpable() then
+        luasnip.jump(1)
       elseif cmp.visible() then
         cmp.select_next_item()
       elseif check_backspace() then
@@ -96,7 +94,7 @@ cmp.setup {
     { name = "luasnip", max_item_count = 5 },
     { name = "buffer", max_item_count = 5 },
     { name = "path", max_item_count = 5 },
-    { name = 'cmdline', max_item_count = 2},
+    -- { name = 'cmdline', max_item_count = 2},
   },
   confirm_opts = {
     behavior = cmp.ConfirmBehavior.Replace,
@@ -107,7 +105,7 @@ cmp.setup {
     documentation = cmp.config.window.bordered(winhighlight),
   },
   experimental = {
-    ghost_text = false,
+    ghost_text = true,
     native_menu = false,
   },
 }

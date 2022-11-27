@@ -22,8 +22,8 @@ SETUVAR --export EXA_LT_OPTIONS:\x2d\x2dtree\x1e\x2d\x2dlevel
 SETUVAR --export EXA_L_OPTIONS:\x1d
 SETUVAR --export EXA_STANDARD_OPTIONS:\x2d\x2dgroup\x1e\x2d\x2dicons\x1e\x2d\x2dgroup\x2ddirectories\x2dfirst
 SETUVAR VIRTUAL_ENV_DISABLE_PROMPT:true
-SETUVAR --export __ABBR_TIPS_KEYS:a__df\x1ea__nvc\x1ea__nvim\x1ea__\x1ea__nvim\x1ea__nvi\x1ea__nvim\x1ea__\x1ea__nvim\x1ea__\x1ea__\x1ea__\x1ea__\x1ea__\x1ea__ls\x1epjo\x1eqoe
-SETUVAR --export __ABBR_TIPS_VALUES:duf\x1ecd\x20\x7e/\x2econfig/nvim/lua/user/\x1elvim\x20nvim\x3dlvim\x1e\x1elvim\x20nvim\x3dlvim\x1e\x1e\x1e\x1e\x20nvim\x3d\x1e\x1e\x1e\x1e\x1e\x1el\x27\x20ls\x3d\x27l\x1epj\x20open\x1e\x7e/qoedash
+SETUVAR --export __ABBR_TIPS_KEYS:a__df\x1ea__nvc\x1ea__nvim\x1ea__\x1ea__nvim\x1ea__nvi\x1ea__nvim\x1ea__\x1ea__nvim\x1ea__\x1ea__\x1ea__\x1ea__\x1ea__\x1ea__ls\x1epjo\x1eqoe\x1ea__\x1ea__\x1ea__ls\x1ea__\x1ea__ls
+SETUVAR --export __ABBR_TIPS_VALUES:duf\x1ecd\x20\x7e/\x2econfig/nvim/lua/user/\x1elvim\x20nvim\x3dlvim\x1e\x1elvim\x20nvim\x3dlvim\x1e\x1e\x1e\x1e\x20nvim\x3d\x1e\x1e\x1e\x1e\x1e\x1el\x27\x20ls\x3d\x27l\x1epj\x20open\x1e\x7e/qoedash\x1e\x1e\x1e\x1el\x27\x20ls\x3d\x27l\x1e\x1ela\x27\x20ls\x3d\x27la\x1e
 SETUVAR --export __FISH_EXA_ALIASES:l\x1ela\x1eld\x1eli\x1elid\x1elaa\x1elad\x1elai\x1elaid\x1elaad\x1elaai\x1elaaid\x1ell\x1ella\x1elld\x1elli\x1ellid\x1ellaa\x1ellad\x1ellai\x1ellaid\x1ellaad\x1ellaai\x1ellaaid\x1elg\x1elga\x1elgd\x1elgi\x1elgid\x1elgaa\x1elgad\x1elgai\x1elgaid\x1elgaad\x1elgaai\x1elgaaid\x1ele\x1elea\x1eled\x1elei\x1eleid\x1eleaa\x1elead\x1eleai\x1eleaid\x1eleaad\x1eleaai\x1eleaaid\x1elt\x1elta\x1eltd\x1elti\x1eltid\x1eltad\x1eltai\x1eltaid\x1eltaad\x1eltaai\x1eltaaid\x1elc\x1elca\x1elcd\x1elci\x1elcid\x1elcaa\x1elcad\x1elcai\x1elcaid\x1elcaad\x1elcaai\x1elcaaid\x1elo\x1eloa\x1elod\x1eloi\x1eloid\x1eloaa\x1eload\x1eloai\x1eloaid\x1eloaad\x1eloaai\x1eloaaid
 SETUVAR --export __FISH_EXA_BASE_ALIASES:l\x1ell\x1elg\x1ele\x1elt\x1elc\x1elo
 SETUVAR --export __FISH_EXA_EXPANDED:a\x1ed\x1ei\x1eid\x1eaa\x1ead\x1eai\x1eaid\x1eaad\x1eaai\x1eaaid
@@ -83,7 +83,7 @@ SETUVAR fish_pager_color_selected_background:\x2d\x2dbackground\x3dbrblack
 SETUVAR fish_pager_color_selected_completion:\x1d
 SETUVAR fish_pager_color_selected_description:\x1d
 SETUVAR fish_pager_color_selected_prefix:\x1d
-SETUVAR fish_user_paths:/Users/rcool2/\x2ecargo/bin\x1e/opt/homebrew/bin
+SETUVAR fish_user_paths:/Users/rcool2/\x2elocal/bin\x1e/Users/rcool2/\x2ecargo/bin\x1e/opt/homebrew/bin
 SETUVAR fzf_directory_opts:\x2d\x2dbind\x1ectrl\x2do\x3aexecute\x28\x20\x7b\x7d\x20\x26\x3e\x20/dev/tty\x29
 SETUVAR nvm_data:/Users/rcool2/\x2elocal/share/nvm
 SETUVAR nvm_mirror:https\x3a//nodejs\x2eorg/dist

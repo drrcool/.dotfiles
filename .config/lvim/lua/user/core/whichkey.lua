@@ -112,7 +112,8 @@ lvim.builtin.which_key.mappings = {
     D = { "<cmd>lua vim.lsp.buf.declaration()<cr>", "Goto Declaration" },
     H = { "<cmd>lua vim.lsp.buf.signature_help()<cr>", "Signature Help" },
     R = { "<cmd>lua require('telescope.builtin').lsp_references()<cr>", "References" },
-
+    l = { "<cmd>Prettier<CR>","Run Prettier"},
+    e = { "<cmd>ESLintFixAll<CR>","ESLINT"},
     a = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code Action" },
     d = { "<cmd>lua require('telescope.builtin').lsp_definitions()<cr>", "Goto Definition" },
     f = { "<cmd>lua vim.lsp.buf.format({async = true})<cr>", "Format" },
@@ -120,7 +121,7 @@ lvim.builtin.which_key.mappings = {
     i = { "<cmd>lua require('telescope.builtin').lsp_implementations()<cr>", "Implimentations" },
     j = { "<cmd>lua vim.diagnostic.goto_next()<cr>", "Next Diagnostic" },
     k = { "<cmd>lua vim.diagnostic.goto_prev()<cr>", "Prev Diagnostic" },
-    l = { "<cmd>lua vim.lsp.codelens.run()<cr>", "CodeLens Action" },
+    L = { "<cmd>lua vim.lsp.codelens.run()<cr>", "CodeLens Action" },
     q = { "<cmd>lua require('telescope.builtin').quickfix()<cr>", "Quickfix" },
     r = { "<cmd>lua vim.lsp.buf.rename()<cr>", "Rename" },
     s = { "<cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>", "Document Symbols" },

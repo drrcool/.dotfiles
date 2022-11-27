@@ -23,3 +23,8 @@ separator = '|'
 
 [editor.lsp]
 display-messages=true
+
+[keys.insert]
+j  = {k = 'normal_mode'}
+
+
