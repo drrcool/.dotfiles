@@ -163,32 +163,32 @@ lvim.plugins = {
       vim.o.timeoutlen = 1000
     end,
   },
-  -- {
-  --   "kevinhwang91/nvim-bqf",
-  --   event = { "BufRead", "BufNew" },
-  --   config = function()
-  --     require("bqf").setup({
-  --       auto_enable = true,
-  --       preview = {
-  --         win_height = 12,
-  --         win_vheight = 12,
-  --         delay_syntax = 80,
-  --         border_chars = { "┃", "┃", "━", "━", "┏", "┓", "┗", "┛", "█" },
-  --       },
-  --       func_map = {
-  --         vsplit = "",
-  --         ptogglemode = "z,",
-  --         stoggleup = "",
-  --       },
-  --       filter = {
-  --         fzf = {
-  --           action_for = { ["ctrl-s"] = "split" },
-  --           extra_opts = { "--bind", "ctrl-o:toggle-all", "--prompt", "> " },
-  --         },
-  --       },
-  --     })
-  --   end,
-  -- },
+  {
+    "kevinhwang91/nvim-bqf",
+    event = { "BufRead", "BufNew" },
+    config = function()
+      require("bqf").setup({
+        auto_enable = true,
+        preview = {
+          win_height = 12,
+          win_vheight = 12,
+          delay_syntax = 80,
+          border_chars = { "┃", "┃", "━", "━", "┏", "┓", "┗", "┛", "█" },
+        },
+        func_map = {
+          vsplit = "",
+          ptogglemode = "z,",
+          stoggleup = "",
+        },
+        filter = {
+          fzf = {
+            action_for = { ["ctrl-s"] = "split" },
+            extra_opts = { "--bind", "ctrl-o:toggle-all", "--prompt", "> " },
+          },
+        },
+      })
+    end,
+  },
 
   {
     "windwp/nvim-ts-autotag",
@@ -229,12 +229,12 @@ lvim.plugins = {
   { 'RRethy/nvim-treesitter-textsubjects' },
   { 'rktjmp/lush.nvim' },
   { 'tjdevries/colorbuddy.nvim' },
-  -- { 'jdhao/better-escape.luafile %vim' }
+  { 'jdhao/better-escape.luafile %vim' }
 }
 
 
 lvim.builtin.telescope.on_config_done = function(telescope)
-  pcall(telescope.load_extension, 'git_worktree')
+  -- pcall(telescope.load_extension, 'git_worktree')
   pcall(telescope.load_extension, "neoclip")
   pcall(telescope.load_extension("fzf"))
 end

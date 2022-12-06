@@ -109,7 +109,7 @@
     "when": "sideBarFocus"
   },
   {
-    "key": "ctrl+k",
+    "key": "cmd+k cmd+b",
     "command": "workbench.action.focusActiveEditorGroup",
     "when": "panelFocus"
   },
@@ -190,5 +190,31 @@
     "key": "ctrl+k",
     "command": "workbench.action.focusAboveGroup",
     "when": "editorFocus"
+  },
+  {
+    "key": "escape escape",
+    "command": "-quokka.clearFileValues",
+    "when": "editorTextFocus && quokka.fileHasRemovableInlineValues && quokka.isActiveEditorRunningQuokka && !editorHasSelection && !findWidgetVisible && !inReferenceSearchEditor && !parameterHintsVisible && !quickFixWidgetVisible && !quokka.lineHasRemovableInlineValues && !referenceSearchVisible && !renameInputVisible && !suggestWidgetVisible"
+  },
+  {
+    "key": "escape escape",
+    "command": "-wallaby.clearFileValues",
+    "when": "editorTextFocus && wallaby.feature.trackableValues && wallaby.fileHasRemovableInlineValues && wallaby.started && !editorHasSelection && !findWidgetVisible && !inReferenceSearchEditor && !parameterHintsVisible && !quickFixWidgetVisible && !referenceSearchVisible && !renameInputVisible && !suggestWidgetVisible && !wallaby.lineHasRemovableInlineValues && !wallaby.paused && !wallaby.uncoveredToggled"
+  },
+  {
+    "key": "cmd+p",
+    "command": "workbench.action.showCommands"
+  },
+  {
+    "key": "shift+cmd+p",
+    "command": "-workbench.action.showCommands"
+  },
+  {
+    "key": "cmd+o",
+    "command": "workbench.action.quickOpen"
+  },
+  {
+    "key": "cmd+p",
+    "command": "-workbench.action.quickOpen"
   }
 ]

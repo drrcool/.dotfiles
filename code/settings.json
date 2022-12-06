@@ -1,5 +1,13 @@
 {
-  // Terminal
+  // Clean things up
+  "workbench.startupEditor": "none",
+  "editor.renderControlCharacters": false,
+  "editor.renderLineHighlight": "none",
+  "editor.matchBrackets": "never",
+  "workbench.editor.showTabs": false,
+  "editor.minimap.enabled": false,
+  "editor.codeLens": true,
+  "workbench.activityBar.visible": false,
 
   // Formatters
   "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -13,8 +21,9 @@
   },
   // Themes + Icons
   "workbench.iconTheme": "icons",
-  "workbench.colorTheme": "One Dark Vibrant",
+  "workbench.colorTheme": "Sublime Material Theme - Dark",
   "workbench.colorCustomizations": {
+    "editorCursor.foreground": "#ffff00",
     "[One Dark Vibrant]": {
       "editor.background": "#000000",
       "editor.lineHighlightBackground": "#211f1f",
@@ -49,7 +58,7 @@
   "gitlens.hovers.currentLine.over": "line",
   //FONTS
   "editor.fontSize": 16,
-  "editor.fontFamily": "Anonymice Nerd Font",
+  "editor.fontFamily": "OperatorMonoLiga Nerd Font",
   "editor.fontLigatures": true,
   "editor.fontWeight": "400",
   "editor.lineHeight": 24,
@@ -634,18 +643,17 @@
   "editor.suggestSelection": "first",
   "editor.scrollbar.horizontal": "hidden",
   "editor.scrollbar.vertical": "hidden",
-  "editor.cursorBlinking": "solid",
+  "editor.cursorBlinking": "smooth",
   "files.exclude": {
     "**/.git": true,
     "**/node_modules": true
   },
-  "editor.minimap.enabled": false,
 
   /// VERY RAW BASICS
   "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
   "vscode-neovim.neovimInitVimPaths.darwin": "/Users/rcool2/.config/vscode.init.vim",
   "git.ignoredRepositories": [
-    "/Users/rcool2/.vscode/extensions/stepsize.stepsize-0.70.0/resources/demo-repository"
+    "/Users/rcool/.vscode/extensions/stepsize.stepsize-0.69.5/resources/demo-repository"
   ],
   "terminal.integrated.env.osx": {
     "FIG_NEW_SESSION": "1"
@@ -655,7 +663,6 @@
   "cSpell.showAutocompleteSuggestions": true,
   "window.zoomLevel": 1,
   "p42.feature.dependencyVisualization.enabled": true,
-  "workbench.startupEditor": "none",
   "cSpell.userWords": [
     "datepicker",
     "dattepicker",
@@ -668,7 +675,6 @@
   "terminal.integrated.fontSize": 15,
   "terminal.integrated.macOptionIsMeta": true,
   "editor.lineNumbers": "relative",
-  "editor.renderLineHighlight": "gutter",
   "javascript.format.semicolons": "insert",
   "javascript.inlayHints.functionLikeReturnTypes.enabled": true,
   "javascript.inlayHints.parameterNames.enabled": "literals",
@@ -766,5 +772,17 @@
     "svg",
     "javascript",
     "typescript"
-  ]
+  ],
+  "dashboard.projectData": null,
+  "editor.cursorWidth": 3,
+  "vim.cursorStylePerMode.insert": "line",
+  "vim.cursorStylePerMode.normal": "underline",
+  "vim.cursorStylePerMode.replace": "block-outline",
+  "vim.cursorStylePerMode.visual": "block",
+  "vim.cursorStylePerMode.visualblock": "block",
+  "vim.cursorStylePerMode.visualline": "block",
+  "editor.cursorSmoothCaretAnimation": true,
+  "editor.cursorSurroundingLines": 5,
+  "editor.autoClosingBrackets": "never",
+  "editor.inlayHints.enabled": "off"
 }

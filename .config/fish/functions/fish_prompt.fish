@@ -1,1 +1,0 @@
-/Users/rcool2/.local/share/omf/themes/purify.fish/fish_prompt.fish

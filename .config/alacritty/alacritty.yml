@@ -1,4 +1,4 @@
-liv_config_reload: true
+live_config_reload: true
 env:
   TERM: xterm-256color
 shell:
@@ -8,46 +8,47 @@ shell:
     - --login
 window:
   dimensions: 
-    columns: 100
+    columns: 140
     lines: 40
-  opacity: 0.95
+  opacity: 0.9
   padding:
-    x: 10
-    y: 10
+    x: 2
+    y: 2
+  decorations: buttonless 
   dynamic_padding: false
-  
-
+  startup_mode: Windowed
+  dynamic_title: true
+scrolling: 
+  auto-scroll: true
+  history: 10000
+  multipler: 3
 font:
   normal:
-    family: "PragmataProMonoLiga Nerd Font" 
+    family: DankMono Nerd Font
     style: Regular
   bold:
-    family: "PragmataProMonoLiga Nerd Font"
+    family: DankMono Nerd Font 
     style: Bold
   italic:
-    family:  "PragmataProMonoLiga Nerd Font"
+    family: DankMono Nerd Font 
     style: Italic
   size: 20.0
   AppleFontSmoothing: true
   offset:
-    x: 1
+    x: 0
     y: 1
-
+  glyph_offset:
+    x: 0
+    y: 1
+  use_this_strokes: true
+draw_bold_text_with_bright_colors:  true
+mouse_bindings:
+  - {mouse: Right, action: PasteSelection }
 mouse:
   hide_when_typing: true
-
-
-  key_bindings:
-      - { key: T,        mods: Command,       chars: "\x02c"                       }  # new tab
-scrolling:
-  # Specifying '0' will disable scrolling.
-  history: 100000
-  # Number of lines the viewport will move for every line scrolled when
-  # scrollback is enabled (history > 0).
-  multiplier: 3
-bell:
-  animation: EaseOutExpo
-  duration: 300
+visual_bell:
+  animation: Ease 
+  duration: 0
   color: '0xffffff'
 selection:
   # This string contains all characters that are used as separators for
@@ -56,51 +57,23 @@ selection:
   # When set to `true`, selected text will be copied to the primary clipboard.
   save_to_clipboard: true
 # Allow terminal applications to change Alacritty’s window title.
-window.dynamic_title: true
 cursor:
   style: Block
   unfocused_hollow: true
-# Live config reload (changes require restart)
-live_config_reload: true
-
 # Keybindings
 alt_send_esc: true
 key_bindings:
-  - { key: J,        mods: Alt,     chars: "\x1bj"                       }
-  - { key: K,        mods: Alt,     chars: "\x1bk"                       }
-  - { key: H,        mods: Alt,     chars: "\x1bh"                       }
-  - { key: L,        mods: Alt,     chars: "\x1bl"                       }
-  - { key: N,        mods: Alt,     chars: "\x1bn"                       }
-  - { key: P,        mods: Alt,     chars: "\x1bp"}
+  - { key: N,        mods: Command, action: SpawnNewInstance            }
+  - { key: V,        mods: Command, action: Paste                        }
+  - { key: C,        mods: Command, action: Copy                         }
+  - { key: Paste,                   action: Paste                        }
+  - { key: Copy,                    action: Copy                         }
+  - { key: H,        mods: Command, action: Hide                         }
+  - { key: Q,        mods: Command, action: Quit                          }
+  - { key: W,        mods: Command, action: Quit                          }
+  - { key: Equals,        mods: Shift|Command, action: IncreaseFontSize              }
+  - { key: Minus,     mods: Command,  action: DecreaseFontSize }
+  - { key: Key0,    mods: Command, action: ResetFontSize}
 
-# Nightfox Alacritty Colors
-# Style: carbonfox
-# Upstream: https://github.com/edeneast/nightfox.nvim/raw/main/extra/carbonfox/nightfox_alacritty.yml
-colors:
-  # Default colors
-  primary:
-    background: '0x161616'
-    foreground: '0xf2f4f8'
-  # Normal colors
-  normal:
-    black:   '0x282828'
-    red:     '0xee5396'
-    green:   '0x25be6a'
-    yellow:  '0x08bdba'
-    blue:    '0x78a9ff'
-    magenta: '0xbe95ff'
-    cyan:    '0x33b1ff'
-    white:   '0xdfdfe0'
-  # Bright colors
-  bright:
-    black:   '0x484848'
-    red:     '0xf16da6'
-    green:   '0x46c880'
-    yellow:  '0x2dc7c4'
-    blue:    '0x8cb6ff'
-    magenta: '0xc8a5ff'
-    cyan:    '0x52bdff'
-    white:   '0xe4e4e5'
-  indexed_colors:
-    - { index: 16, color: '0x3ddbd9' }
-    - { index: 17, color: '0xff7eb6' }
+import:
+  - ~/.alacritty-colorscheme/themes/challenger_deep.yaml

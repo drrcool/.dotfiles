@@ -87,49 +87,6 @@ plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
 
-# Codi
-# Usage: codi [filetype] [filename]
-codi() {
-  local syntax="${1:-python}"
-  shift
-  vim -c \
-    "let g:startify_disable_at_vimenter = 1 |\
-    set bt=nofile ls=0 noru nonu nornu |\
-    hi ColorColumn ctermbg=NONE |\
-    hi VertSplit ctermbg=NONE |\
-    hi NonText ctermfg=0 |\
-    Codi $syntax" "$@"
-}
-
-
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-
-export PATH=/Users/rcool/.cargo/bin:$PATH
-export PATH=$HOME/Documents/mydotfiles/bin/:$PATH
 
 # ColorLS
 source $(dirname $(gem which colorls))/tab_complete.sh
@@ -140,9 +97,9 @@ eval "$(starship init zsh)"
 alias yarn="newt exec yarn"
 alias npm="newt exec npm"
 
-# ssh-add -q --apple-use-keychain /Users/rcool/.ssh/rcool@netflix.com-stash__corp__netflix__com
-# ssh-add -q --apple-use-keychain /Users/rcool/.ssh/id_ed25519
-# ssh-add -q --apple-use-keychain /Users/rcool/.ssh/drrcool-GitHub
+ ssh-add -q --apple-use-keychain /Users/rcool/.ssh/rcool@netflix.com-stash__corp__netflix__com
+ ssh-add -q --apple-use-keychain /Users/rcool/.ssh/id_ed25519
+ ssh-add -q --apple-use-keychain /Users/rcool/.ssh/drrcool-GitHub
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
 eval $(thefuck --alias)
