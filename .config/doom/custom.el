@@ -3,7 +3,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(warning-suppress-types '((initialization) (defvaralias))))
+ '(package-selected-packages
+   '(@ subatomic-theme spacemacs-theme noctilux-theme magit cyberpunk-theme cyberpunk-2019-theme color-theme-modern))
+ '(warning-suppress-types '((initialization) (defvaralias)) t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -45,4 +47,5 @@
  '(solaire-default-face ((((class color) (min-colors 89)) :inherit default :background "#191a1b" :foreground "#e0e6f0")))
  '(solaire-hl-line-face ((((class color) (min-colors 89)) :background "#323232")))
  '(solaire-line-number-face ((((class color) (min-colors 89)) :inherit solaire-default-face :foreground "#93959b")))
- '(solaire-org-hide-face ((((class color) (min-colors 89)) :background "#191a1b" :foreground "#191a1b"))))
+ '(solaire-org-hide-face ((((class color) (min-colors 89)) :background "#191a1b" :foreground "#191a1b")))
+ '(ts-fold-replacement-face ((t (:foreground nil :box nil :inherit font-lock-comment-face :weight light)))))

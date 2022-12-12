@@ -84,9 +84,9 @@ SETUVAR fish_pager_color_selected_background:\x2d\x2dbackground\x3dbrblack
 SETUVAR fish_pager_color_selected_completion:\x1d
 SETUVAR fish_pager_color_selected_description:\x1d
 SETUVAR fish_pager_color_selected_prefix:\x1d
-SETUVAR fish_user_paths:/Users//\x2edeno/bin\x1e/Users/rcool2/\x2eemacs\x2ed/bin\x1e/Users/rcool2/\x2ecargo/bin\x1e/opt/homebrew/bin\x1e/Users/rcool2/\x2elocal/bin
+SETUVAR fish_user_paths:/Users/rcool2/\x2elocal/share/nodejs/bin\x1e/Users//\x2edeno/bin\x1e/Users/rcool2/\x2eemacs\x2ed/bin\x1e/Users/rcool2/\x2ecargo/bin\x1e/opt/homebrew/bin\x1e/Users/rcool2/\x2elocal/bin
 SETUVAR fzf_directory_opts:\x2d\x2dbind\x1ectrl\x2do\x3aexecute\x28\x20\x7b\x7d\x20\x26\x3e\x20/dev/tty\x29
-SETUVAR nvm_data:/Users//\x2elocal/share/nvm
+SETUVAR nvm_data:/Users/rcool2/\x2elocal/share/nvm
 SETUVAR nvm_mirror:https\x3a//nodejs\x2eorg/dist
 SETUVAR tide_aws_bg_color:normal
 SETUVAR tide_aws_color:FF9900

@@ -119,7 +119,3 @@
 (package! moe-theme)
 (package! evil-god-state)
 (package! rainbow-mode)
-(package! ivy-posframe)
-(package! org-super-agenda)
-(package! ox-slack)
-(package! ox-gfm)

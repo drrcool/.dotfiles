@@ -12,3 +12,4 @@ ssh-add -q --apple-use-keychain $HOME/.ssh/id_rsa
 export NVIMLOADED=$HOME/.dotfiles/.config/nvimloaded
 
 starship init fish | source
+nvm use v16

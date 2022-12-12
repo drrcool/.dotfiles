@@ -1,13 +1,24 @@
+* My Emacs Config
+
+** My Info:
+#+begin_src emacs-lisp :tangle yes
 (setq user-full-name "Richard Cool"
       user-mail-address "richardjcool@gmail.com")
-
+#+end_src
+** Change Evil cursor
+#+begin_src emacs-lisp :tangle yes
 (setq evil-normal-state-cursor '(box "light blue")
       evil-insert-state-cursor '(bar "medium sea green")
       evil-visual-state-cursor '(hollow "orange"))
+#+end_src
 
+** Move to trash to delete
+#+begin_src emacs-lisp :tangle yes
 (setq-default delete-by-moving-to-trash t
               trash-directory "~/.local/share/Trash/files/")
-
+#+end_src
+** Font
+#+begin_src emacs-lisp :tangle yes
 (setq doom-font (font-spec :family "PragmataPro Liga" :size 20)
       doom-big-font (font-spec :family "PragmataPro Liga" :size 30)
     doom-variable-pitch-font (font-spec :family "Fantasque Sans Mono" :size 20)
@@ -20,7 +31,10 @@
 (custom-set-faces!
 '(font-lock-comment-face :slant italic)
 '(font-lock-keyword-face :slant italic))
+#+end_src
 
+** Theme
+#+begin_src emacs-lisp :tangle yes
 (use-package! modus-themes
 :init
 (setq modus-themes-hl-line '(accented intense)
@@ -64,6 +78,9 @@
     :prefix "t" ;; toggle hrr
     :desc "Toggle Modus theme" "m" #'modus-themes-toggle)
 
+#+end_src
+** Copilot
+#+begin_src emacs-lisp :tangle yes
 ;; accept completion from copilot and fallback to company
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
@@ -72,22 +89,38 @@
          :map copilot-completion-map
          ("<tab>" . 'copilot-accept-completion)
          ("TAB" . 'copilot-accept-completion)))
-
+#+end_src
+* Turn off god-mode
+#+begin_src emacs-lisp :tangle yes
 (god-mode)
-
+#+end_src
+** set a keybind to allow to use god mode in evil
+#+begin_src emacs-lisp :tangle yes
 (evil-define-key 'normal global-map "," 'evil-execute-in-god-state)
+#+end_src
 
+** Evil god state has a mode line tracker, we dont need two
+#+begin_src emacs-lisp :tangle yes
 (evil-define-key 'normal global-map "," 'evil-execute-in-god-state)
+#+end_src
 
+#+RESULTS:
+** Add the ability to cancel out of god mode
+#+begin_src emacs-lisp :tangle yes
 (evil-define-key 'god global-map [escape] 'evil-god-state-bail)
-
+#+end_src
+* Turn on rainbow mode
+#+begin_src emacs-lisp :tangle yes
 (define-globalized-minor-mode global-rainbow-mode rainbow-mode
   (lambda ()
     (when (not (memq major-mode
                 (list 'org-agenda-mode)))
      (rainbow-mode 1))))
 (global-rainbow-mode 1 )
+#+end_src
 
+* Org modern
+#+begin_src emacs-lisp :tangle yes
 (use-package! org-modern
   :hook (org-mode . org-modern-mode)
   :config
@@ -161,13 +194,20 @@
                     :src_block_end nil
                     :quote nil
                     :quote_end nil)))
+#+end_src
 
+#+RESULTS:
+* Org journal
+#+begin_src emacs-lisp :tangle yes
 (setq org-journal-dir "~/nc/Org/journal/"
       org-journal-date-prefix "* "
       org-journal-time-prefix "** "
       org-journal-date-format "%B %d, %Y (%A) "
       org-journal-file-format "%Y-%m-%d.org")
+#+end_src
 
+* Org Mode
+#+begin_src emacs-lisp :tangle yes
 (after! org
   (setq org-directory "~/org"
         org-agenda-files '("~/org/agenda.org")
@@ -193,7 +233,9 @@
              "|"                 ; The pipe necessary to separate "active" states and "inactive" states
              "DONE(d)"           ; Task has been completed
              "CANCELLED(c)" )))) ; Task has been cancelled
-
+#+end_src
+* Ivy Posframe
+#+begin_src emacs-lisp :tangle yes
 (setq ivy-posframe-display-functions-alist
       '((swiper                         . ivy-posframe-dispaly-at-point)
      (complete-symbol            . ivy-posframe-display-at-point)
@@ -211,7 +253,9 @@
         (dmenu . 20)
         (t . 10)))
 (ivy-posframe-mode 1)
-
+#+end_src
+* Org Capture
+   #+begin_src emacs-lisp :tangle yes
 (after! org
   ;; TODO: extract org-directory into noweb reference so it can be used in all the places
   (setq org-directory "~/org"
@@ -307,5 +351,14 @@
   (setq org-agenda-skip-deadline-if-done t) ;; Don't show done items in agenda
   (after! org (setq org-re-reveal-title-slide nil))
   )
+#+end_src
+
+* Set HUGO base directory
+#+begin_src emacs-lisp :tangle yes
 
 (setq org-huge-base-dir "~/org/markdown")
+
+#+end_src
+
+#+RESULTS:
+: ~/org/markdown
