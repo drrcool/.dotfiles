@@ -4,10 +4,9 @@
   "editor.renderControlCharacters": false,
   "editor.renderLineHighlight": "none",
   "editor.matchBrackets": "never",
-  "workbench.editor.showTabs": false,
+  "workbench.editor.showTabs": true,
   "editor.minimap.enabled": false,
   "editor.codeLens": true,
-  "workbench.activityBar.visible": false,
 
   // Formatters
   "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -21,7 +20,7 @@
   },
   // Themes + Icons
   "workbench.iconTheme": "icons",
-  "workbench.colorTheme": "Sublime Material Theme - Dark",
+  "workbench.colorTheme": "modus-vivendi",
   "workbench.colorCustomizations": {
     "editorCursor.foreground": "#ffff00",
     "[One Dark Vibrant]": {
@@ -50,19 +49,15 @@
       "statusBarItem.remoteForeground": "#569CD6",
       "activityBar.background": "#2E2E2E",
       "tab.inactiveBackground": "#2E2E2E"
-    }
+    },
+    "statusBar.background": "#005f5f",
+    "statusBar.noFolderBackground": "#005f5f",
+    "statusBar.debuggingBackground": "#005f5f"
   },
 
   // Gitlens
   "gitlens.currentLine.enabled": false,
   "gitlens.hovers.currentLine.over": "line",
-  //FONTS
-  "editor.fontSize": 16,
-  "editor.fontFamily": "OperatorMonoLiga Nerd Font",
-  "editor.fontLigatures": true,
-  "editor.fontWeight": "400",
-  "editor.lineHeight": 24,
-  "editor.letterSpacing": 0.5,
 
   //WHICH KEY
   "whichkey.sortOrder": "alphabetically",
@@ -653,7 +648,7 @@
   "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
   "vscode-neovim.neovimInitVimPaths.darwin": "/Users/rcool2/.config/vscode.init.vim",
   "git.ignoredRepositories": [
-    "/Users/rcool/.vscode/extensions/stepsize.stepsize-0.69.5/resources/demo-repository"
+    "/Users/rcool2/.vscode/extensions/stepsize.stepsize-0.70.0/resources/demo-repository"
   ],
   "terminal.integrated.env.osx": {
     "FIG_NEW_SESSION": "1"
@@ -661,7 +656,6 @@
   "editor.inlineSuggest.enabled": true,
   "editor.accessibilitySupport": "off",
   "cSpell.showAutocompleteSuggestions": true,
-  "window.zoomLevel": 1,
   "p42.feature.dependencyVisualization.enabled": true,
   "cSpell.userWords": [
     "datepicker",
@@ -672,7 +666,7 @@
     "testid"
   ],
   "terminal.integrated.fontFamily": "PragmataProMonoLiga Nerd Font",
-  "terminal.integrated.fontSize": 15,
+  "terminal.integrated.fontSize": 10,
   "terminal.integrated.macOptionIsMeta": true,
   "editor.lineNumbers": "relative",
   "javascript.format.semicolons": "insert",
@@ -755,10 +749,6 @@
   "p42.refactoring.useStringStartsWith.suggestion": "error",
   "p42.refactoring.useTemplateLiteral.suggestion": "warning",
   "errorLens.enabledDiagnosticLevels": ["error", "warning", "info", "hint"],
-  "customizeUI.activityBar": "regular",
-  "customizeUI.font.monospace": "fira code mono",
-  "customizeUI.font.regular": "mononoki nerd font",
-  "customizeUI.titleBar": "inline",
   "window.titleBarStyle": "native",
   "colorize.languages": [
     "css",
@@ -784,5 +774,28 @@
   "editor.cursorSmoothCaretAnimation": true,
   "editor.cursorSurroundingLines": 5,
   "editor.autoClosingBrackets": "never",
-  "editor.inlayHints.enabled": "off"
+  "editor.inlayHints.enabled": "off",
+  "vim.easymotion": true,
+  "vim.highlightedyank.enable": true,
+  "vim.leader": ",",
+  "vim.neovimConfigPath": "~/.config/vscode.init.vim",
+  "vim.showMarksInGutter": true,
+  "vim.smartRelativeLine": true,
+  "vim.sneak": true,
+  "vim.sneakReplacesF": true,
+  "vim.sneakUseIgnorecaseAndSmartcase": true,
+  "vim.statusBarColorControl": true,
+  "workbench.sideBar.location": "right",
+  "editor.fontVariations": false,
+  "workbench.fontAliasing": "antialiased",
+  "debug.console.fontFamily": "agave",
+  "scm.inputFontFamily": "agave",
+  //FONTS
+  "editor.fontSize": 12,
+  "editor.fontFamily": "PragmataProMonoLiga Nerd Font",
+  "editor.fontLigatures": true,
+  "editor.fontWeight": "400",
+  "editor.lineHeight": 0,
+  "editor.letterSpacing": 0,
+  "window.zoomLevel": 2
 }
