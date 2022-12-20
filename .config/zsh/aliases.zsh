@@ -11,6 +11,8 @@ alias less="bat -p"
 alias cd='z'
 alias ps='procs'
 
+#set up tmux integration with iterm2
+export ITERM_TMUX_INTEGRATION=true
 
 alias goqoe='exec $(echo "cd ~/qoedash; newt exec yarn run start:dev")'
 alias gosw='exec $(echo "cd ~/sessionwiz; newt exec npm run start:dev")'
@@ -21,3 +23,11 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATN="$HOME/.fig/bin:$PATH"
 alias reset_bluetooth="sudo pkill bluetoothd"
+
+alias npm='newt exec npm'
+alias yarn='newt exec yarn'
+
+alias pylon='ssh root@rcool.pylon.prod.container.dataeng.netflix.net'
+alias ls='exa -a --group --icons --group-directories-first --all --binary'
+alias ec='emacsclient -c'
+alias killemacs='emacsclient -e "(kill-emacs)"'
