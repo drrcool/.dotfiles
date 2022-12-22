@@ -92,7 +92,7 @@
 #+end_src
 * Turn off god-mode
 #+begin_src emacs-lisp :tangle yes
-(god-mode)
+;; (god-mode)
 #+end_src
 ** set a keybind to allow to use god mode in evil
 #+begin_src emacs-lisp :tangle yes
@@ -109,6 +109,9 @@
 #+begin_src emacs-lisp :tangle yes
 (evil-define-key 'god global-map [escape] 'evil-god-state-bail)
 #+end_src
+
+#+RESULTS:
+
 * Turn on rainbow mode
 #+begin_src emacs-lisp :tangle yes
 (define-globalized-minor-mode global-rainbow-mode rainbow-mode
@@ -237,7 +240,7 @@
 * Ivy Posframe
 #+begin_src emacs-lisp :tangle yes
 (setq ivy-posframe-display-functions-alist
-      '((swiper                         . ivy-posframe-dispaly-at-point)
+      '((swiper                         . ivy-posframe-display-at-point)
      (complete-symbol            . ivy-posframe-display-at-point)
         (counsel-M-x                . ivy-display-function-fallback)
         (counsel-esh-history        . ivy-posframe-display-at-window-center)
@@ -254,6 +257,10 @@
         (t . 10)))
 (ivy-posframe-mode 1)
 #+end_src
+
+#+RESULTS:
+: t
+
 * Org Capture
    #+begin_src emacs-lisp :tangle yes
 (after! org
@@ -362,3 +369,29 @@
 
 #+RESULTS:
 : ~/org/markdown
+* Theme
+#+begin_src emacs-lisp :tangle yes
+(use-package autothemer
+
+  :ensure t)
+
+(load-theme 'doom-catppuccin t)
+;; (load-theme 'catppuccin-latte t)
+;; (load-theme 'catppuccin-macchiato t)
+;; (load-theme 'catppuccin-mocha t)
+;; (load-theme 'catppuccin t)
+#+End_src
+
+#+RESULTS:
+: t
+* line numbers
+#+begin_src emacs-lisp :tangle yes
+(global-display-line-numbers-mode 1)
+(setq display-line-numbers-type 'relative)
+#+end_src
+
+* tramp
+#+begin_src emacs-lisp :tangle yes
+(setq tramp-default-method "ssh")
+
+#+end_src

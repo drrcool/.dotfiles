@@ -38,7 +38,7 @@
 ;(package! builtin-package :recipe (:branch "develop"))
 
 ;; Use `:pin' to specify a particular commit to install.
-;(package! builtin-package :pin "1a2b3c4d5e")
+;(package! builtin-package )
 
 
 ;; Doom's packages are pinned to a specific commit and updated from release to
@@ -56,59 +56,59 @@
 (package! tldr)
 (package! rainbow-mode)
 (package! org-auto-tangle)
-(package! fzf :pin "21912ebc7e1084aa88c9d8b7715e782a3978ed23")
+(package! fzf )
 
 
 (package! beacon)
 (package! super-save
   :disable t
-  :pin "3313f38ed7d23947992e19f1e464c6d544124144")
+  )
 
 (package! vundo
   :recipe (:host github
            :repo "casouri/vundo")
-  :pin "16a09774ddfbd120d625cdd35fcf480e76e278bb")
-(package! modus-themes :pin "ee35a9af344d2b2920589ec4d66e9cijjdsfasf")
-(package! ef-themes :pin "3f9628750f8ff544169d4924e8c51f49b31f39e1")
-(package! svg-tag-mode :pin "efd22edf650fb25e665269ba9fed7ccad0771a2f")
-(package! focus :pin "9dd85fc474bbc1ebf22c287752c960394fcd465a")
+  )
+(package! modus-themes)
+(package! ef-themes )
+(package! svg-tag-mode )
+(package! focus )
 (package! good-scroll
   :disable EMACS29+
-  :pin "a7ffd5c0e5935cebd545a0570f64949077f71ee3")
-(package! aggressive-indent :pin "70b3f0add29faff41e480e82930a231d88ee9ca7")
-(package! cov :pin "cd3e1995c596cc227124db9537792d8329ffb696")
+  )
+(package! aggressive-indent )
+(package! cov )
 
 (package! grammarly
   :recipe (:host github
            :repo "emacs-grammarly/grammarly")
-  :pin "e47b370faace9ca081db0b87ae3bcfd73212c56d")
+  )
 
 (package! eglot-grammarly
   :disable (not (modulep! :tools lsp +eglot))
   :recipe (:host github
            :repo "emacs-grammarly/eglot-grammarly")
-  :pin "3313f38ed7d23947992e19f1e464c6d544124144")
+  )
 
 (package! flycheck-grammalecte
   :recipe (:host github
            :repo "milouse/flycheck-grammalecte")
-  :pin "314de13247710410f11d060a214ac4f400c02a71")
+  )
 
 (package! flycheck-posframe)
 
-(package! info-colors :pin "47ee73cc19b1049eef32c9f3e264ea7ef2aaf8a5")
+(package! info-colors )
 
 
-(package! elpy :pin "ae7919d94659eb26d4146d4c3422c5f4c3610837")
+(package! elpy )
 (package! semgrep
   :disable t
   :recipe (:host github
            :repo "Ruin0x11/semgrep.el")
-  :pin "3313f38ed7d23947992e19f1e464c6d544124144")
+  )
 (package! magit-pretty-graph
   :recipe (:host github
            :repo "georgek/magit-pretty-graph")
-  :pin "26dc5535a20efe781b172bac73f14a5ebe13efa9")
+  )
 
 (package! evil-escape :disable t)
 
@@ -123,3 +123,5 @@
 (package! org-super-agenda)
 (package! ox-slack)
 (package! ox-gfm)
+(package! autothemer)
+(package! yasnippet-snippets)

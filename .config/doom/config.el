@@ -73,7 +73,7 @@
          ("<tab>" . 'copilot-accept-completion)
          ("TAB" . 'copilot-accept-completion)))
 
-(god-mode)
+;; (god-mode)
 
 (evil-define-key 'normal global-map "," 'evil-execute-in-god-state)
 
@@ -195,7 +195,7 @@
              "CANCELLED(c)" )))) ; Task has been cancelled
 
 (setq ivy-posframe-display-functions-alist
-      '((swiper                         . ivy-posframe-dispaly-at-point)
+      '((swiper                         . ivy-posframe-display-at-point)
      (complete-symbol            . ivy-posframe-display-at-point)
         (counsel-M-x                . ivy-display-function-fallback)
         (counsel-esh-history        . ivy-posframe-display-at-window-center)
@@ -309,3 +309,18 @@
   )
 
 (setq org-huge-base-dir "~/org/markdown")
+
+(use-package autothemer
+
+  :ensure t)
+
+(load-theme 'doom-catppuccin t)
+;; (load-theme 'catppuccin-latte t)
+;; (load-theme 'catppuccin-macchiato t)
+;; (load-theme 'catppuccin-mocha t)
+;; (load-theme 'catppuccin t)
+
+(global-display-line-numbers-mode 1)
+(setq display-line-numbers-type 'relative)
+
+(setq tramp-default-method "ssh")

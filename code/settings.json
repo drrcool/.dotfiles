@@ -20,7 +20,7 @@
   },
   // Themes + Icons
   "workbench.iconTheme": "icons",
-  "workbench.colorTheme": "modus-vivendi",
+  "workbench.colorTheme": "One Dark Vibrant",
   "workbench.colorCustomizations": {
     "editorCursor.foreground": "#ffff00",
     "[One Dark Vibrant]": {
@@ -50,9 +50,9 @@
       "activityBar.background": "#2E2E2E",
       "tab.inactiveBackground": "#2E2E2E"
     },
-    "statusBar.background": "#005f5f",
-    "statusBar.noFolderBackground": "#005f5f",
-    "statusBar.debuggingBackground": "#005f5f"
+    "statusBar.background": "#5f0000",
+    "statusBar.noFolderBackground": "#5f0000",
+    "statusBar.debuggingBackground": "#5f0000"
   },
 
   // Gitlens
@@ -791,11 +791,22 @@
   "debug.console.fontFamily": "agave",
   "scm.inputFontFamily": "agave",
   //FONTS
-  "editor.fontSize": 12,
+  "editor.fontSize": 16,
   "editor.fontFamily": "PragmataProMonoLiga Nerd Font",
   "editor.fontLigatures": true,
   "editor.fontWeight": "400",
   "editor.lineHeight": 0,
   "editor.letterSpacing": 0,
-  "window.zoomLevel": 2
+  "window.zoomLevel": 2,
+  "vitest.commandLine": "newt exec yarn test:unit",
+  "vitest.enable": true,
+  "debug.console.acceptSuggestionOnEnter": "on",
+  "emmet.triggerExpansionOnTab": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python"
+  },
+  "projectManager.git.baseFolders": [
+    "/Users/rcool2/",
+    "/Users/rcool2/allprojects"
+  ]
 }

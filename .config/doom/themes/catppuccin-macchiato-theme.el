@@ -1,0 +1,1 @@
+/Users/rcool2/.dotfiles/.config/doom/catppuccin/catppuccin-macchiato-theme.el
