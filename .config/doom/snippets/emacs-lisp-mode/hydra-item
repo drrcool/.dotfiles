@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: hydra-item
+# key: hi
+# uuid: hi
+# --
+("${1:keybind}" (${2:action})             "${3:name}")

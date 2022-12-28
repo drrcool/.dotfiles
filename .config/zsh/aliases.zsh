@@ -2,13 +2,11 @@
 alias code="open -a Visual\ Studio\ Code"
 
 # Command line utilities
-alias ls="exa --icons -a --group-directories-first"
 alias ll='exa -lbhH --color-scale --git -icons --group-directories-first'
 alias grep='rg'
 alias du="dust"
 alias df="duf"
 alias less="bat -p"
-alias cd='z'
 alias ps='procs'
 
 #set up tmux integration with iterm2
@@ -28,6 +26,10 @@ alias npm='newt exec npm'
 alias yarn='newt exec yarn'
 
 alias pylon='ssh root@rcool.pylon.prod.container.dataeng.netflix.net'
-alias ls='exa -a --group --icons --group-directories-first --all --binary'
+alias ls='exa  --group --icons --group-directories-first --binary'
 alias ec='emacsclient -c'
 alias killemacs='emacsclient -e "(kill-emacs)"'
+
+alias vpn='/opt/pulsesecure/bin/pulseUI'
+
+alias emacs='LD_LIBRARY_PATH=~/repos/tree-sitter /usr/local/bin/emacs'

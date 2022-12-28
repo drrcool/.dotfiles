@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: hydra
+# key: hy
+# uuid: hy 
+# --
+(defhydra ${1:fuctionName}
+ ${2:action}
+ ${0}
+)

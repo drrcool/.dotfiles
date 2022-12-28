@@ -2,4 +2,4 @@
 # name: if-let
 # condition: (<= (doom-snippets-count-lines %) 1)
 # --
-(if-let* (($1)) `%`$0)`(doom-snippets-newline-or-eol)`
+(if-let* (($1)) `yas-selected-text`$0)`(doom-snippets-newline-or-eol)`
