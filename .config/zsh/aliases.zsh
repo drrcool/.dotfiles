@@ -32,4 +32,3 @@ alias killemacs='emacsclient -e "(kill-emacs)"'
 
 alias vpn='/opt/pulsesecure/bin/pulseUI'
 
-alias emacs='LD_LIBRARY_PATH=~/repos/tree-sitter /usr/local/bin/emacs'
