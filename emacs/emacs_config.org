@@ -1,5 +1,5 @@
-#Title: Emacs Configuration
-#+PROPERTY: header-Ares :results none :tangle ~/.config/emacs/init.el
+Title: Emacs Configuration
+#+PROPERTY: header-Ares :results none :tangle ~/.emacs.d/init.el
 #+auto_tangle: t
 
 
@@ -12,7 +12,7 @@ I got tired of emacs asking if it was ok to follow a symlink on every boot and t
 * Initial Quick setup
 These are the random one-off configurations that help make Emacs better, but didn't fall into a great category.  Things like removing the unneeded ui elements from the screen or suppressing annoying dialogs that you always answer yes to.
 ** Remove some of the features of the UI that we don't need (toolbars, menubars, scroll bars, and splash screen)
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
   ;;-*- lexical-binding: t; -*-
   ;; Don't show the splash screen
   (setq inhibit-startup-message t)
@@ -27,27 +27,40 @@ These are the random one-off configurations that help make Emacs better, but did
   (display-time-mode 1)
 #+END_SRC
 ** Turn on centered-cursor-mode
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
       (use-package centered-cursor-mode
       :ensure t
     :config
   (global-centered-cursor-mode +1))
 #+end_src
+** Make deleted files go to trash
+#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+  (setq delete-by-moving-to-trash t
+trash-directory "~/.local/share/Trash/files/")
+#+end_src
+
+** Turn on beacon
+#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+  (use-package beacon
+    :ensure t
+    :config
+    (beacon-mode +1))
+#+end_src
 
 ** DONE Suppress execute confirm
 CLOSED: [2022-12-28 Wed 17:26]
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
  (setq org-confirm-babel-evaluate nil)
 #+end_src
 ** DONE Keep little files from littering
 CLOSED: [2022-12-28 Wed 18:13]
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (use-package no-littering :ensure t)
 #+end_src
 
 ** DONE Suppress compiler warnings
 CLOSED: [2022-12-28 Wed 17:27]
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 
 ;; Silence compiler warnings as they can be pretty disruptive
 (setq native-comp-async-report-warnings-errors nil)
@@ -58,7 +71,7 @@ CLOSED: [2022-12-28 Wed 17:27]
 #+end_src
 
 ** Load custom lisp files
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (load (expand-file-name "rc-funcs.el" user-emacs-directory))
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (load custom-file)
@@ -66,36 +79,36 @@ CLOSED: [2022-12-28 Wed 17:27]
 
 #+RESULTS:
 ** Suppress emacs from asking if it should follow symlink files
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
 (setq vc-follow-symlinks t)
 (setq vc-suppress-confirm t)
 #+end_src
 ** Turn on line numbers
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
   ;; Turn on line numbers in every buffer
   (global-display-line-numbers-mode 1)
   ;; With vim bindings, relatives let us use j and k better
   (setq display-line-numbers-type 'relative)
 #+END_SRC
 ** Disable lockfiles
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
 (setq create-lockfiles nil)
 #+end_src
 
 ** Line Highlighting and Fringe
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
   ;; Turn on line highlithting for current line
   (hl-line-mode 1)
   ;; Add some margins
   (set-fringe-mode 10)
 #+END_SRC
 ** Add escape to kill prompts
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
   ;; Make escape kill prompts
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 #+END_SRC
 ** Keys for Mac
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (setq mac-command-modifier       'meta
         mac-option-modifier        'meta
         mac-control-modifier       'control
@@ -107,7 +120,7 @@ CLOSED: [2022-12-28 Wed 17:27]
 : control
 ** DONE Turn on garbage collection
 CLOSED: [2022-12-28 Wed 18:13]
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (use-package gcmh
   :diminish gcmh-mode
   :config
@@ -130,7 +143,7 @@ CLOSED: [2022-12-28 Wed 18:13]
 
 #+end_src
 ** Manage how new windows are placed
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (setq display-buffer-base-action
     '((display-buffer-reuse-window
        display-buffer-reuse-mode-window
@@ -141,11 +154,11 @@ CLOSED: [2022-12-28 Wed 18:13]
 * Setup our package manager
 ** Define where we go for packages
 
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
      ;; Configure pacakge manager
      (require 'package)
      (setq package-archives '(
-  ("melpa" . "https://melpa.org/packages/")
+            ("melpa" . "https://melpa.org/packages/")
             ("org" . "https://orgmode.org/elpa/")
             ("elpa" . "https://elpa.gnu.org/packages/")
             ))
@@ -160,7 +173,7 @@ CLOSED: [2022-12-28 Wed 18:13]
 
 ** Setup use-package
 
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
 ;;Initalize use-package
 (unless (package-installed-p 'use-package)
 (package-install 'use-package))
@@ -174,31 +187,26 @@ CLOSED: [2022-12-28 Wed 18:13]
 * Build the UI we want
 ** Install a better mode line
 
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
-      (use-package doom-modeline
-        :ensure t
-        :init (doom-modeline-mode 1)
-        :config
-        (setq doom-modeline-hud nil)
-        (setq doom-modeline-minor-modes nil)
-        (if (facep 'mode-line-active)
-            (set-face-attribute 'mode-line-active nil :family "agave Nerd Font" :height 200) ; For 29+
-          (set-face-attribute 'mode-line nil :family "agave Nerd Font" :height 200))
-        (set-face-attribute 'mode-line-inactive nil :family "agave Nerd Font" :height 200)
-    )
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1)
+    :config
+    (setq doom-modeline-hud nil)
+    (setq doom-modeline-minor-modes t)
     (setq rc-doom-modeline-text-height 200)
     (setq doom-modeline-height 35)
-      (use-package all-the-icons
-        :ensure t
-        :if (display-graphic-p))
-
+    )
+  (use-package all-the-icons
+    :ensure t
+    :if (display-graphic-p))
 
 #+END_SRC
 ** Themes:
 *** Setup Modus Themes
 
 I like to do this even if I don't plan on the modus themes being my main theme of choice. I often swap themes, and this way they are ready when I want them.
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package modus-themes
   :ensure t
   :init
@@ -233,7 +241,7 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 #+RESULTS:
 : t
 *** doom-themes
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package doom-themes
   :after mixed-pitch
     :ensure t
@@ -249,7 +257,7 @@ I like to do this even if I don't plan on the modus themes being my main theme o
     (doom-themes-org-config))
 #+end_src
 *** Kaolin Themes
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
     (use-package kaolin-themes
       :ensure t
       :config
@@ -257,37 +265,42 @@ I like to do this even if I don't plan on the modus themes being my main theme o
   )
 #+end_src
 *** Ef-themes
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
-  (use-package ef-themes
-    :ensure t
-    :init
-    (setq ef-themes-headings
-          (quote ((1 . (variable-pitch 1.1))
-                  (2 . (regular))
-                  (3 . (regular))
-                  (4 . (regular))))))
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+    (use-package ef-themes
+      :ensure t
+      :init
+      (setq ef-themes-headings
+	    (quote ((1 . (variable-pitch 1.1))
+		    (2 . (regular))
+		    (3 . (regular))
+		    (4 . (regular))))))
 #+end_src
 *** Set out theme
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
-(load-theme 'doom-moonlight t)
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+  (load-theme 'doom-acario-dark t)
 #+end_src
 
 
 ** Setup our fonts
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
-;; Set a font
-(set-face-attribute 'default nil :family "PragmataProMonoLiga Nerd Font" :height 250)
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+   ;; Set a font
+   (set-face-attribute 'default nil :family "Spleen 32x64" :height 250)
 
-;; Proportionally spaced typeface
-(set-face-attribute 'variable-pitch nil :family "Fantasque Sans Mono" :height 1.0)
+   ;; Proportionally spaced typeface
+   (set-face-attribute 'variable-pitch nil :family "OpenDyslexicAlta NF" :height 1.0)
 
-;; Monospaced typeface
-(set-face-attribute 'fixed-pitch nil :family "DankMono Nerd Font" :height 1.5)
+   ;; Monospaced typeface
+   (set-face-attribute 'fixed-pitch nil :family "OperatorMono Nerd Font" :height 1.5)
 
+
+   (if (facep 'mode-line-active)
+       (set-face-attribute 'mode-line-active nil :family "Spleen 32x64" :height 200) ; For 29+
+     (set-face-attribute 'mode-line nil :family "Spleen 32x64" :height 200))
+  (set-face-attribute 'mode-line-inactive nil :family "OpenDyslexicAlta Nf" :height 200)
 #+END_SRC
 ** Update the help docs
 
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
 (use-package helpful
   :ensure t)
 (global-set-key (kbd "C-c C-d") #'helpful-at-point)
@@ -298,38 +311,38 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 
 #+END_SRC
 ** Popper.el - tame popups
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
-  (use-package popper
-    :ensure t
-    :bind (("C-`" . popper-toggle-latest) 
-           ("M-`" . popper-cycle)
-           ("C-M-`" . popper-toggle-type))
-    :init
-    (setq popper-reference-buffers
-          '("\\*Messages\\*"
-            "Output\\*$"
-            "\\*Warnings\\*"
-            help-mode
-            helpful-mode
-            compilation-mode))
-    (popper-mode +1))
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+  ;; (use-package popper
+  ;;   :ensure t
+  ;;   :bind (("C-`" . popper-toggle-latest) 
+  ;;          ("M-`" . popper-cycle)
+  ;;          ("C-M-`" . popper-toggle-type))
+  ;;   :init
+  ;;   (setq popper-reference-buffers
+  ;;         '("\\*Messages\\*"
+  ;;           "Output\\*$"
+  ;;           "\\*Warnings\\*"
+  ;;           help-mode
+  ;;           helpful-mode
+  ;;           compilation-mode))
+  ;;   (popper-mode +1))
 
 
-  (defvar rcool/help-temp-buffers '("^\\*Help\\*$",
-                                    "^\\*helpful command"))
+  ;; (defvar rcool/help-temp-buffers '("^\\*Help\\*$",
+  ;;                                   "^\\*helpful command"))
 
-  (while rcool/help-temp-buffers
-    (add-to-list 'display-buffer-alist
-                 `(,(car rcool/help-temp-buffers)
-                   (display-buffer-in-side-window
-                    (side . left)
-                    (window-width . 50))))
-    (setq rcool/help-temp-buffers (cdr rcool/help-temp-buffers)))
+  ;; (while rcool/help-temp-buffers
+  ;;   (add-to-list 'display-buffer-alist
+  ;;                `(,(car rcool/help-temp-buffers)
+  ;;                  (display-buffer-in-side-window
+  ;;                   (side . left)
+  ;;                   (window-width . 50))))
+  ;;   (setq rcool/help-temp-buffers (cdr rcool/help-temp-buffers)))
 
 #+end_src
 
 ** Key bindings with general
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package general
     :ensure t
     :config
@@ -341,15 +354,15 @@ I like to do this even if I don't plan on the modus themes being my main theme o
   #+end_src
 
 ** Ace window
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
     (use-package ace-window :defer t :ensure t)
 #+end_src
 ** Diminish
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
     (use-package diminish :ensure t)
 #+end_src
 ** Bufler 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
     (use-package bufler
       :ensure t
       :config
@@ -392,19 +405,38 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 * Developer Interaction
 This class of settings I think of as those that I need in order to work best with the editor.  How can I commicate. Plugins that affect how I communicate via keybindings, mouse, whatever should go here.
 ** Avy
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (use-package avy :ensure t)
 #+end_src
 
+** Undo-fu
+#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+(use-package undo-fu :ensure t)
+#+end_src
+
+
+
 ** Evil
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+  (defun modeline-face-color ()
+    (let ((color (cond ((minibufferp) '("#1d1d1f" . "#ffffff"))
+                       ((evil-insert-state-p) '("#331612" . "#ffffff"))
+                       ((evil-emacs-state-p) '("#1a2b14" . "#ffffff"))
+                       ((evil-visual-state-p) '("#5a5c21" . "#ffffff"))
+                       ((evil-replace-state-p) '("#1a403e" . "#ffffff"))
+                       ((evil-motion-state-p) '("#677691" . "#ffffff"))
+                       ((buffer-modified-p) '("#2b1a40" . "#ffffff"))
+                       (t '("#1d1d1f" . "#ffffff")))))
+      (set-face-background 'mode-line (car color))
+      (set-face-foreground 'mode-line (cdr color))))
   (use-package evil
     :ensure t
     :init
     (setq evil-want-fine-under t)
     (setq evil-want-keybinding nil)
     (setq evil-want-Y-yank-to-eol t)
-    (setq evil-undo-system 'undo-redo)
+    (setq evil-undo-system 'undo-fu)
+    (setq evil-search-module 'evil-search)
     :config
 
     (evil-set-initial-state 'dashboard-mode 'motion)
@@ -414,11 +446,10 @@ This class of settings I think of as those that I need in order to work best wit
     (evil-set-initial-state 'inferior-python-mode 'emacs)
     (evil-set-initial-state 'term-mode 'emacs)
     (evil-set-initial-state 'calc-mode 'emacs)
-    ;; ----- Keybindings
-    ;; I tried using evil-define-key for these. Didn't work.
     (define-key evil-window-map "\C-q" 'evil-delete-buffer) ;; Maps C-w C-q to evil-delete-buffer (The first C-w puts you into evil-window-map)
     (define-key evil-window-map "\C-w" 'kill-this-buffer)
     (define-key evil-motion-state-map "\C-b" 'evil-scroll-up) ;; Makes C-b how C-u is
+    (add-hook 'post-command-hook 'modeline-face-color)
 
     ;; ----- Setting cursor colors
     (setq evil-emacs-state-cursor    '("#649bce" box))
@@ -432,12 +463,13 @@ This class of settings I think of as those that I need in order to work best wit
   (use-package evil-collection
     :ensure t
     :after evil
+  :diminish
     :config
     (setq evil-collection-mode-list '(dired (custom cus-edit) (package-menu package) calc diff-mode))
     (evil-collection-init))
 #+END_SRC
 *** evil-surround
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 
   (use-package evil-surround
     :ensure t
@@ -446,7 +478,7 @@ This class of settings I think of as those that I need in order to work best wit
     )
 #+end_src
 *** evil-exchange
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
     (use-package evil-exchange
   :ensure t
     :config
@@ -455,21 +487,43 @@ This class of settings I think of as those that I need in order to work best wit
 
 #+end_src
 *** visual star
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
     (use-package evil-visualstar
   :ensure t
     :config
   (global-evil-visualstar-mode 1))
 #+end_src
 *** evil dvorak
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (use-package evil-dvorak :ensure t)
 #+end_src
+*** evil-escape
+#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+
+(use-package evil-escape
+:ensure t
+:custom
+(setq-default evil-escape-key-sequence "jk")
+(setq-default evil-escape-key-delay 0.5))
+#+end_src
+*** Evil God
+#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+  (use-package evil-god-state
+    :ensure t
+    :after evil
+    :diminish evil-god-state
+    :config
+    (define-key evil-normal-state-map (kbd "'") 'evil-execute-in-god-state)
+    (define-key evil-god-state-map (kbd [escape]) 'evil-god-state-bail)
+    )
+
+#+end_src
+
 
 #+RESULTS:
 : t
 ** Yas Snippets 
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package yasnippet
    :ensure t
    :config
@@ -477,7 +531,7 @@ This class of settings I think of as those that I need in order to work best wit
    (yas-global-mode 1))
 #+END_SRC
 ** Which-key
- #+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+ #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
 
    (use-package which-key
      :ensure t
@@ -487,13 +541,13 @@ This class of settings I think of as those that I need in order to work best wit
    (setq which-key-idle-delay 0.01))
    #+end_src  
 ** Rainbow delim
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package rainbow-delimiters
    :ensure t
   :hook (prog-mode . rainbow-delimiters-mode))
   #+end_src
 ** hydra
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package hydra :ensure t)
   (defhydra hydra-text-scale (:timeout 4)
             "scale text"
@@ -502,7 +556,7 @@ This class of settings I think of as those that I need in order to work best wit
             ("f" nil "finished" :exit t))
   #+end_src
 ** Quickrun
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (use-package quickrun
     :defer t
     :ensure t
@@ -528,8 +582,8 @@ This class of settings I think of as those that I need in order to work best wit
 #+end_src
 ** Install rainbow mode
 This lets us see hex colors
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
-  (use-package rainbow-mode :ensure t)
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+  (use-package rainbow-mode :ensure t :diminish)
   (define-globalized-minor-mode global-rainbow-mode rainbow-mode
     (lambda ()
       (when (not (memq major-mode
@@ -539,7 +593,7 @@ This lets us see hex colors
 #+END_SRC
 
 ** Recent files
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (use-package recentf
                :ensure nil
                :config
@@ -549,22 +603,24 @@ This lets us see hex colors
   (recentf-mode))
 #+end_src
 ** Projectile
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (use-package projectile
     :ensure t
+  :diminish
     )
 
   (use-package counsel-projectile
     :ensure t
     :after projectile
+  :diminish
     :init
     (counsel-projectile-mode +1)
     )
-  
+
 #+end_src
 
 ** Workspaces with perspective
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package perspective
     :ensure t
     :bind
@@ -578,21 +634,21 @@ This lets us see hex colors
 #+end_src
 
 ** Auto-revert changed files
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (setq global-auto-revert-non-file-buffers t)
 (global-auto-revert-mode 1)
 #+end_src
 
 
 ** Tramp
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
 (setq tramp-default-method "ssh")
 #+end_src
 
 * Org-Mode and Family
 ** TODO Install org-mode (todo: Clean up and add comment)
 Above is a function for all the "stuff" we want to do when org-mode starts. We attach that to a hook when org-mode starts. 
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package org
     :ensure t
     :hook (org-mode . rc/prettify-symbols-setup)
@@ -654,13 +710,13 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 #+END_SRC
 
 **** Org part 2 -- tags
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (setq org-tags-column -1)
 #+end_src
 
 
 **** Todos
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (setq org-todo-keywords '((type
                            "TODO(t)" "WAITING(h)" "INPROG-TODO(i)" "WORK(w)"
                            "STUDY(s)" "SOMEDAY" "READ(r)" "PROJ(p)" "CONTACT(c)"
@@ -676,7 +732,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 #+end_src
 
 **** Priorities
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (setq org-lowest-priority ?F)  ;; Gives us priorities A through F
 (setq org-default-priority ?E) ;; If an item has no priority, it is considered [#E].
 
@@ -690,7 +746,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 #+end_src
 
 **** Babel
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (org-babel-do-load-languages
    'org-babel-load-languages
    '(
@@ -710,7 +766,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 #+end_src
 
 **** Agenda
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 ; custom time stamp format. I don't use this.
 (setq org-time-stamp-custom-formats '("<%A, %B %d, %Y" . "<%m/%d/%y %a %I:%M %p>"))
 
@@ -758,7 +814,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 #+end_src
 
 **** Org-capture
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 
 (setq org-outline-path-complete-in-steps nil) ; Refile in a single go
 (setq org-refile-use-outline-path t)          ; Show full paths for refiling
@@ -792,7 +848,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 
 
 *** OrgMode keybindings
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
    (general-def
      :states 'normal
      :keymaps 'org-mode-map
@@ -825,7 +881,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
      "bc" 'org-edit-src-abort)
 #+end_src
 *** Org mode comma key setup
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (general-define-key
    :prefix ","
    :states 'motion
@@ -905,7 +961,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 
 #+RESULTS:
 **** Evil org
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (fset 'evil-redirect-digit-argument 'ignore) ;; before evil-org loaded
     (use-package evil-org
       :ensure t
@@ -920,16 +976,17 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
     (evil-org-agenda-set-keys)
 #+end_src
 ** Auto :results none :tangle org files
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package org-auto-tangle
     :ensure t
     :defer t
+  :diminish
     :hook (org-mode . org-auto-tangle-mode)
     :config
     (setq org-auto-tangle-default t))
   #+end_src
 ** Org-projectile
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   ;; (use-package org-category-capture :ensure t)
   ;; (use-package org-projectile
   ;;   :after org org-category-capture
@@ -957,8 +1014,8 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 #+end_src
 
 * Languages
-** Tree-sitter
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+** STUDY Tree-sitter
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
 
   (use-package tree-sitter
     :ensure t
@@ -966,6 +1023,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
     (global-tree-sitter-mode)
     (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
+  (add-to-list 'tree-sitter-major-mode-language-alist '(tsx-ts-mode . tsx))
   (use-package tree-sitter-langs
     :ensure t
     :after tree-sitter)
@@ -973,36 +1031,31 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 
 ** LSP via EGlOT
 This seems like its the paved path, but I'm unsure.
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
 (use-package eglot :ensure t)
 #+end_src
 ** LSP via lsp-mode
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package lsp-mode
     :ensure t
     :commands (lsp lsp-deferred)
+    :hook ((typescript-mode . #'lsp)
+           (tsx-ts-mode . #'lsp)
+           (js-mode . #'lsp)
+           (lua-mode . #'lsp))
     :init
     (setq lsp-keymap-prefix "C-c l")
     (setq lsp-modeline-code-actions-segments t)
     :config
     (with-eval-after-load 'lsp-mode
       (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)))
-#+end_src
-** Setting up for Typescript
-*** Language server
-First we configure the LSP mode =typescript-mode=. This will be replaced by =typescript-ts-mode= but that uses tree-sitter and for some reason I can't get that to compile. We install and enable tree-sitter support. Then we define a new mode =Typescript TSX= mode that is a combination of =typescript-mode= and =typescriptreact-mode= (for tsx files).  We then tell treesitter that both tsx and ts should be treated the same.
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
-  (use-package typescript-mode
-    :after tree-sitter
-    :config
-    (define-derived-mode typescriptreact-mode typescript-mode "Typescript TSX")
-    (add-to-list 'auto-mode-alist '("\\.tsx?\\'".typescriptreact-mode))
-    (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode .tsx)))
+
+
 #+end_src
 
 *** TSI.el
 =tsi.el= provides a tree-sitter powered set of indentation rules for ts, json, and css files
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package tsi
   :ensure t
         :after tree-sitter
@@ -1011,6 +1064,8 @@ First we configure the LSP mode =typescript-mode=. This will be replaced by =typ
         :commands (tsi-typescript-mode tsi-json-mode tsi-css-mode)
         :init
         (add-hook 'typescript-mode-hook (lambda () (tsi-typescript-mode 1)))
+        (add-hook 'tsx-ts-mode-hook (lambda () (tsi-typescript-mode 1)))
+        (add-hook 'js-mode-hook (lambda () (tsi-typescript-mode 1)))
         (add-hook 'json-mode-hook (lambda () (tsi-json-mode 1)))
         (add-hook 'css-mode-hook (lambda () (tsi-css-mode 1)))
         (add-hook 'scss-mode-hook (lambda () (tsi-scss-mode 1))))
@@ -1024,9 +1079,10 @@ First we configure the LSP mode =typescript-mode=. This will be replaced by =typ
 We use =apheleia= to handle our formatting. This packages can do many different languages so including it here will
 benefit others as well.
 
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package apheleia
     :ensure t
+  :diminish
     :config
     (apheleia-global-mode +1))
  #+end_src
@@ -1034,11 +1090,11 @@ benefit others as well.
 ** Simple Lua
 *** Enable =lua-mode=
 
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el :results none 
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el :results none 
   (use-package lua-mode
     :ensure t
-    :after tree-sitter
-    :config
+    :after (tree-sitter lsp-mode)
+  :init
     (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
     (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
   )
@@ -1046,13 +1102,13 @@ benefit others as well.
 
 * Completion
 ** Install Company Mode
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el :results none 
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el :results none 
   (use-package company
     :ensure t
     :after lsp-mode
     :hook (prog-mode . company-mode)
     :bind (:map company-active-map
-                ("<tab>" . compnay-complete-selection))
+                ("<tab>" . company-complete-selection))
     (:map lsp-mode-map
           ("<tab>" . company-indent-or-complete-common))
     :custom
@@ -1063,7 +1119,7 @@ benefit others as well.
 
 
 ** Add LSP UI
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
     (use-package lsp-ui
       :ensure t
       :hook (lsp-mode . lsp-ui-mode)
@@ -1074,7 +1130,7 @@ benefit others as well.
 #+end_src
 
 ** Treemacs
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package treemacs
     :ensure t
     :defer t
@@ -1085,7 +1141,7 @@ benefit others as well.
 
 
 *** LSP Treemacs
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package lsp-treemacs
     :ensure t
   :after lsp)
@@ -1093,7 +1149,7 @@ benefit others as well.
 
 
 *** Treemacs-evil
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package treemacs-evil
     :ensure t
     :config
@@ -1103,7 +1159,7 @@ benefit others as well.
 
 
 *** Treemacs-projectile
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package treemacs-projectile
     :ensure t
     )
@@ -1113,7 +1169,7 @@ benefit others as well.
 
 
 *** treemacs-magit
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package treemacs-magit
     :ensure t
     )
@@ -1122,37 +1178,38 @@ benefit others as well.
 
 
 *** treemacs-icons-dired
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (use-package treemacs-icons-dired :ensure t)
 #+end_src
 
 
 *** treemacs-perspective
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (use-package treemacs-perspective :ensure t)
 #+end_src
 
 
 *** treemacs-all-the-icons
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (use-package treemacs-all-the-icons :ensure t)
 #+end_src
 
 
 
 ** Ivy
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
 
   (use-package ivy
     :ensure t
+    :diminish 
     :config
     (setq ivy-use-virtual-buffers t)
     (setq ivy-count-format "(%d/%d) ")
     (ivy-mode 1)
-  )
+    )
   #+end_src
 ** Prescient
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
       (use-package prescient
     :after counsel
       :ensure t)
@@ -1163,14 +1220,14 @@ benefit others as well.
 #+end_src
 
 ** Faster Symbol searches
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package lsp-ivy
     :ensure t)
 #+end_src
 
 
 ** Ivy Rich
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
 
   (use-package ivy-rich
     :ensure t
@@ -1193,11 +1250,35 @@ benefit others as well.
                             (with-current-buffer buffer
                               (not (derived-mode-p 'exwm-mode)))))))))
   #+end_src
+** Ivy posframe
+#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+  (use-package ivy-posframe
+    :ensure t
+    :config
+    (setq ivy-posframe-display-functions-alist
+          '((swiper          . ivy-posframe-display-at-point)
+            (complete-symbol . ivy-posframe-display-at-point)
+            (counsel-M-x . ivy-display-function-fallback)
+            (counsel-esh-history . ivy-posframe-display-at-window-center)
+            (counsel-describe-function . ivy-display-function-fallback)
+            (counsel-describe-variable . ivy-display-function-fallback)
+            (counsel-find-file . ivy-posframe-display-at-window-center)
+            (counsel-recentf . ivy-posframe-display-at-window-center)
+            (counsel-register . ivy-posframe-display-at-frame-bottom-window-center)
+            (dmenu . ivy-posframe-display-at-frame-top-center)
+            (nil . ivy-posframe-display))
+          ivy-posframe-height-alist
+          '((swiper . 20)
+            (dmenu . 20)
+            (t . 10)))
+    (ivy-posframe-mode +1)
+    )
+#+end_src
 
 
 * Magit
 
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
     (use-package magit
     :ensure t
     :commands (magit-status magit-get-current-branch)
@@ -1210,18 +1291,18 @@ benefit others as well.
 * Editing Configuration
 ** Tab Widths
 Default to an indentation size of 2
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
 (setq-default tab-width 2)
 (setq-default evil-shift-width tab-width)
 #+end_src
 
 ** Spaces not tabs
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (setq-default indent-tabs-mode nil)
 #+end_src
 
 ** Comments:
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (use-package evil-nerd-commenter
     :ensure t
     :bind
@@ -1231,7 +1312,7 @@ Default to an indentation size of 2
 
 ** Mixed Pitch
 A better verson of variable pitch.
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (use-package mixed-pitch
     :ensure t
     :defer t
@@ -1244,18 +1325,18 @@ A better verson of variable pitch.
 
 * Hydra
 ** Fonts
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (defhydra rc-hydra-variable-fonts (:pre (mixed-pitch-mode 0)
                                           :post (mixed-pitch-mode 1))
     ("t" (set-face-attribute 'variable-pitch nil :family "Tinos" :height 160)             "Tinos")
     ("g" (set-face-attribute 'variable-pitch nil :family "EB Garamond" :height 160 :weight 'normal)             "EB Garamond")
     ("n" (set-face-attribute 'variable-pitch nil :family "Nunito" :slant 'normal :weight 'normal :height 160) "Nunito")
-
-
+    ("s" (set-face-attribute 'variable-pitch nil :family "Spleen 32x64" :slant 'normal :weight 'normal :height 160) "Spleen")
+    ("c" (set-face-attribute 'variable-pitch nil :family "Source Sans Pro" :slant 'normal :weight 'normal :height 160) "Source Sans Pro")
   )
 #+end_src
 ** Dired
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (defhydra hydra-dired (:hint nil :color pink)
   "
 _+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
@@ -1311,7 +1392,7 @@ T - tag prefix
 #+end_src
 
 ** Theme swticher
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
            (defhydra rc-hydra-theme-switcher (:hint nil)
              "
               Dark                ^Light^
@@ -1358,14 +1439,14 @@ T - tag prefix
 
 #+end_src
 ** window commands
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (defhydra rc-hydra-window (:hint nil)
    "
 Movement      ^Split^            ^Switch^        ^Resize^
 ----------------------------------------------------------------
-_M-<left>_  <   _/_ vertical      _b_uffer        _<left>_  <
-_M-<right>_ >   _-_ horizontal    _f_ind file     _<down>_  ↓
-_M-<up>_    ↑   _m_aximize        _s_wap          _<up>_    ↑
+_M-<left>_  <   _s_ vertical      _b_uffer        _<left>_  <
+_M-<right>_ >   _v_ horizontal    _f_ind file     _<down>_  ↓
+_M-<up>_    ↑   _m_aximize        _x_wap          _<up>_    ↑
 _M-<down>_  ↓   _c_lose           _[_backward     _<right>_ >
 _q_uit          _e_qualize        _]_forward     ^
 ^               ^               _K_ill         ^
@@ -1403,7 +1484,7 @@ _q_uit          _e_qualize        _]_forward     ^
    ("q" nil))
 #+END_SRC
 ** Flycheck
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
  (defhydra hydra-flycheck
     (:pre (flycheck-list-errors)
      :post (quit-windows-on "*Flycheck errors*")
@@ -1417,7 +1498,7 @@ _q_uit          _e_qualize        _]_forward     ^
   ("q" nil)) 
 #+end_src
 ** Org
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 ;; Hydra for org agenda (graciously taken from Spacemacs)
 (defhydra hydra-org-agenda (:pre (setq which-key-inhibit t)
                                  :post (setq which-key-inhibit nil)
@@ -1499,7 +1580,7 @@ _vr_ reset      ^^                       ^^                 ^^
   ("gr" org-agenda-redo))
 #+end_src
 ** Avy
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (defhydra hydra-avy (:exit t :hint nil)
   "
  Line^^       Region^^        Goto
@@ -1522,7 +1603,7 @@ _vr_ reset      ^^                       ^^                 ^^
 
 #+end_src
 ** YasNippet
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (defhydra hydra-yasnippet (:color blue :hint nil)
   "
               ^YASnippets^
@@ -1549,7 +1630,7 @@ _vr_ reset      ^^                       ^^                 ^^
 
 * Keybinds
 ** Preamble
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
         (general-define-key
          :states '(normal motion visual)
          :keymaps 'override
@@ -1557,17 +1638,12 @@ _vr_ reset      ^^                       ^^                 ^^
 
          ;; Top level functions
          "/" '(rc/rg :which-key "RipGrep")
-         ":" '(project-find-file :which-key "Project File")
-         "." '(counsel-find-file :which-key "Find File")
-         "," '(counsel-recentf :which-key "Recent Files")
-         "TAB" '(switch-to-prev-buffer :which-key "previous buffer")
          "SPC" '(counsel-M-x :which-key "M-x")
          "q" '(save-buffers-kill-terminal :which-key "quit emacs")
-         "r" '(jump-to-register :which-key "registers")
          "X" '(org-capture :which-key "Capture")
 #+END_SRC
 ** Files
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   "f" '(nil :which-key "Files")
   "fd" '(counsel-dired-jump :which-key "Find directory")
   "ff" '(counsel-find-file :which-key "Find file")
@@ -1580,19 +1656,22 @@ _vr_ reset      ^^                       ^^                 ^^
 
 
 ** Buffers
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
-       ;; Buffers
-       "b" '(nil :which-key "Buffer")
-       "bb" '(persp-counsel-switch-buffer :which-key "Switch buffer")
-       "bd" '(evil-delete-buffer :which-key "Delete buffer")
-       "bm" '(rc/kill-other-buffers :which-key "Kill other buffers")
-       "bi" '(ibuffer :which-key "iBuffer")
-       "br" '(revert-buffer :which-key "Revert buffer")
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+  ;; Buffers
+  "b" '(nil :which-key "Buffer")
+  "bb" '(persp-counsel-switch-buffer :which-key "Switch buffer")
+  "bd" '(evil-delete-buffer :which-key "Delete buffer")
+  "bm" '(rc/kill-other-buffers :which-key "Kill other buffers")
+  "bi" '(ibuffer :which-key "iBuffer")
+  "br" '(revert-buffer :which-key "Revert buffer")
+  "bn" '(next-buffer :which-key "Next")
+  "bp" '(previous-buffer :which-key "Prev")
+
 
 #+END_SRC
 
 ** Code
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
   ;; Code
 
   "c" '(nil :which-key "Code")
@@ -1610,9 +1689,19 @@ _vr_ reset      ^^                       ^^                 ^^
   "cft" '(lsp-on-type-formatting :which-key "Toggle On Type Formatting")
 #+END_SRC
 
-** Files
-#+BEGIN_SRC-lisp :results none :tangle ~/.config/emacs/init.el
+** Bookmarks
+#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+  "B" '(nil :which-key "Bookmarks")
+  "Ba" '(bookmark-set  :which-key "Set a bookmark")
+  "Bj" '(bookmark-jump-other-window :which-key "Jump to bookmark")
+  "BJ" '(bookmark-jump :which-key "Jump Here")
+  "Bb" '(counsel-bookmark :which-key "Set or Jump")
+  "Bd" '(counsel-bookmark-avoid-dired :which-key "Jump to Directory")
+  
+#+end_src
 
+** Files
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
        ;;Files.
        "f" '(nil :which-key "files")
        "fb" '(counsel-bookmark :which-key "bookmarks")
@@ -1624,7 +1713,7 @@ _vr_ reset      ^^                       ^^                 ^^
 #+END_SRC
 
 ** Projects
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   "p" '(nil :which-key "Projects")
   "pp" '(counsel-projectile-switch-project :which-key "Switch Project")
   "pf" '(counsel-projectile-find-file :which-key "Files")
@@ -1636,7 +1725,7 @@ _vr_ reset      ^^                       ^^                 ^^
 #+end_src
 
 ** Hydra
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
   ;; Hydras
   "H" '(nil :which-key "Hydras")
   "Hs" '(hydra-text-scale/body :which-key "Scale text")
@@ -1651,7 +1740,7 @@ _vr_ reset      ^^                       ^^                 ^^
 #+END_SRC
 
 ** Help
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
   ;; Help/emacs
   "h" '(nil :which-key "help/emacs")
 
@@ -1677,26 +1766,41 @@ _vr_ reset      ^^                       ^^                 ^^
 #+END_SRC
 
 ** Window
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
 
   ;; Windows
          "w" '(nil :which-key "window")
-         "wm" '(jib/toggle-maximize-buffer :which-key "maximize buffer")
+         "wm" '(rc/toggle-maximize-buffer :which-key "maximize buffer")
          "wN" '(make-frame :which-key "make frame")
          "wd" '(evil-window-delete :which-key "delete window")
-         "w-" '(jib/split-window-vertically-and-switch :which-key "split below")
-         "w/" '(jib/split-window-horizontally-and-switch :which-key "split right")
+         "ws" '(rc/split-window-vertically-and-switch :which-key "split below")
+         "wv" '(rc/split-window-horizontally-and-switch :which-key "split right")
          "wr" '(rc-hydra-window/body :which-key "hydra window")
          "wl" '(evil-window-right :which-key "evil-window-right")
          "wh" '(evil-window-left :which-key "evil-window-left")
          "wj" '(evil-window-down :which-key "evil-window-down")
          "wk" '(evil-window-up :which-key "evil-window-up")
-         "wz" '(text-scale-adjust :which-key "text zoom")
-
+  "wz" '(text-scale-adjust :which-key "text zoom")
+  "wu" '(winner-undo :which-key "Winnder undo")
+  "wU" '(winner-redo :which-key "Winner Redo")
 #+END_SRC
-
-** Workspaces
+** Registers
 #+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+  "r" '(nil :which-key "Registers")
+  "rc" '(copy-to-register :which-key "Copy to Register")
+  "rf" '(frameset-to-register :which-key "Frameset to register")
+  "ri" '(insert-register :which-key "Insert contents of register")
+  "rj" '(jump-to-register :which-key "Jump to")
+  "rl" '(list-registers :which-key "List registers")
+  "rn" '(number-to-register :which-key "Number to register")
+  "rr" '(counsel-register :which-key "Choose a register")
+  "rv" '(view-register :which-key "View register")
+  "rw" '(window-configuration-to-register :which-key "Window config to register")
+  "r+" '(increment-register :which-key "Increment register")
+  "r " '(point-to-register :which-key "Point to Register")
+#+end_src
+** Workspaces
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   "s" '(nil :which-key "Work[s]paces")
   "ss" '(persp-switch :which-key "Switch")
   "sn" '(persp-switch-by-number :which-key "Swich By #")
@@ -1712,7 +1816,7 @@ _vr_ reset      ^^                       ^^                 ^^
 
 
 ** Toggles
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
   ;; Toggles
   "t" '(nil :which-key "toggles")
   "tm" '(modus-themes-toggle :which-key "Modus Themes")
@@ -1730,7 +1834,7 @@ _vr_ reset      ^^                       ^^                 ^^
 #+RESULTS:
 
 ** Global keybinds
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (general-def
     :keymaps 'override
 
@@ -1743,13 +1847,13 @@ _vr_ reset      ^^                       ^^                 ^^
 #+RESULTS:
 
 ** Non-insert mode bindings
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (general-def
     :states '(normal visual motion)
     "gc" 'comment-dwim
     "gC" 'comment-line
-    "u" 'undo-only
-    "U" 'undo-redo
+    "u" 'undo-fu-only-undo
+    "U" 'undo-fu-only-redo
     "j" 'evil-next-visual-line
     "k" 'evil-previous-visual-line
     "f" 'evil-avy-goto-char-in-line
@@ -1776,39 +1880,50 @@ _vr_ reset      ^^                       ^^                 ^^
 #+RESULTS:
 
 * TODO ADD:
-** TODO snippet insert
 ** TODO open commonly used thigns
 ** TODO registers for common files
-** TODO dired
-** TODO
 
 
 * Languages
 ** Web mode
-#+begin_src emacs-lisp :results none :tangle ~/.config/emacs/init.el
-  (use-package web-mode
-    :ensure t
-    :defer t
-    :init
-    (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-    :config
-    (setq web-mode-enable-current-element-highlight t
-          web-mode-enable-current-column-highlight t)
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
 
-    :general
-    (general-def
-      :prefix ","
-      :states 'motion
-      :keymaps 'web-mode-map
-      "" nil
-      "i" '(web-mode-buffer-indent :which-key "Web mode indent")
-      "c" '(web-mode-fold-or-unfold :which-key "Web mode toggle fold")
-      ))
+  ;; (use-package web-mode
+  ;;   :ensure t
+  ;;   :defer t
+  ;; :after lsp-mode
+  ;;   :config
+  ;;   (setq web-mode-enable-current-element-highlight t
+  ;;         web-mode-enable-current-column-highlight t
+  ;;         web-mode-enable-auto-quoting nil
+  ;;         web-mode-markup-indent-offset 2
+  ;;         web-mode-attr-indent-offset 2
+  ;;         web-mode-attr-value-indent-offset 2)
 
+  ;;   (define-derived-mode web-typescript-mode web-mode "TS [web]")
+  ;;   (define-derived-mode web-js-mode web-mode "JS [web]")
+  ;;   (define-derived-mode web-html-mode web-mode "HTML [web]")
+  ;;   (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+  ;;   (add-to-list 'auto-mode-alist '("\\.[tj]sx?\\'" . web-mode))
+
+  ;;   :general
+  ;;   (general-def
+  ;;     :prefix ","
+  ;;     :states 'motion
+  ;;     :keymaps 'web-mode-map
+  ;;     "" nil
+  ;;     "i" '(web-mode-buffer-indent :which-key "Web mode indent")
+  ;;     "c" '(web-mode-fold-or-unfold :which-key "Web mode toggle fold")
+  ;;     ))
+
+#+end_src
+** json
+#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+  ;; (use-package json-mode :ensure t)       ;
 #+end_src
 
 ** emacs-lisp-mode
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (use-package emacs-lisp-mode
     :ensure nil
     :general
@@ -1835,13 +1950,29 @@ _vr_ reset      ^^                       ^^                 ^^
 #+end_src
 ** typescript tide
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
-(use-package tide
-  :ensure t
-  :after (typescript-mode company flycheck)
-  :hook ((typescript-mode . tide-setup)
-         (typescript-mode . tide-hl-identifier-mode)
-         (before-save . tide-format-before-save))
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+  (defun tide-setup-hook()
+    (tide-setup)
+    (eldoc-setup)
+    (tide-hl-identifier-mode +1)
+    (set (make-local-variable 'company-backends)
+         '((company-tide company-files :with company-yasnippet
+                         company-dabbrev-code company-dabbrev))))
+
+  (use-package tide
+    :ensure t
+    :after (company flycheck)
+    :hook (
+           (before-save . tide-format-before-save)
+           (tsx-ts-mode-hook . tide-setup-hook)
+           (js-mode-hook . tide-setup-hook)
+           (typescript-mode-hook . tide-setup-hook)
+           )
+    :config
+    (flycheck-add-note 'typescript-tslint 'web-mode)
+    (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append)
+
+
 
     :general
     (general-def
@@ -1864,19 +1995,20 @@ _vr_ reset      ^^                       ^^                 ^^
 
 
 * Dashboard
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (use-package dashboard
     :ensure t
+    :pin melpa 
     :config
     (dashboard-setup-startup-hook))
   (setq dashboard-banner-logo-title "")
-  (setq dashboard-startup-banner "~/.config/emacs/ka.png")
+  (setq dashboard-startup-banner "~/.emacs.d/ka.png")
 
   (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*"))    )
 
   #+end_src
 * kill the scratch on startup
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (add-hook 'emacs-startup-hook (lambda ()
                                 (when (get-buffer "*scratch*")
                                   (kill-buffer "*scratch*"))))
