@@ -13,7 +13,7 @@ I got tired of emacs asking if it was ok to follow a symlink on every boot and t
 * Initial Quick setup
 These are the random one-off configurations that help make Emacs better, but didn't fall into a great category.  Things like removing the unneeded ui elements from the screen or suppressing annoying dialogs that you always answer yes to.
 ** Remove some of the features of the UI that we don't need (toolbars, menubars, scroll bars, and splash screen)
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   ;;-*- lexical-binding: t; -*-
   ;; Don't show the splash screen
   (setq inhibit-startup-message t)
@@ -27,21 +27,14 @@ These are the random one-off configurations that help make Emacs better, but did
   (scroll-bar-mode -1)
   (display-time-mode 1)
 #+END_SRC
-** Turn on centered-cursor-mode
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-      (use-package centered-cursor-mode
-      :ensure t
-    :config
-  (global-centered-cursor-mode +1))
-#+end_src
 ** Make deleted files go to trash
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (setq delete-by-moving-to-trash t
 trash-directory "~/.local/share/Trash/files/")
 #+end_src
 
 ** Turn on beacon
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package beacon
     :ensure t
     :config
@@ -50,18 +43,15 @@ trash-directory "~/.local/share/Trash/files/")
 
 ** DONE Suppress execute confirm
 CLOSED: [2022-12-28 Wed 17:26]
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
  (setq org-confirm-babel-evaluate nil)
 #+end_src
 ** DONE Keep little files from littering
 CLOSED: [2022-12-28 Wed 18:13]
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-(use-package no-littering :ensure t)
-#+end_src
 
 ** DONE Suppress compiler warnings
 CLOSED: [2022-12-28 Wed 17:27]
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 
 ;; Silence compiler warnings as they can be pretty disruptive
 (setq native-comp-async-report-warnings-errors nil)
@@ -72,44 +62,43 @@ CLOSED: [2022-12-28 Wed 17:27]
 #+end_src
 
 ** Load custom lisp files
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (load (expand-file-name "rc-funcs.el" user-emacs-directory))
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (load custom-file)
 #+end_src
 
-#+RESULTS:
 ** Suppress emacs from asking if it should follow symlink files
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
 (setq vc-follow-symlinks t)
 (setq vc-suppress-confirm t)
 #+end_src
 ** Turn on line numbers
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   ;; Turn on line numbers in every buffer
   (global-display-line-numbers-mode 1)
   ;; With vim bindings, relatives let us use j and k better
   (setq display-line-numbers-type 'relative)
 #+END_SRC
 ** Disable lockfiles
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
 (setq create-lockfiles nil)
 #+end_src
 
 ** Line Highlighting and Fringe
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   ;; Turn on line highlithting for current line
   (hl-line-mode 1)
   ;; Add some margins
   (set-fringe-mode 10)
 #+END_SRC
 ** Add escape to kill prompts
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   ;; Make escape kill prompts
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 #+END_SRC
 ** Keys for Mac
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (setq mac-command-modifier       'meta
         mac-option-modifier        'meta
         mac-control-modifier       'control
@@ -117,34 +106,37 @@ CLOSED: [2022-12-28 Wed 17:27]
         mac-right-control-modifier  'control)
 #+end_src
 
-#+RESULTS:
-: control
 ** DONE Turn on garbage collection
 CLOSED: [2022-12-28 Wed 18:13]
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-  (use-package gcmh
-  :diminish gcmh-mode
-  :config
-  (setq gcmh-idle-delay 5
-        gcmh-high-cons-threshold (* 16 1024 1024))  ; 16mb
-  (gcmh-mode 1))
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
+    (use-package gcmh
+    :diminish gcmh-mode
+    :straight (gcmh-mode :host github :repo "akirak/gcmh")
+    :config
+    (setq gcmh-idle-delay 5
+	  gcmh-high-cons-threshold (* 16 1024 1024))  ; 16mb
+    (gcmh-mode 1))
 
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (setq gc-cons-percentage 0.1))) ;; Default value for `gc-cons-percentage'
+  (add-hook 'emacs-startup-hook
+	    (lambda ()
+	      (setq gc-cons-percentage 0.1))) ;; Default value for `gc-cons-percentage'
 
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (message "Emacs ready in %s with %d garbage collections."
-                     (format "%.2f seconds"
-                             (float-time
-                              (time-subtract after-init-time before-init-time)))
-                     gcs-done)))
+  (add-hook 'emacs-startup-hook
+	    (lambda ()
+	      (message "Emacs ready in %s with %d garbage collections."
+		       (format "%.2f seconds"
+			       (float-time
+				(time-subtract after-init-time before-init-time)))
+		       gcs-done)))
 
 
 #+end_src
 ** Manage how new windows are placed
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
+  (use-package winner-mode
+    :ensure t
+    :config
+    (winner-mode +1))
   (setq display-buffer-base-action
     '((display-buffer-reuse-window
        display-buffer-reuse-mode-window
@@ -152,7 +144,6 @@ CLOSED: [2022-12-28 Wed 18:13]
        display-buffer-in-previous-window)))
 #+end_src
 
-* Setup our package manager
 ** Define where we go for packages
 
 ** Straight.el
@@ -188,7 +179,7 @@ CLOSED: [2022-12-28 Wed 18:13]
 * Build the UI we want
 ** Install a better mode line
 
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package doom-modeline
     :ensure t
     :init (doom-modeline-mode 1)
@@ -207,7 +198,7 @@ CLOSED: [2022-12-28 Wed 18:13]
 *** Setup Modus Themes
 
 I like to do this even if I don't plan on the modus themes being my main theme of choice. I often swap themes, and this way they are ready when I want them.
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package modus-themes
   :ensure t
   :init
@@ -239,10 +230,8 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 
 #+END_SRC
 
-#+RESULTS:
-: t
 *** doom-themes
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package doom-themes
   :after mixed-pitch
     :ensure t
@@ -258,7 +247,7 @@ I like to do this even if I don't plan on the modus themes being my main theme o
     (doom-themes-org-config))
 #+end_src
 *** Kaolin Themes
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package kaolin-themes
       :ensure t
       :config
@@ -266,7 +255,7 @@ I like to do this even if I don't plan on the modus themes being my main theme o
   )
 #+end_src
 *** Ef-themes
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package ef-themes
       :ensure t
       :init
@@ -277,13 +266,13 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 		    (4 . (regular))))))
 #+end_src
 *** Set out theme
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (load-theme 'doom-acario-dark t)
 #+end_src
 
 
 ** Setup our fonts
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
  (set-face-attribute 'default nil :family "Anonymice Nerd Font Mono" :height 220)
 
  ;; Proportionally spaced typeface
@@ -300,7 +289,7 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 #+END_SRC
 ** Update the help docs
 
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
 (use-package helpful
   :ensure t)
 (global-set-key (kbd "C-c C-d") #'helpful-at-point)
@@ -311,7 +300,7 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 
 #+END_SRC
 ** Popper.el - tame popups
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package popper
     :ensure t
     :bind (("C-`" . popper-toggle-latest) 
@@ -345,7 +334,7 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 #+end_src
 
 ** Key bindings with general
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package general
     :ensure t
     :config
@@ -357,15 +346,15 @@ I like to do this even if I don't plan on the modus themes being my main theme o
   #+end_src
 
 ** Ace window
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package ace-window :defer t :ensure t)
 #+end_src
 ** Diminish
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package diminish :ensure t)
 #+end_src
 ** Bufler 
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package bufler
       :ensure t
       :config
@@ -408,16 +397,16 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 * Developer Interaction
 This class of settings I think of as those that I need in order to work best with the editor.  How can I commicate. Plugins that affect how I communicate via keybindings, mouse, whatever should go here.
 ** Avy
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (use-package avy :ensure t)
 #+end_src
 
 ** Undo-fu
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (use-package undo-fu :ensure t)
 #+end_src
 ** flycheck
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package flycheck
   :ensure t
     :config
@@ -433,7 +422,7 @@ This class of settings I think of as those that I need in order to work best wit
 
 
 ** Evil
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   (defun modeline-face-color ()
     (let ((color (cond ((minibufferp) '("#1d1d1f" . "#ffffff"))
                        ((evil-insert-state-p) '("#331612" . "#ffffff"))
@@ -485,7 +474,7 @@ This class of settings I think of as those that I need in order to work best wit
     (evil-collection-init))
 #+END_SRC
 *** evil-surround
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 
   (use-package evil-surround
     :ensure t
@@ -494,7 +483,7 @@ This class of settings I think of as those that I need in order to work best wit
     )
 #+end_src
 *** evil-exchange
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package evil-exchange
   :ensure t
     :config
@@ -503,18 +492,18 @@ This class of settings I think of as those that I need in order to work best wit
 
 #+end_src
 *** visual star
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package evil-visualstar
   :ensure t
     :config
   (global-evil-visualstar-mode 1))
 #+end_src
 *** evil dvorak
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (use-package evil-dvorak :ensure t)
 #+end_src
 *** evil-escape
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 
     (use-package evil-escape
     :ensure t
@@ -526,7 +515,7 @@ This class of settings I think of as those that I need in order to work best wit
     (setq-default evil-escape-key-delay 0.5))
 #+end_src
 *** Evil God
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
       (use-package evil-god-state
         :ensure t
       :straight (evil-god-state :host github
@@ -541,7 +530,7 @@ This class of settings I think of as those that I need in order to work best wit
 #+end_src
 
 ** Copilot
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
       (use-package copilot
         :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
         :ensure t
@@ -553,10 +542,8 @@ This class of settings I think of as those that I need in order to work best wit
   )
 #+end_src
 
-#+RESULTS:
-: t
 ** Yas Snippets 
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package yasnippet
    :ensure t
    
@@ -565,7 +552,7 @@ This class of settings I think of as those that I need in order to work best wit
    (yas-global-mode 1))
 #+END_SRC
 ** Which-key
- #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+ #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
 
    (use-package which-key
      :ensure t
@@ -575,13 +562,13 @@ This class of settings I think of as those that I need in order to work best wit
    (setq which-key-idle-delay 0.01))
    #+end_src  
 ** Rainbow delim
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-  (use-package rainbow-delimiters
-   :ensure t
-  :hook (prog-mode . rainbow-delimiters-mode))
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
+    (use-package rainbow-delimiters
+     :ensure t
+    :hook (prog-mode . rainbow-delimiters-mode)
   #+end_src
 ** hydra
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package hydra :ensure t)
   (defhydra hydra-text-scale (:timeout 4)
             "scale text"
@@ -590,12 +577,12 @@ This class of settings I think of as those that I need in order to work best wit
             ("f" nil "finished" :exit t))
   #+end_src
 ** Quickrun
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package quickrun
     :defer t
     :ensure t
     :general
-    (general-define-key
+    (general-def
      :states 'normal
      :prefix "SPC"
      :keymaps 'quickrun--mode-map
@@ -616,7 +603,7 @@ This class of settings I think of as those that I need in order to work best wit
 #+end_src
 ** Install rainbow mode
 This lets us see hex colors
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package rainbow-mode :ensure t :diminish)
   (define-globalized-minor-mode global-rainbow-mode rainbow-mode
     (lambda ()
@@ -627,7 +614,7 @@ This lets us see hex colors
 #+END_SRC
 
 ** Recent files
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package recentf
                :ensure nil
                :config
@@ -637,7 +624,7 @@ This lets us see hex colors
   (recentf-mode))
 #+end_src
 ** Projectile
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package projectile
     :ensure t
   :diminish
@@ -654,7 +641,7 @@ This lets us see hex colors
 #+end_src
 
 ** Workspaces with perspective
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package perspective
     :ensure t
     :bind
@@ -668,21 +655,21 @@ This lets us see hex colors
 #+end_src
 
 ** Auto-revert changed files
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (setq global-auto-revert-non-file-buffers t)
 (global-auto-revert-mode 1)
 #+end_src
 
 
 ** Tramp
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
 (setq tramp-default-method "ssh")
 #+end_src
 
 * Org-Mode and Family
-** TODO Install org-mode (todo: Clean up and add comment)
+**  Install org-mode (todo: Clean up and add comment)
 Above is a function for all the "stuff" we want to do when org-mode starts. We attach that to a hook when org-mode starts. 
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package org
     :ensure t
     :hook (org-mode . rc/prettify-symbols-setup)
@@ -744,13 +731,13 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 #+END_SRC
 
 **** Org part 2 -- tags
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (setq org-tags-column -1)
 #+end_src
 
 
 **** Todos
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (setq org-todo-keywords '((type
                            "TODO(t)" "WAITING(h)" "INPROG-TODO(i)" "WORK(w)"
                            "STUDY(s)" "SOMEDAY" "READ(r)" "PROJ(p)" "CONTACT(c)"
@@ -766,7 +753,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 #+end_src
 
 **** Priorities
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (setq org-lowest-priority ?F)  ;; Gives us priorities A through F
 (setq org-default-priority ?E) ;; If an item has no priority, it is considered [#E].
 
@@ -780,7 +767,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 #+end_src
 
 **** Babel
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (org-babel-do-load-languages
    'org-babel-load-languages
    '(
@@ -800,7 +787,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 #+end_src
 
 **** Agenda
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 ; custom time stamp format. I don't use this.
 (setq org-time-stamp-custom-formats '("<%A, %B %d, %Y" . "<%m/%d/%y %a %I:%M %p>"))
 
@@ -848,7 +835,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 #+end_src
 
 **** Org-capture
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 
 (setq org-outline-path-complete-in-steps nil) ; Refile in a single go
 (setq org-refile-use-outline-path t)          ; Show full paths for refiling
@@ -882,7 +869,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 
 
 *** OrgMode keybindings
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
    (general-def
      :states 'normal
      :keymaps 'org-mode-map
@@ -915,8 +902,8 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
      "bc" 'org-edit-src-abort)
 #+end_src
 *** Org mode comma key setup
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-  (general-define-key
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
+  (general-def
    :prefix ","
    :states 'motion
    :keymaps '(org-mode-map)
@@ -971,7 +958,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 
 
   ;; Org-agenda
-  (general-define-key
+  (general-def
    :prefix ","
    :states 'motion
    :keymaps '(org-agenda-mode-map) ;; Available in org mode, org agenda
@@ -993,9 +980,8 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
     (kbd "b") 'org-agenda-earlier)
 #+end_src
 
-#+RESULTS:
 **** Evil org
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (fset 'evil-redirect-digit-argument 'ignore) ;; before evil-org loaded
     (use-package evil-org
       :ensure t
@@ -1009,8 +995,8 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
     (require 'evil-org-agenda)
     (evil-org-agenda-set-keys)
 #+end_src
-** Auto :results none :tangle org files
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+** Auto  :tangle org files
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package org-auto-tangle
     :ensure t
     :defer t
@@ -1020,7 +1006,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
     (setq org-auto-tangle-default t))
   #+end_src
 ** Org-projectile
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 
      (use-package org-projectile
 :straight (org-projectile :host github :repo "IvanMalison/org-projectile")
@@ -1049,8 +1035,8 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 #+end_src
 
 * Languages
-** STUDY Tree-sitter
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+**  Tree-sitter
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
 
   (use-package tree-sitter
     :ensure t
@@ -1066,35 +1052,20 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 
 ** LSP via EGlOT
 This seems like its the paved path, but I'm unsure.
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-(use-package eglot :ensure t)
-#+end_src
-** LSP via lsp-mode
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-  ;; (use-package lsp-mode
-  ;;   :ensure t
-  ;;   :commands (lsp lsp-deferred)
-  ;;   :hook (
-  ;;          (lua-mode . #'lsp))
-  ;;   :init
-  ;;   (setq lsp-keymap-prefix "C-c l")
-  ;;   (setq lsp-modeline-code-actions-segments t)
-  ;;   :config
-  ;;   (with-eval-after-load 'lsp-mode
-  ;;     (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)))
-
-
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
+    (use-package eglot
+     :hook (tsx-mode #'eglot)
+  :ensure t)
 #+end_src
 *** TEXmode
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
     (use-package tsx-mode
       :ensure t
       :straight '(tsx-mode
                   :type git :host github
-                  :repo "orzechowskid/tsx-mode.el"
+                  :epo "orzechowskid/tsx-mode.el"
                   :branch "emacs29")
 
-      :hook (tsx-mode . #'lsp)
       :init
       (add-to-list 'auto-mode-alist '("\\.[jt]sx?\\'" . tsx-mode))
 
@@ -1167,7 +1138,7 @@ This seems like its the paved path, but I'm unsure.
                                        
 *** TSI.el
 =tsi.el= provides a tree-sitter powered set of indentation rules for ts, json, and css files
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package tsi
   :ensure t
         :after tree-sitter
@@ -1182,15 +1153,11 @@ This seems like its the paved path, but I'm unsure.
         (add-hook 'scss-mode-hook (lambda () (tsi-scss-mode 1))))
 #+end_src
 
-#+RESULTS:
-| lambda  | nil | (tsi-scss-mode 1) |                   |
-| closure | (t) | nil               | (tsi-scss-mode 1) |
-
 *** Formatting on Save
 We use =apheleia= to handle our formatting. This packages can do many different languages so including it here will
 benefit others as well.
 
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package apheleia
     :ensure t
   :diminish
@@ -1201,151 +1168,137 @@ benefit others as well.
 ** Simple Lua
 *** Enable =lua-mode=
 
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el :results none 
-  (use-package lua-mode
-    :ensure t
-    :after (tree-sitter lsp-mode)
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el :results none 
+    (use-package lua-mode
+      :ensure t
+      :after (tree-sitter eglot)
+
   :init
-    (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
-    (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
-  )
+      (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
+      (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+    )
 #+END_SRC
 
 * Completion
-** Install Company Mode
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el :results none 
-  ;; (use-package company
-  ;;   :ensure t
-  ;;   :after lsp-mode
-  ;;   :hook (prog-mode . company-mode)
-  ;;   :bind (:map company-active-map
-  ;;               ("<tab>" . company-complete-selection))
-  ;;   (:map lsp-mode-map
-  ;;         ("<tab>" . company-indent-or-complete-common))
-  ;;   :custom
-  ;;   (company-minimum-prefix-length 1)
-  ;;   (company-idle-delay 0.0))
-
-  #+end_src
 ** Consult
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-;; Example configuration for Consult
-(use-package consult
-  ;; Replace bindings. Lazily loaded due by `use-package'.
-  :bind (;; C-c bindings (mode-specific-map)
-         ("C-c h" . consult-history)
-         ("C-c m" . consult-mode-command)
-         ("C-c k" . consult-kmacro)
-         ;; C-x bindings (ctl-x-map)
-         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
-         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
-         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
-         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
-         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
-         ;; Custom M-# bindings for fast register access
-         ("M-#" . consult-register-load)
-         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
-         ("C-M-#" . consult-register)
-         ;; Other custom bindings
-         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
-         ;; M-g bindings (goto-map)
-         ("M-g e" . consult-compile-error)
-         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
-         ("M-g g" . consult-goto-line)             ;; orig. goto-line
-         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
-         ("M-g m" . consult-mark)
-         ("M-g k" . consult-global-mark)
-         ("M-g i" . consult-imenu)
-         ("M-g I" . consult-imenu-multi)
-         ;; M-s bindings (search-map)
-         ("M-s d" . consult-find)
-         ("M-s D" . consult-locate)
-         ("M-s g" . consult-grep)
-         ("M-s G" . consult-git-grep)
-         ("M-s r" . consult-ripgrep)
-         ("M-s l" . consult-line)
-         ("M-s L" . consult-line-multi)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
-         ;; Isearch integration
-         ("M-s e" . consult-isearch-history)
-         :map isearch-mode-map
-         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
-         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
-         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
-         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
-         ;; Minibuffer history
-         :map minibuffer-local-map
-         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
-         ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
+  ;; Example configuration for Consult
+  (use-package consult
+    ;; Replace bindings. Lazily loaded due by `use-package'.
+    :bind (;; C-c bindings (mode-specific-map)
+	   ("C-c h" . consult-history)
+	   ("C-c m" . consult-mode-command)
+	   ("C-c k" . consult-kmacro)
+	   ;; C-x bindings (ctl-x-map)
+	   ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+	   ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+	   ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+	   ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+	   ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+	   ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+	   ;; Custom M-# bindings for fast register access
+	   ("M-#" . consult-register-load)
+	   ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+	   ("C-M-#" . consult-register)
+	   ;; Other custom bindings
+	   ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+	   ;; M-g bindings (goto-map)
+	   ("M-g e" . consult-compile-error)
+	   ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+	   ("M-g g" . consult-goto-line)             ;; orig. goto-line
+	   ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+	   ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+	   ("M-g m" . consult-mark)
+	   ("M-g k" . consult-global-mark)
+	   ("M-g i" . consult-imenu)
+	   ("M-g I" . consult-imenu-multi)
+	   ;; M-s bindings (search-map)
+	   ("M-s d" . consult-find)
+	   ("M-s D" . consult-locate)
+	   ("M-s g" . consult-grep)
+	   ("M-s G" . consult-git-grep)
+	   ("M-s r" . consult-ripgrep)
+	   ("M-s l" . consult-line)
+	   ("M-s L" . consult-line-multi)
+	   ("M-s k" . consult-keep-lines)
+	   ("M-s u" . consult-focus-lines)
+	   ;; Isearch integration
+	   ("M-s e" . consult-isearch-history)
+	   :map isearch-mode-map
+	   ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+	   ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+	   ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+	   ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+	   ;; Minibuffer history
+	   :map minibuffer-local-map
+	   ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+	   ("M-r" . consult-history))                ;; orig. previous-matching-history-element
 
-  ;; Enable automatic preview at point in the *Completions* buffer. This is
-  ;; relevant when you use the default completion UI.
-  :hook (completion-list-mode . consult-preview-at-point-mode)
+    ;; Enable automatic preview at point in the *Completions* buffer. This is
+    ;; relevant when you use the default completion UI.
+    :hook (completion-list-mode . consult-preview-at-point-mode)
 
-  ;; The :init configuration is always executed (Not lazy)
-  :init
+    ;; The :init configuration is always executed (Not lazy)
+    :init
 
-  ;; Optionally configure the register formatting. This improves the register
-  ;; preview for `consult-register', `consult-register-load',
-  ;; `consult-register-store' and the Emacs built-ins.
-  (setq register-preview-delay 0.5
-        register-preview-function #'consult-register-format)
+    ;; Optionally configure the register formatting. This improves the register
+    ;; preview for `consult-register', `consult-register-load',
+    ;; `consult-register-store' and the Emacs built-ins.
+    (setq register-preview-delay 0.5
+	  register-preview-function #'consult-register-format)
 
-  ;; Optionally tweak the register preview window.
-  ;; This adds thin lines, sorting and hides the mode line of the window.
-  (advice-add #'register-preview :override #'consult-register-window)
+    ;; Optionally tweak the register preview window.
+    ;; This adds thin lines, sorting and hides the mode line of the window.
+    (advice-add #'register-preview :override #'consult-register-window)
 
-  ;; Use Consult to select xref locations with preview
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref)
+    ;; Use Consult to select xref locations with preview
+    (setq xref-show-xrefs-function #'consult-xref
+	  xref-show-definitions-function #'consult-xref)
 
-  ;; Configure other variables and modes in the :config section,
-  ;; after lazily loading the package.
-  :config
+    ;; Configure other variables and modes in the :config section,
+    ;; after lazily loading the package.
+    :config
 
-  ;; Optionally configure preview. The default value
-  ;; is 'any, such that any key triggers the preview.
-  ;; (setq consult-preview-key 'any)
-  ;; (setq consult-preview-key (kbd "M-."))
-  ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
-  ;; For some commands and buffer sources it is useful to configure the
-  ;; :preview-key on a per-command basis using the `consult-customize' macro.
-  (consult-customize
-   consult-theme :preview-key '(:debounce 0.2 any)
-   consult-ripgrep consult-git-grep consult-grep
-   consult-bookmark consult-recent-file consult-xref
-   consult--source-bookmark consult--source-file-register
-   consult--source-recent-file consult--source-project-recent-file
-   ;; :preview-key (kbd "M-.")
-   :preview-key '(:debounce 0.4 any))
+    ;; Optionally configure preview. The default value
+    ;; is 'any, such that any key triggers the preview.
+    ;; (setq consult-preview-key 'any)
+    ;; (setq consult-preview-key (kbd "M-."))
+    ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
+    ;; For some commands and buffer sources it is useful to configure the
+    ;; :preview-key on a per-command basis using the `consult-customize' macro.
+    (consult-customize
+     consult-theme :preview-key '(:debounce 0.2 any)
+     consult-ripgrep consult-git-grep consult-grep
+     consult-bookmark consult-recent-file consult-xref
+     consult--source-bookmark consult--source-file-register
+     consult--source-recent-file consult--source-project-recent-file
+     ;; :preview-key (kbd "M-.")
+     :preview-key '(:debounce 0.4 any))
 
-  ;; Optionally configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
-  (setq consult-narrow-key "<") ;; (kbd "C-+")
+    ;; Optionally configure the narrowing key.
+    ;; Both < and C-+ work reasonably well.
+    (setq consult-narrow-key "<") ;; (kbd "C-+")
 
-  ;; Optionally make narrowing help available in the minibuffer.
-  ;; You may want to use `embark-prefix-help-command' or which-key instead.
-  ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
+    ;; Optionally make narrowing help available in the minibuffer.
+    ;; You may want to use `embark-prefix-help-command' or which-key instead.
+    ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
 
-  ;; By default `consult-project-function' uses `project-root' from project.el.
-  ;; Optionally configure a different project root function.
-  ;; There are multiple reasonable alternatives to chose from.
-  ;;;; 1. project.el (the default)
-  ;; (setq consult-project-function #'consult--default-project--function)
-  ;;;; 2. projectile.el (projectile-project-root)
-   (autoload 'projectile-project-root "projectile")
-   (setq consult-project-function (lambda (_) (projectile-project-root)))
-  ;;;; 3. vc.el (vc-root-dir)
-  ;; (setq consult-project-function (lambda (_) (vc-root-dir)))
-  ;;;; 4. locate-dominating-file
-  ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
-)
+    ;; By default `consult-project-function' uses `project-root' from project.el.
+    ;; Optionally configure a different project root function.
+    ;; There are multiple reasonable alternatives to chose from.
+    ;;;; 1. project.el (the default)
+    ;; (setq consult-project-function #'consult--default-project--function)
+    ;;;; 2. projectile.el (projectile-project-root)
+     (autoload 'projectile-project-root "projectile")
+     (setq consult-project-function (lambda (_) (projectile-project-root)))
+    ;;;; 3. vc.el (vc-root-dir)
+    ;; (setq consult-project-function (lambda (_) (vc-root-dir)))
+    ;;;; 4. locate-dominating-file
+    ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git"))))
+     )
 #+end_src
 ** Consult-dir
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package consult-dir
     :ensure t
   :straight (consult-dir :host github :repo "karthink/consult-dir")
@@ -1355,7 +1308,7 @@ benefit others as well.
            ("C-x C-j" . consult-dir-jump-file)))
 #+end_src
 ** Consult-flycheck
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 
           (use-package consult-flycheck
           :ensure t
@@ -1367,14 +1320,14 @@ benefit others as well.
     ))
 #+end_src
 ** Consult-eglot
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
      (use-package consult-eglot :ensure t
        :straight  (consult-eglot
        :host github
   :repo "mohkale/consult-eglot"))
 #+end_src
 ** Consult-projectile
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
          (use-package consult-projectile :ensure t
         :straight
        (consult-projectile
@@ -1385,7 +1338,7 @@ benefit others as well.
 
 #+end_src
 ** Consult-yasnippet
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 	(use-package consult-yasnippet
 	:ensure t
   :straight (consult-yasnippet :host github
@@ -1393,11 +1346,11 @@ benefit others as well.
     )
 #+end_src
 ** wgrep
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (use-package wgrep :ensure t)
 #+end_src
 ** marinalia
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     ;; Enable rich annotations using the Marginalia package
     (use-package marginalia
       ;; Either bind `marginalia-cycle' globally or only in the minibuffer
@@ -1408,7 +1361,7 @@ benefit others as well.
       ;; The :init configuration is always executed (Not lazy!)
       :init
   :general
-  (general-define-key
+  (general-def
     :states 'normal
   :keymap 'override
   "?" 'marginalia-cyle)
@@ -1418,7 +1371,7 @@ benefit others as well.
 #+end_src
 
 ** Veritco
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     ;; Enable vertico
     (use-package vertico
       :ensure t
@@ -1482,7 +1435,7 @@ benefit others as well.
 #+end_src
 
 ** vertico directory
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 ;; Configure directory extension.
 (use-package vertico-directory
   :after vertico
@@ -1498,7 +1451,7 @@ benefit others as well.
 #+end_src
 
 ** Orderless
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (use-package orderless :ensure t
   :init
   ;; Configure a custom style dispatcher (see the Consult wiki)
@@ -1510,11 +1463,11 @@ benefit others as well.
 #+end_src
 
 ** Vertico quick
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (use-package vertico-quick :ensure nil)
 #+end_src
 ** Embark
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package embark
       :ensure t
 
@@ -1545,18 +1498,8 @@ benefit others as well.
 
 
 
-** Add LSP UI
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-  
-  ;;     :hook ((lsp-mode . lsp-ui-mode)
-  ;; (lsp-mode . lsp-ui-sideline-mode))
-  ;;     :config
-  ;; (setq lsp-ui-sideline-show-hover t)
-  ;;   (setq lsp-ui-doc-position 'top))
-#+end_src 
-
 ** Treemacs
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package treemacs
     :ensure t
     :defer t
@@ -1566,16 +1509,8 @@ benefit others as well.
 #+end_src
 
 
-*** LSP Treemacs
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-  ;; (use-package lsp-treemacs
-  ;;   :ensure t
-  
-#+end_src
-
-
 *** Treemacs-evil
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package treemacs-evil
     :ensure t
     :config
@@ -1585,7 +1520,7 @@ benefit others as well.
 
 
 *** Treemacs-projectile
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package treemacs-projectile
     :ensure t
     )
@@ -1595,7 +1530,7 @@ benefit others as well.
 
 
 *** treemacs-magit
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package treemacs-magit
     :ensure t
     )
@@ -1604,38 +1539,25 @@ benefit others as well.
 
 
 *** treemacs-icons-dired
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (use-package treemacs-icons-dired :ensure t)
 #+end_src
 
 
 *** treemacs-perspective
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (use-package treemacs-perspective :ensure t)
 #+end_src
 
 
 *** treemacs-all-the-icons
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (use-package treemacs-all-the-icons :ensure t)
 #+end_src
 
 
-
-** Ivy
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-
-  ;; (use-package ivy
-  ;;   :ensure t
-  ;;   :diminish 
-  ;;   :config
-  ;;   (setq ivy-use-virtual-buffers t)
-  ;;   (setq ivy-count-format "(%d/%d) ")
-  ;;   (ivy-mode 1)
-  ;;   )
-  #+end_src
 ** Prescient
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   ;;     (use-package prescient
   ;;   :after counsel
   ;;     :ensure t)
@@ -1645,66 +1567,10 @@ benefit others as well.
   
 #+end_src
 
-** Faster Symbol searches
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-  ;; (use-package lsp-ivy
-  ;;   :ensure t)
-#+end_src
-
-
-** Ivy Rich
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-
-  ;; (use-package ivy-rich
-  ;;   :ensure t
-  ;;   :init
-  ;;   (ivy-rich-mode 1)
-  ;;  :config
-  ;;  (setq ivy-format-function #'ivy-format-function-line)
-  ;;  (setq ivy-rich-display-transformers-list
-  ;;        (plist-put ivy-rich-display-transformers-list
-  ;;                   'ivy-switch-buffer
-  ;;                   '(:columns
-  ;;                     ((ivy-rich-candidate (:width 40))
-  ;;                      (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right))
-  ;;                      (ivy-rich-switch-buffer-major-mode (:width 12 :face warning))
-  ;;                      (ivy-rich-switch-buffer-project (:width 15 :face success))
-  ;;                      (ivy-rich-switch-buffer-path (:width (lambda(x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))
-  ;;                     :predicate
-  ;;                     (lambda (cand)
-  ;;                       (if-let ((buffer (get-buffer cand)))
-  ;;                           (with-current-buffer buffer
-  ;;                             (not (derived-mode-p 'exwm-mode)))))))))
-  #+end_src
-** Ivy posframe
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-  ;; (use-package ivy-posframe
-  ;;   :ensure t
-  ;;   :config
-  ;;   (setq ivy-posframe-display-functions-alist
-  ;;         '((swiper          . ivy-posframe-display-at-point)
-  ;;           (complete-symbol . ivy-posframe-display-at-point)
-  ;;           (counsel-M-x . ivy-display-function-fallback)
-  ;;           (counsel-esh-history . ivy-posframe-display-at-window-center)
-  ;;           (counsel-describe-function . ivy-display-function-fallback)
-  ;;           (counsel-describe-variable . ivy-display-function-fallback)
-  ;;           (counsel-find-file . ivy-posframe-display-at-window-center)
-  ;;           (counsel-recentf . ivy-posframe-display-at-window-center)
-  ;;           (counsel-register . ivy-posframe-display-at-frame-bottom-window-center)
-  ;;           (dmenu . ivy-posframe-display-at-frame-top-center)
-  ;;           (nil . ivy-posframe-display))
-  ;;         ivy-posframe-height-alist
-  ;;         '((swiper . 20)
-  ;;           (dmenu . 20)
-  ;;           (t . 10)))
-  ;;   (ivy-posframe-mode +1)
-  ;;   )
-#+end_src
-
 
 * Magit
 
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
     (use-package magit
     :ensure t
     :commands (magit-status magit-get-current-branch)
@@ -1717,18 +1583,18 @@ benefit others as well.
 * Editing Configuration
 ** Tab Widths
 Default to an indentation size of 2
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
 (setq-default tab-width 2)
 (setq-default evil-shift-width tab-width)
 #+end_src
 
 ** Spaces not tabs
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (setq-default indent-tabs-mode nil)
 #+end_src
 
 ** Comments:
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package evil-nerd-commenter
     :ensure t
     :bind
@@ -1739,7 +1605,7 @@ Default to an indentation size of 2
 ** Mixed Pitch
 A better verson of variable pitch.
 
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package mixed-pitch
     :ensure t
     :defer t
@@ -1752,7 +1618,7 @@ A better verson of variable pitch.
 
 * Hydra
 ** Fonts
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (defhydra rc-hydra-variable-fonts (:pre (mixed-pitch-mode 0)
                                           :post (mixed-pitch-mode 1))
     ("t" (set-face-attribute 'variable-pitch nil :family "Tinos" :height 160)             "Tinos")
@@ -1763,7 +1629,7 @@ A better verson of variable pitch.
   )
 #+end_src
 ** Dired
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
       (defhydra hydra-dired (:hint nil :color pink)
         "
       _+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
@@ -1819,7 +1685,7 @@ A better verson of variable pitch.
 #+end_src
 
 ** Theme swticher
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
            (defhydra rc-hydra-theme-switcher (:hint nil)
              "
               Dark                ^Light^
@@ -1866,7 +1732,7 @@ A better verson of variable pitch.
 
 #+end_src
 ** window commands
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (defhydra rc-hydra-window (:hint nil)
      "
   Movement      ^Split^            ^Switch^        ^Resize^
@@ -1911,7 +1777,7 @@ A better verson of variable pitch.
      ("q" nil))
 #+END_SRC
 ** Flycheck
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (defhydra hydra-flycheck
      (:pre (flycheck-list-errors)
       :post (quit-windows-on "*Flycheck errors*")
@@ -1926,7 +1792,7 @@ A better verson of variable pitch.
    ("q" nil)) 
 #+end_src
 ** Org
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
         ;; Hydra for org agenda (graciously taken from Spacemacs)
         (defhydra hydra-org-agenda (:pre (setq which-key-inhibit t)
                                          :post (setq which-key-inhibit nil)
@@ -2009,7 +1875,7 @@ A better verson of variable pitch.
           ("gr" org-agenda-redo))
 #+end_src
 ** Avy
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
       (defhydra hydra-avy (:exit t :hint nil)
         "
        Line^^       Region^^        Goto
@@ -2032,7 +1898,7 @@ A better verson of variable pitch.
 
 #+end_src
 ** YasNippet
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (defhydra hydra-yasnippet (:color blue :hint nil)
   "
               ^YASnippets^
@@ -2059,8 +1925,8 @@ A better verson of variable pitch.
 
 * Keybinds
 ** Preamble
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-(general-define-key
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
+(general-def
    :states '(normal motion visual)
    :keymaps 'override
    :prefix "SPC"
@@ -2072,7 +1938,7 @@ A better verson of variable pitch.
    "X" '(org-capture :which-key "Capture")
 #+END_SRC
 ** Files
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   "f" '(nil :which-key "Files")
   "fd" '(consult-dir :which-key "Find directory")
   "ff" '(consult-find :which-key "Find file")
@@ -2084,7 +1950,7 @@ A better verson of variable pitch.
 
 
 ** Buffers
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   ;; Buffers
   "b" '(nil :which-key "Buffer")
   "bb" '(consult-project-buffer :which-key "Switch buffer")
@@ -2099,37 +1965,36 @@ A better verson of variable pitch.
 #+END_SRC
 
 ** Code
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
-        ;; lCode
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
+  ;; lCode
 
-        "c" '(nil :which-key "Code")
-        "cd" '(lsp-ui-peek-find-definitions :which-key "Definition")
-  "cR" '(lsp-ui-peek-find-references :which-key "References")
-        "ca" '(lsp-execute-code-action :which-key "Code action")
-        "ci" '(lsp-ui-peek-find-implementation :which-key "Implementations")
-        "cD" '(lsp-goto-type-definition :which-key "Type Def.")
-        "cc" '(lsp-treemacs-call-hierarchy :which-key "Call hierarchy")
-        "ct" '(lsp-treemacs-type-hierarchy :which-key "Type hierarchy")
-        "cs" '(lsp-treemacs-symbols :which-key "Symbol Hierarchy")
-        "cT" '(lsp-treemacs-tree :which-key "Tree")
-        "ce" '(nil :which-key "Errors")
-        "cek" '(flycheck-previous-error :which-key "Prev Error")
-        "cej" '(flycheck-next-error :which-key "Next Error")
-        "ceg" '(flycheck-first-error :which-key "First Error")
-        "cef" '(flycheck-error-list-set-filter :which-key "Filter")
-        "ceG" '((progn (goto-char (point-max)) (flycheck-previour-error)) :which-key "Last Error")
-        "cel" '(consult-flycheck :which-key "Error List")
-        "cee" '(flycheck-explain-error-at-point :which-key "Explain error")
+  "c" '(nil :which-key "Code")
+  "cd" '(xref-find-defintion :which-key "Definition")
+  "cR" '(xref-find-references :which-key "References")
+  "ca" '(eglot-code-actions :which-key "Code action")
+  "ci" '(eglot-find-implementation :which-key "Implementations")
+  "cD" '(eglot-find-type-definition :which-key "Type Def.")
+  "cr" '(eglot-rename :which-key "Rename Symbol")
 
-        "cf" '(nil :which-key "Format")
-        "cfl" '(lsp-format-buffer :which-key "LSP format Buffer")
-        "cfa" '(apheleia-format-buffer :which-key "Apheleia Format")
-        "cfr" '(lsp-format-region :which-key "LSP Format Region")
-        "cft" '(lsp-on-type-formatting :which-key "Toggle On Type Formatting")
+
+
+  "ce" '(nil :which-key "Errors")
+  "cek" '(flycheck-previous-error :which-key "Prev Error")
+  "cej" '(flycheck-next-error :which-key "Next Error")
+  "ceg" '(flycheck-first-error :which-key "First Error")
+  "cef" '(flycheck-error-list-set-filter :which-key "Filter")
+  "ceG" '((progn (goto-char (point-max)) (flycheck-previour-error)) :which-key "Last Error")
+  "cel" '(consult-flycheck :which-key "Error List")
+  "cee" '(flycheck-explain-error-at-point :which-key "Explain error")
+
+  "cf" '(nil :which-key "Format")
+  "cfl" '(eglot-format-buffer :which-key "LSP format Buffer")
+  "cfa" '(apheleia-format-buffer :which-key "Apheleia Format")
+  "cfr" '(eglot-format :which-key "LSP Format Region")
 #+END_SRC
 
 ** Bookmarks
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   "m" '(nil :which-key "Bookmarks")
   "ma" '(bookmark-set  :which-key "Set a bookmark")
   "mj" '(bookmark-jump-other-window :which-key "Jump to bookmark")
@@ -2139,26 +2004,26 @@ A better verson of variable pitch.
 #+end_src
 
 ** Files
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
        ;;Files.
        "f" '(nil :which-key "files")
        "fb" '(consult-bookmark :which-key "bookmarks")
        "ff" '(consult-find :which-key "find file")
-       "fr" '(consult-recent-file :which-key "recent files")
+       "fr" '(consult-projectile-recentf :which-key "recent files")
        "fR" '(rename-file :which-key "rename file")
        "fs" '(save-buffer :which-key "save buffer")
        "fS" '(evil-write-all :which-key "save all buffers")
 #+END_SRC
 
 ** Projects
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   "p" '(nil :which-key "Projects")
   "pp" '(consult-projectile :which-key "Switch Project")
   "pg" '(consult-rg :which-key "RipGrep")
 #+end_src
 
 ** Hydra
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   ;; Hydras
   "H" '(nil :which-key "Hydras")
   "Hs" '(hydra-text-scale/body :which-key "Scale text")
@@ -2173,7 +2038,7 @@ A better verson of variable pitch.
 #+END_SRC
 
 ** Help
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
     ;; Help/emacs
     "h" '(nil :which-key "help/emacs")
 
@@ -2199,7 +2064,7 @@ A better verson of variable pitch.
 #+END_SRC
 
 ** Window
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
 
   ;; Windows
          "w" '(nil :which-key "window")
@@ -2218,7 +2083,7 @@ A better verson of variable pitch.
   "wU" '(winner-redo :which-key "Winner Redo")
 #+END_SRC
 ** Registers
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   "r" '(nil :which-key "Registers")
   "rc" '(copy-to-register :which-key "Copy to Register")
   "rf" '(frameset-to-register :which-key "Frameset to register")
@@ -2234,7 +2099,7 @@ A better verson of variable pitch.
   "rs" '(consult-register-store :which-key "Store")
 #+end_src
 ** Workspaces
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   "s" '(nil :which-key "Work[s]paces")
   "ss" '(persp-switch :which-key "Switch")
   "sn" '(persp-switch-by-number :which-key "Swich By #")
@@ -2249,8 +2114,9 @@ A better verson of variable pitch.
 #+end_src
 
 
-** Toggles
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+** DONE Toggles
+CLOSED: [2022-12-30 Fri 03:49]
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   ;; Toggles
   "t" '(nil :which-key "toggles")
   "tm" '(modus-themes-toggle :which-key "Modus Themes")
@@ -2260,16 +2126,15 @@ A better verson of variable pitch.
   "tT" '(term :which-key "Term (HERE)")
   "te" '(term-toggle-eshell :which-key "Eshell")
   "tE" '(eshell :which-key "Eshell (HERE)")
-  "td" '(dired :which-key "Dired")
+  "td" '(dired-single :which-key "Dired")
   "tp" '(treemacs :which-key "Treemacs")
   ) ;; End SPC prefix block
 #+end_src
 
-#+RESULTS:
 
 ** DONE Global keybinds
 CLOSED: [2022-12-29 Thu 06:28]
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (general-def
     :keymaps 'override
 
@@ -2279,15 +2144,14 @@ CLOSED: [2022-12-29 Thu 06:28]
   (general-def
     :keymaps 'override
     :states '(normal motion)
-    "K" 'lsp-ui-doc-show
+    "K" 'eldoc
     "Q" 'popper-kill-latest-popup
   )
 #+end_src
 
-#+RESULTS:
 
 ** Non-insert mode bindings
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (general-def
     :states '(normal visual motion)
     "gc" 'comment-dwim
@@ -2316,58 +2180,13 @@ CLOSED: [2022-12-29 Thu 06:28]
 
     )
 #+end_src
-
-#+RESULTS:
-
-* TODO ADD:
-** TODO open commonly used thigns
-** TODO registers for common files
-
-
 * Languages
-** Web mode
-#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-
-  ;; (use-package web-mode
-  ;;   :ensure t
-  ;;   :defer t
-  ;; :after lsp-mode
-  ;;   :config
-  ;;   (setq web-mode-enable-current-element-highlight t
-  ;;         web-mode-enable-current-column-highlight t
-  ;;         web-mode-enable-auto-quoting nil
-  ;;         web-mode-markup-indent-offset 2
-  ;;         web-mode-attr-indent-offset 2
-  ;;         web-mode-attr-value-indent-offset 2)
-
-  ;;   (define-derived-mode web-typescript-mode web-mode "TS [web]")
-  ;;   (define-derived-mode web-js-mode web-mode "JS [web]")
-  ;;   (define-derived-mode web-html-mode web-mode "HTML [web]")
-  ;;   (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
-  ;;   (add-to-list 'auto-mode-alist '("\\.[tj]sx?\\'" . web-mode))
-
-  ;;   :general
-  ;;   (general-def
-  ;;     :prefix ","
-  ;;     :states 'motion
-  ;;     :keymaps 'web-mode-map
-  ;;     "" nil
-  ;;     "i" '(web-mode-buffer-indent :which-key "Web mode indent")
-  ;;     "c" '(web-mode-fold-or-unfold :which-key "Web mode toggle fold")
-  ;;     ))
-
-#+end_src
-** json
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-  ;; (use-package json-mode :ensure t)       ;
-#+end_src
-
 ** emacs-lisp-mode
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package emacs-lisp-mode
     :ensure nil
     :general
-    (general-define-key
+    (general-def
      :prefix ","
      :states 'motion
      :keymaps 'emacs-lisp-mode-map
@@ -2388,54 +2207,10 @@ CLOSED: [2022-12-29 Thu 06:28]
 
     )
 #+end_src
-** typescript tide
-
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-  ;; (defun tide-setup-hook()
-  ;;   (tide-setup)
-  ;;   (eldoc-setup)
-  ;;   (flycheck-set-indication-mode +1)
-  ;;   (tide-hl-identifier-mode +1)
-  ;;   (set (make-local-variable 'company-backends)
-  ;;        '((company-tide company-files :with company-yasnippet
-  ;;                        company-dabbrev-code company-dabbrev))))
-
-  ;; (use-package tide
-  ;;   :ensure t
-  ;;   :after (company flycheck)
-  ;;   :hook (
-  ;;          (before-save . tide-format-before-save)
-  ;;          (tsx-mode-hook . tide-setup-hook)
-  ;;          (js-mode-hook . tide-setup-hook)
-  ;;          (typescript-mode-hook . tide-setup-hook)
-  ;;          )
-  ;;  :config
-  ;;   (flycheck-add-mode 'typescript-tslint 'typescript-mode)
-  ;;  (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append)
-
-
-
-  ;; :general
-  ;; (general-def
-  ;;   :prefix "SPC"
-  ;; :states 'normal
-  ;; :keymap: 'override
-
-  ;;   "j"  '(nil :whick-key "Tide (TS/JS)")
-  ;;   "jr" '(tide-refactor :which-key "Refactor")
-  ;;   "jo" '(tide-organize-imports :which-key "Organize Imports")
-  ;;   "jR" '(tide-rename-file :which-key "Rename the files and references")
-  ;;   "js" '(tide-rename-symbol :which-key "Rename symbol")
-  ;;   "je" '(tide-error-at-point :which-key "Error details at point")
-
-  ;;     ))
-
-
-#+END_SRC
 
 
 * Dashboard
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package dashboard
     :ensure t
     :config
@@ -2447,8 +2222,10 @@ CLOSED: [2022-12-29 Thu 06:28]
 
   #+end_src
 * kill the scratch on startup
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (add-hook 'emacs-startup-hook (lambda ()
                                 (when (get-buffer "*scratch*")
                                   (kill-buffer "*scratch*"))))
 #+end_src
+
+
