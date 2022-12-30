@@ -1055,7 +1055,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
     (global-tree-sitter-mode)
     (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
-  (add-to-list 'tree-sitter-major-mode-language-alist '(tsx-ts-mode . tsx))
+  (add-to-list 'tree-sitter-major-mode-language-alist '(tex-mode . tsx))
   (use-package tree-sitter-langs
     :ensure t
     :after tree-sitter)
@@ -1071,9 +1071,7 @@ This seems like its the paved path, but I'm unsure.
   (use-package lsp-mode
     :ensure t
     :commands (lsp lsp-deferred)
-    :hook ((typescript-mode . #'lsp)
-           (tsx-ts-mode . #'lsp)
-           (js-mode . #'lsp)
+    :hook (
            (lua-mode . #'lsp))
     :init
     (setq lsp-keymap-prefix "C-c l")
@@ -1084,7 +1082,45 @@ This seems like its the paved path, but I'm unsure.
 
 
 #+end_src
+*** TEXmode
+#+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
+            (use-package tsx-mode
+              :ensure t
+              :straight '(tsx-mode
+                          :type git :host github
+                          :repo "orzechowskid/tsx-mode.el"
+                          :branch "emacs29")
 
+             :hook (tsx-mode . #'lsp)
+      :init
+        (add-to-list 'auto-mode-alist '("\\.[jt]sx?\\'" . tsx-mode))
+
+    :general
+    (general-def
+      :prefix ","
+      :states 'motion
+      :keymaps 'general-override-mode-map
+      "" nil
+
+      "z" '(tsx-mode-fold-toggle-all-nodes :which-key "Toggle Fold all nodes")
+      "c" '(tsx-mode-coverage-toggle :which-key "Toggle Coverage")
+      "tab" '(tsx-mode-fold-toggle-node :which-key "Toggle Fold here")
+      ))
+
+
+            (use-package coverlay
+              :ensure t
+              :straight '(coverlay :type git
+                                   :host github :repo "twada/coverlay.el"))
+            (use-package css-in-js-mode
+              :ensure t :straight '(css-in-js-mode :type git :host github :repo "orzechowskid/tree-sitter-css-in-js"))
+            (use-package origami :ensure t
+              :straight '(origamd
+                          :type git
+                          :host github
+                          :repo "gregsexton/origami.el"))
+                                       #+END_SRC
+                                       
 *** TSI.el
 =tsi.el= provides a tree-sitter powered set of indentation rules for ts, json, and css files
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
@@ -1095,8 +1131,7 @@ This seems like its the paved path, but I'm unsure.
         ;; define autoload definitions which when actually invoked will cause package to be loaded
         :commands (tsi-typescript-mode tsi-json-mode tsi-css-mode)
         :init
-        (add-hook 'typescript-mode-hook (lambda () (tsi-typescript-mode 1)))
-        (add-hook 'tsx-ts-mode-hook (lambda () (tsi-typescript-mode 1)))
+        (add-hook 'tsx-mode-hook (lambda () (tsi-typescript-mode 1)))
         (add-hook 'js-mode-hook (lambda () (tsi-typescript-mode 1)))
         (add-hook 'json-mode-hook (lambda () (tsi-json-mode 1)))
         (add-hook 'css-mode-hook (lambda () (tsi-css-mode 1)))
@@ -2015,7 +2050,7 @@ CLOSED: [2022-12-29 Thu 06:28]
     :after (company flycheck)
     :hook (
            (before-save . tide-format-before-save)
-           (tsx-ts-mode-hook . tide-setup-hook)
+           (tsx-mode-hook . tide-setup-hook)
            (js-mode-hook . tide-setup-hook)
            (typescript-mode-hook . tide-setup-hook)
            )
