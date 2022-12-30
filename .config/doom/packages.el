@@ -52,53 +52,15 @@
 (package! apheleia)
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
-(package! beacon)
-(package! tldr)
 (package! rainbow-mode)
 (package! org-auto-tangle)
-(package! fzf )
-
-
 (package! beacon)
-(package! super-save
-  :disable t
-  )
-
-(package! vundo
-  :recipe (:host github
-           :repo "casouri/vundo")
-  )
 (package! modus-themes)
-(package! ef-themes )
-(package! svg-tag-mode )
 (package! focus )
-(package! good-scroll
-  :disable EMACS29+
-  )
 (package! aggressive-indent )
 (package! cov )
-
-(package! grammarly
-  :recipe (:host github
-           :repo "emacs-grammarly/grammarly")
-  )
-
-(package! eglot-grammarly
-  :disable (not (modulep! :tools lsp +eglot))
-  :recipe (:host github
-           :repo "emacs-grammarly/eglot-grammarly")
-  )
-
-(package! flycheck-grammalecte
-  :recipe (:host github
-           :repo "milouse/flycheck-grammalecte")
-  )
-
 (package! flycheck-posframe)
-
 (package! info-colors )
-
-
 (package! elpy )
 (package! semgrep
   :disable t
@@ -109,19 +71,15 @@
   :recipe (:host github
            :repo "georgek/magit-pretty-graph")
   )
-
-(package! evil-escape :disable t)
-
 (unpin! lsp-mode)
 (unpin! dap-mode)
 (package! org-wild-notifier)
 (package! org-modern)
 (package! moe-theme)
 (package! evil-god-state)
-(package! rainbow-mode)
 (package! ivy-posframe)
 (package! org-super-agenda)
-(package! ox-slack)
-(package! ox-gfm)
-(package! autothemer)
-(package! yasnippet-snippets)
+(package! org-auto-tangle)
+(package! tsi 
+          :recipe (:host github :repo "orzechowskid/tsi.el"))
+

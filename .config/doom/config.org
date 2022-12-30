@@ -1,3 +1,4 @@
+#+PROPERTY: :tangle ~/.doom.d/config.el
 * My Emacs Config
 
 ** My Info:
@@ -21,9 +22,9 @@
 #+begin_src emacs-lisp :tangle yes
 (setq doom-font (font-spec :family "PragmataPro Liga" :size 20)
       doom-big-font (font-spec :family "PragmataPro Liga" :size 30)
-    doom-variable-pitch-font (font-spec :family "Fantasque Sans Mono" :size 20)
+    doom-variable-pitch-font (font-spec :family "Fantasque Sans Mono Nerd Font" :size 20)
     doom-unicode-font (font-spec :family "PragmataPro Mono Liga" :size 20)
-    doom-serif-font (font-spec :family "Rockwell" :size 20)
+    doom-serif-font (font-spec :family "DankMono Nerd Font" :size 20)
 
     )
 
@@ -370,17 +371,6 @@
 #+RESULTS:
 : ~/org/markdown
 * Theme
-#+begin_src emacs-lisp :tangle yes
-(use-package autothemer
-
-  :ensure t)
-
-(load-theme 'doom-catppuccin t)
-;; (load-theme 'catppuccin-latte t)
-;; (load-theme 'catppuccin-macchiato t)
-;; (load-theme 'catppuccin-mocha t)
-;; (load-theme 'catppuccin t)
-#+End_src
 
 #+RESULTS:
 : t
@@ -395,3 +385,16 @@
 (setq tramp-default-method "ssh")
 
 #+end_src
+
+* auto-tangle
+#+begin_src emacs-lisp :tangle yes
+(after! org-mode
+ (use-package! org-auto-mode
+   :defer t
+   :hook (org-mode . org-auto-tangle-mode)
+   :config
+   (setq org-auto-tangle-default t))
+)
+#+end_src
+
+#+RESULTS:

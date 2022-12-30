@@ -3,6 +3,6 @@
 # key: init
 # uuid: init
 # --
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 $0
 #+end_src
