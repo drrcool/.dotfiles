@@ -34,13 +34,13 @@ These are the random one-off configurations that help make Emacs better, but did
   (global-centered-cursor-mode +1))
 #+end_src
 ** Make deleted files go to trash
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (setq delete-by-moving-to-trash t
 trash-directory "~/.local/share/Trash/files/")
 #+end_src
 
 ** Turn on beacon
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (use-package beacon
     :ensure t
     :config
@@ -154,20 +154,21 @@ CLOSED: [2022-12-28 Wed 18:13]
 * Setup our package manager
 ** Define where we go for packages
 
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
-     ;; Configure pacakge manager
-     (require 'package)
-     (setq package-archives '(
-            ("melpa" . "https://melpa.org/packages/")
-            ("org" . "https://orgmode.org/elpa/")
-            ("elpa" . "https://elpa.gnu.org/packages/")
-            ))
-
-  (package-initialize)
-     (unless package-archive-contents
-       (package-refresh-contents))
-
-#+END_SRC
+** Straight.el
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+#+end_src
 
 #+RESULTS:
 
@@ -180,7 +181,6 @@ CLOSED: [2022-12-28 Wed 18:13]
 
 (require 'use-package)
 (require 'quelpa-use-package)
-(setq use-package-always-ensure t)
 
 #+END_SRC
 
@@ -193,7 +193,7 @@ CLOSED: [2022-12-28 Wed 18:13]
     :init (doom-modeline-mode 1)
     :config
     (setq doom-modeline-hud nil)
-    (setq doom-modeline-minor-modes t)
+    (setq doom-modeline-minor-modes nil)
     (setq rc-doom-modeline-text-height 200)
     (setq doom-modeline-height 35)
     )
@@ -248,7 +248,7 @@ I like to do this even if I don't plan on the modus themes being my main theme o
     :config
     (setq doom-themes-enable-bold t
           doom-themes-enable-italic t)
-    (load-theme 'doom-acario-dark t)
+    (load-theme 'doom-1337 t)
 
     (doom-themes-visual-bell-config)
     (doom-themes-neotree-config)
@@ -283,20 +283,19 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 
 ** Setup our fonts
 #+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
-   ;; Set a font
-   (set-face-attribute 'default nil :family "Spleen 32x64" :height 250)
+ (set-face-attribute 'default nil :family "Anonymice Nerd Font Mono" :height 220)
 
-   ;; Proportionally spaced typeface
-   (set-face-attribute 'variable-pitch nil :family "OpenDyslexicAlta NF" :height 1.0)
+ ;; Proportionally spaced typeface
+ (set-face-attribute 'variable-pitch nil :family "OpenDyslexicAlta NF" :height 1.0)
 
-   ;; Monospaced typeface
-   (set-face-attribute 'fixed-pitch nil :family "OperatorMono Nerd Font" :height 1.5)
+ ;; Monospaced typeface
+ (set-face-attribute 'fixed-pitch nil :family "Comic Sans MS" :height 1.5)
 
 
-   (if (facep 'mode-line-active)
-       (set-face-attribute 'mode-line-active nil :family "Spleen 32x64" :height 200) ; For 29+
-     (set-face-attribute 'mode-line nil :family "Spleen 32x64" :height 200))
-  (set-face-attribute 'mode-line-inactive nil :family "OpenDyslexicAlta Nf" :height 200)
+ (if (facep 'mode-line-active)
+     (set-face-attribute 'mode-line-active nil :family "Spleen 32x64" :height 200) ; For 29+
+   (set-face-attribute 'mode-line nil :family "Spleen 32x64" :height 200))
+(set-face-attribute 'mode-line-inactive nil :family "Anonymice Nerd Font Mono" :height 200)
 #+END_SRC
 ** Update the help docs
 
@@ -312,33 +311,36 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 #+END_SRC
 ** Popper.el - tame popups
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-  ;; (use-package popper
-  ;;   :ensure t
-  ;;   :bind (("C-`" . popper-toggle-latest) 
-  ;;          ("M-`" . popper-cycle)
-  ;;          ("C-M-`" . popper-toggle-type))
-  ;;   :init
-  ;;   (setq popper-reference-buffers
-  ;;         '("\\*Messages\\*"
-  ;;           "Output\\*$"
-  ;;           "\\*Warnings\\*"
-  ;;           help-mode
-  ;;           helpful-mode
-  ;;           compilation-mode))
-  ;;   (popper-mode +1))
+  (use-package popper
+    :ensure t
+    :bind (("C-`" . popper-toggle-latest) 
+           ("M-`" . popper-cycle)
+           ("C-M-`" . popper-toggle-type))
+    :init
+    (setq popper-reference-buffers
+          '("\\*Messages\\*"
+            "Output\\*$"
+            "\\*Warnings\\*"
+            "\\*Backtrace\\*"
+            help-mode
+            helpful-mode
+            compilation-mode))
+    (popper-mode +1)
+    (popper-echo-mode +1)
+    )
 
 
-  ;; (defvar rcool/help-temp-buffers '("^\\*Help\\*$",
-  ;;                                   "^\\*helpful command"))
+  (defvar rcool/help-temp-buffers '("^\\*Help\\*$",
+                                    "^\\*helpful command"))
 
-  ;; (while rcool/help-temp-buffers
-  ;;   (add-to-list 'display-buffer-alist
-  ;;                `(,(car rcool/help-temp-buffers)
-  ;;                  (display-buffer-in-side-window
-  ;;                   (side . left)
-  ;;                   (window-width . 50))))
-  ;;   (setq rcool/help-temp-buffers (cdr rcool/help-temp-buffers)))
+  (while rcool/help-temp-buffers
+    (add-to-list 'display-buffer-alist
+                 `(,(car rcool/help-temp-buffers)
+                   (display-buffer-in-side-window
+                    (side . left)
+                    (window-width . 50))))
 
+    (setq rcool/help-temp-buffers (cdr rcool/help-temp-buffers)))
 #+end_src
 
 ** Key bindings with general
@@ -410,8 +412,21 @@ This class of settings I think of as those that I need in order to work best wit
 #+end_src
 
 ** Undo-fu
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 (use-package undo-fu :ensure t)
+#+end_src
+** flycheck
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+    (use-package flycheck
+  :ensure t
+    :config
+  (global-flycheck-mode))
+
+  (use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize)):
+  
 #+end_src
 
 
@@ -498,27 +513,44 @@ This class of settings I think of as those that I need in order to work best wit
 (use-package evil-dvorak :ensure t)
 #+end_src
 *** evil-escape
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
 
-(use-package evil-escape
-:ensure t
-:custom
-(setq-default evil-escape-key-sequence "jk")
-(setq-default evil-escape-key-delay 0.5))
+    (use-package evil-escape
+    :ensure t
+    :straight (evil-escape :host github
+    :repo "syl20bnr/evil-escape"
+    :files (:defaults))
+    :custom
+    (setq-default evil-escape-key-sequence "jk")
+    (setq-default evil-escape-key-delay 0.5))
 #+end_src
 *** Evil God
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
-  (use-package evil-god-state
-    :ensure t
-    :after evil
-    :diminish evil-god-state
-    :config
-    (define-key evil-normal-state-map (kbd "'") 'evil-execute-in-god-state)
-    (define-key evil-god-state-map (kbd [escape]) 'evil-god-state-bail)
-    )
-
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+      (use-package evil-god-state
+        :ensure t
+      :straight (evil-god-state :host github
+    :repo "gridaphobe/evil-god-state"
+    :files (:defaults))
+        :after evil
+        :diminish evil-god-state
+        :config
+        (define-key evil-normal-state-map (kbd "'") 'evil-execute-in-god-state)
+        (define-key evil-god-state-map (kbd "Esc") 'evil-god-state-bail)
+        )
 #+end_src
 
+** Copilot
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+      (use-package copilot
+        :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+        :ensure t
+  :config
+  (with-eval-after-load 'company
+  (delq 'company-preview-if-just-one-frontend company-frontends))
+  (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+  )
+#+end_src
 
 #+RESULTS:
 : t
@@ -1122,12 +1154,12 @@ benefit others as well.
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
     (use-package lsp-ui
       :ensure t
-      :hook (lsp-mode . lsp-ui-mode)
+      :hook ((lsp-mode . lsp-ui-mode)
+  (lsp-mode . lsp-ui-sideline-mode))
       :config
-  (setq lsp-ui-sideline-enable t)
-  (setq lso-ui-sideline-show-hover t)
-    (setq lsp-ui-doc-position 'bottom))
-#+end_src
+  (setq lsp-ui-sideline-show-hover t)
+    (setq lsp-ui-doc-position 'top))
+#+end_src 
 
 ** Treemacs
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
@@ -1251,7 +1283,7 @@ benefit others as well.
                               (not (derived-mode-p 'exwm-mode)))))))))
   #+end_src
 ** Ivy posframe
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (use-package ivy-posframe
     :ensure t
     :config
@@ -1485,17 +1517,18 @@ _q_uit          _e_qualize        _]_forward     ^
 #+END_SRC
 ** Flycheck
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
- (defhydra hydra-flycheck
-    (:pre (flycheck-list-errors)
-     :post (quit-windows-on "*Flycheck errors*")
-     :hint nil)
-  "Errors"
-  ("f" flycheck-error-list-set-filter "Filter")
-  ("j" flycheck-next-error "Next")
-  ("k" flycheck-previous-error "Previous")
-  ("gg" flycheck-first-error "First")
-  ("G" (progn (goto-char (point-max)) (flycheck-previous-error)) "Last")
-  ("q" nil)) 
+  (defhydra hydra-flycheck
+     (:pre (flycheck-list-errors)
+      :post (quit-windows-on "*Flycheck errors*")
+      :hint nil)
+   "Errors"
+   ("f" flycheck-error-list-set-filter "Filter")
+   
+   ("j" flycheck-next-error "Next")
+   ("k" flycheck-previous-error "Previous")
+   ("gg" flycheck-first-error "First")
+   ("G" (progn (goto-char (point-max)) (flycheck-previous-error)) "Last")
+   ("q" nil)) 
 #+end_src
 ** Org
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
@@ -1631,16 +1664,16 @@ _vr_ reset      ^^                       ^^                 ^^
 * Keybinds
 ** Preamble
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-        (general-define-key
-         :states '(normal motion visual)
-         :keymaps 'override
-         :prefix "SPC"
+  (general-define-key
+   :states '(normal motion visual)
+   :keymaps 'override
+   :prefix "SPC"
 
-         ;; Top level functions
-         "/" '(rc/rg :which-key "RipGrep")
-         "SPC" '(counsel-M-x :which-key "M-x")
-         "q" '(save-buffers-kill-terminal :which-key "quit emacs")
-         "X" '(org-capture :which-key "Capture")
+   ;; Top level functions
+   "/" '(rc/rg :which-key "RipGrep")
+   "SPC" '(counsel-M-x :which-key "M-x")
+   "q" '(popper-kill-latest-popup :which-key "kill popup")
+   "X" '(org-capture :which-key "Capture")
 #+END_SRC
 ** Files
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
@@ -1672,15 +1705,26 @@ _vr_ reset      ^^                       ^^                 ^^
 
 ** Code
 #+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
-  ;; Code
+  ;; lCode
 
   "c" '(nil :which-key "Code")
-  "cd" '(lsp-find-defintion :which-key "Definition")
-  "cR" '(lsp-find-references :which-key "References")
+  "cd" '(lsp-ui-peek-find-definitions :which-key "Definition")
+  "cR" '(lsp-ui-peek-find-references :which-key "References")
   "ca" '(lsp-execute-code-action :which-key "Code action")
-  "ci" '(lsp-find-implementations :which-key "Implementations")
-  "cD" '(lsp-find-type-definitions :which-key "Type Def.")
+  "ci" '(lsp-ui-peek-find-implementation :which-key "Implementations")
+  "cD" '(lsp-goto-type-definition :which-key "Type Def.")
   "cc" '(lsp-treemacs-call-hierarchy :which-key "Call hierarchy")
+  "ct" '(lsp-treemacs-type-hierarchy :which-key "Type hierarchy")
+  "cs" '(lsp-treemacs-symbols :which-key "Symbol Hierarchy")
+  "cT" '(lsp-treemacs-tree :which-key "Tree")
+  "ce" '(nil :which-key "Errors")
+  "cek" '(flycheck-previous-error :which-key "Prev Error")
+  "cej" '(flycheck-next-error :which-key "Next Error")
+  "ceg" '(flycheck-first-error :which-key "First Error")
+  "cef" '(flycheck-error-list-set-filter :which-key "Filter")
+  "ceG" '((progn (goto-char (point-max)) (flycheck-previour-error)) :which-key "Last Error")
+  "cel" '(counsel-flycheck :which-key "Error List")
+  "cee" '(flycheck-explain-error-at-point :which-key "Explain error")
 
   "cf" '(nil :which-key "Format")
   "cfl" '(lsp-format-buffer :which-key "LSP format Buffer")
@@ -1690,13 +1734,13 @@ _vr_ reset      ^^                       ^^                 ^^
 #+END_SRC
 
 ** Bookmarks
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
-  "B" '(nil :which-key "Bookmarks")
-  "Ba" '(bookmark-set  :which-key "Set a bookmark")
-  "Bj" '(bookmark-jump-other-window :which-key "Jump to bookmark")
-  "BJ" '(bookmark-jump :which-key "Jump Here")
-  "Bb" '(counsel-bookmark :which-key "Set or Jump")
-  "Bd" '(counsel-bookmark-avoid-dired :which-key "Jump to Directory")
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+  "m" '(nil :which-key "Bookmarks")
+  "ma" '(bookmark-set  :which-key "Set a bookmark")
+  "mj" '(bookmark-jump-other-window :which-key "Jump to bookmark")
+  "mJ" '(bookmark-jump :which-key "Jump Here")
+  "mb" '(counsel-bookmark :which-key "Set or Jump")
+  "md" '(counsel-bookmark-avoid-dired :which-key "Jump to Directory")
   
 #+end_src
 
@@ -1785,7 +1829,7 @@ _vr_ reset      ^^                       ^^                 ^^
   "wU" '(winner-redo :which-key "Winner Redo")
 #+END_SRC
 ** Registers
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   "r" '(nil :which-key "Registers")
   "rc" '(copy-to-register :which-key "Copy to Register")
   "rf" '(frameset-to-register :which-key "Frameset to register")
@@ -1827,13 +1871,14 @@ _vr_ reset      ^^                       ^^                 ^^
   "te" '(term-toggle-eshell :which-key "Eshell")
   "tE" '(eshell :which-key "Eshell (HERE)")
   "td" '(dired :which-key "Dired")
-  "tp" '(treemacks :which-key "Treemacs")
+  "tp" '(treemacs :which-key "Treemacs")
   ) ;; End SPC prefix block
 #+end_src
 
 #+RESULTS:
 
-** Global keybinds
+** DONE Global keybinds
+CLOSED: [2022-12-29 Thu 06:28]
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
   (general-def
     :keymaps 'override
@@ -1841,7 +1886,12 @@ _vr_ reset      ^^                       ^^                 ^^
     ;; Emacs
     "M-x" 'counsel-M-x
     )
-  
+  (general-def
+    :keymaps 'override
+    :states '(normal motion)
+    "K" 'lsp-ui-doc-show
+    "Q" 'popper-kill-latest-popup
+  )
 #+end_src
 
 #+RESULTS:
@@ -1918,7 +1968,7 @@ _vr_ reset      ^^                       ^^                 ^^
 
 #+end_src
 ** json
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el :results none
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   ;; (use-package json-mode :ensure t)       ;
 #+end_src
 
@@ -1954,6 +2004,7 @@ _vr_ reset      ^^                       ^^                 ^^
   (defun tide-setup-hook()
     (tide-setup)
     (eldoc-setup)
+    (flycheck-set-indication-mode +1)
     (tide-hl-identifier-mode +1)
     (set (make-local-variable 'company-backends)
          '((company-tide company-files :with company-yasnippet
@@ -1968,25 +2019,24 @@ _vr_ reset      ^^                       ^^                 ^^
            (js-mode-hook . tide-setup-hook)
            (typescript-mode-hook . tide-setup-hook)
            )
-    :config
-    (flycheck-add-note 'typescript-tslint 'web-mode)
-    (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append)
+   :config
+    (flycheck-add-mode 'typescript-tslint 'typescript-mode)
+   (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append)
 
 
 
-    :general
-    (general-def
-      :prefix ","
-      :states 'motion
-      :keymaps 'typescript-mode-map
-      "" nil
-      "i" '(web-mode-buffer-indent :which-key "Web mode indent")
-      "c" '(web-mode-fold-or-unfold :which-key "Web mode toggle fold")
-      "r" '(tide-refactor :which-key "Refactor")
-      "o" '(tide-organize-imports :which-key "Organize Imports")
-      "R" '(tide-rename-file :which-key "Rename the files and references")
-      "s" '(tide-rename-symbol :which-key "Rename symbol")
-      "e" '(tide-error-at-point :which-key "Error details at point")
+  :general
+  (general-def
+    :prefix "SPC"
+  :states 'normal
+  :keymap: 'override
+
+    "j"  '(nil :whick-key "Tide (TS/JS)")
+    "jr" '(tide-refactor :which-key "Refactor")
+    "jo" '(tide-organize-imports :which-key "Organize Imports")
+    "jR" '(tide-rename-file :which-key "Rename the files and references")
+    "js" '(tide-rename-symbol :which-key "Rename symbol")
+    "je" '(tide-error-at-point :which-key "Error details at point")
 
       ))
 
@@ -1998,7 +2048,6 @@ _vr_ reset      ^^                       ^^                 ^^
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (use-package dashboard
     :ensure t
-    :pin melpa 
     :config
     (dashboard-setup-startup-hook))
   (setq dashboard-banner-logo-title "")
