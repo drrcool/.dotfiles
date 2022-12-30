@@ -1068,57 +1068,98 @@ This seems like its the paved path, but I'm unsure.
 #+end_src
 ** LSP via lsp-mode
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-  (use-package lsp-mode
-    :ensure t
-    :commands (lsp lsp-deferred)
-    :hook (
-           (lua-mode . #'lsp))
-    :init
-    (setq lsp-keymap-prefix "C-c l")
-    (setq lsp-modeline-code-actions-segments t)
-    :config
-    (with-eval-after-load 'lsp-mode
-      (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)))
+  ;; (use-package lsp-mode
+  ;;   :ensure t
+  ;;   :commands (lsp lsp-deferred)
+  ;;   :hook (
+  ;;          (lua-mode . #'lsp))
+  ;;   :init
+  ;;   (setq lsp-keymap-prefix "C-c l")
+  ;;   (setq lsp-modeline-code-actions-segments t)
+  ;;   :config
+  ;;   (with-eval-after-load 'lsp-mode
+  ;;     (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)))
 
 
 #+end_src
 *** TEXmode
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-            (use-package tsx-mode
-              :ensure t
-              :straight '(tsx-mode
-                          :type git :host github
-                          :repo "orzechowskid/tsx-mode.el"
-                          :branch "emacs29")
+    (use-package tsx-mode
+      :ensure t
+      :straight '(tsx-mode
+                  :type git :host github
+                  :repo "orzechowskid/tsx-mode.el"
+                  :branch "emacs29")
 
-             :hook (tsx-mode . #'lsp)
+      :hook (tsx-mode . #'lsp)
       :init
-        (add-to-list 'auto-mode-alist '("\\.[jt]sx?\\'" . tsx-mode))
+      (add-to-list 'auto-mode-alist '("\\.[jt]sx?\\'" . tsx-mode))
 
-    :general
-    (general-def
-      :prefix ","
-      :states 'motion
-      :keymaps 'general-override-mode-map
-      "" nil
+      :general
+      (general-def
+        :prefix ","
+        :states 'motion
+        :keymaps 'general-override-mode-map
+        "" nil
 
-      "z" '(tsx-mode-fold-toggle-all-nodes :which-key "Toggle Fold all nodes")
-      "c" '(tsx-mode-coverage-toggle :which-key "Toggle Coverage")
-      "tab" '(tsx-mode-fold-toggle-node :which-key "Toggle Fold here")
-      ))
+        "z" '(tsx-mode-fold-toggle-all-nodes :which-key "Toggle Fold all nodes")
+        "c" '(tsx-mode-coverage-toggle :which-key "Toggle Coverage")
+        "tab" '(tsx-mode-fold-toggle-node :which-key "Toggle Fold here")
+        ))
 
 
-            (use-package coverlay
-              :ensure t
-              :straight '(coverlay :type git
-                                   :host github :repo "twada/coverlay.el"))
-            (use-package css-in-js-mode
-              :ensure t :straight '(css-in-js-mode :type git :host github :repo "orzechowskid/tree-sitter-css-in-js"))
-            (use-package origami :ensure t
-              :straight '(origamd
-                          :type git
-                          :host github
-                          :repo "gregsexton/origami.el"))
+    (use-package coverlay
+      :ensure t
+      :straight '(coverlay :type git
+                           :host github :repo "twada/coverlay.el"))
+    (use-package css-in-js-mode
+      :ensure t :straight '(css-in-js-mode :type git :host github :repo "orzechowskid/tree-sitter-css-in-js"))
+    (use-package origami :ensure t
+      :straight '(origamd
+                  :type git
+                  :host github
+                  :repo "gregsexton/origami.el"))
+
+
+    (use-package corfu
+      :ensure t
+      :straight (corfu :host github :repo "minad/corfu")
+     :custom
+     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+    ;; (corfu-auto t)                 ;; Enable auto completion
+     (corfu-separator ?\s)          ;; Orderless field separator
+    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+     (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+     (corfu-preview-current t)    ;; Disable current candidate preview
+     (corfu-preselect 'prompt)      ;; Preselect the prompt
+    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+    ;; (corfu-scroll-margin 5)        ;; Use scroll margin
+
+    ;; Enable Corfu only for certain modes.
+     :hook ((prog-mode . corfu-mode)
+            (shell-mode . corfu-mode)
+            (eshell-mode . corfu-mode))
+
+    ;; Recommended: Enable Corfu globally.
+    ;; This is recommended since Dabbrev can be used globally (M-/).
+    ;; See also `corfu-excluded-modes'.
+    :init
+    (global-corfu-mode))
+
+  ;; A few more useful configurations...
+  (use-package emacs
+    :init
+    ;; TAB cycle if there are only few candidates
+    (setq completion-cycle-threshold 3)
+
+    ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
+    ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+    ;; (setq read-extended-command-predicate
+    ;;       #'command-completion-default-include-p)
+
+    ;; Enable indentation+completion using the TAB key.
+    ;; `completion-at-point' is often bound to M-TAB.
+    (setq tab-always-indent 'complete))
                                        #+END_SRC
                                        
 *** TSI.el
@@ -1170,30 +1211,330 @@ benefit others as well.
 * Completion
 ** Install Company Mode
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el :results none 
-  (use-package company
-    :ensure t
-    :after lsp-mode
-    :hook (prog-mode . company-mode)
-    :bind (:map company-active-map
-                ("<tab>" . company-complete-selection))
-    (:map lsp-mode-map
-          ("<tab>" . company-indent-or-complete-common))
-    :custom
-    (company-minimum-prefix-length 1)
-    (company-idle-delay 0.0))
+  ;; (use-package company
+  ;;   :ensure t
+  ;;   :after lsp-mode
+  ;;   :hook (prog-mode . company-mode)
+  ;;   :bind (:map company-active-map
+  ;;               ("<tab>" . company-complete-selection))
+  ;;   (:map lsp-mode-map
+  ;;         ("<tab>" . company-indent-or-complete-common))
+  ;;   :custom
+  ;;   (company-minimum-prefix-length 1)
+  ;;   (company-idle-delay 0.0))
 
   #+end_src
+** Consult
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+;; Example configuration for Consult
+(use-package consult
+  ;; Replace bindings. Lazily loaded due by `use-package'.
+  :bind (;; C-c bindings (mode-specific-map)
+         ("C-c h" . consult-history)
+         ("C-c m" . consult-mode-command)
+         ("C-c k" . consult-kmacro)
+         ;; C-x bindings (ctl-x-map)
+         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+         ;; Custom M-# bindings for fast register access
+         ("M-#" . consult-register-load)
+         ("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+         ("C-M-#" . consult-register)
+         ;; Other custom bindings
+         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+         ;; M-g bindings (goto-map)
+         ("M-g e" . consult-compile-error)
+         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+         ("M-g g" . consult-goto-line)             ;; orig. goto-line
+         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-imenu-multi)
+         ;; M-s bindings (search-map)
+         ("M-s d" . consult-find)
+         ("M-s D" . consult-locate)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+         ;; Isearch integration
+         ("M-s e" . consult-isearch-history)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+         ("M-r" . consult-history))                ;; orig. previous-matching-history-element
+
+  ;; Enable automatic preview at point in the *Completions* buffer. This is
+  ;; relevant when you use the default completion UI.
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+
+  ;; The :init configuration is always executed (Not lazy)
+  :init
+
+  ;; Optionally configure the register formatting. This improves the register
+  ;; preview for `consult-register', `consult-register-load',
+  ;; `consult-register-store' and the Emacs built-ins.
+  (setq register-preview-delay 0.5
+        register-preview-function #'consult-register-format)
+
+  ;; Optionally tweak the register preview window.
+  ;; This adds thin lines, sorting and hides the mode line of the window.
+  (advice-add #'register-preview :override #'consult-register-window)
+
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+
+  ;; Configure other variables and modes in the :config section,
+  ;; after lazily loading the package.
+  :config
+
+  ;; Optionally configure preview. The default value
+  ;; is 'any, such that any key triggers the preview.
+  ;; (setq consult-preview-key 'any)
+  ;; (setq consult-preview-key (kbd "M-."))
+  ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
+  ;; For some commands and buffer sources it is useful to configure the
+  ;; :preview-key on a per-command basis using the `consult-customize' macro.
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file consult-xref
+   consult--source-bookmark consult--source-file-register
+   consult--source-recent-file consult--source-project-recent-file
+   ;; :preview-key (kbd "M-.")
+   :preview-key '(:debounce 0.4 any))
+
+  ;; Optionally configure the narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (setq consult-narrow-key "<") ;; (kbd "C-+")
+
+  ;; Optionally make narrowing help available in the minibuffer.
+  ;; You may want to use `embark-prefix-help-command' or which-key instead.
+  ;; (define-key consult-narrow-map (vconcat consult-narrow-key "?") #'consult-narrow-help)
+
+  ;; By default `consult-project-function' uses `project-root' from project.el.
+  ;; Optionally configure a different project root function.
+  ;; There are multiple reasonable alternatives to chose from.
+  ;;;; 1. project.el (the default)
+  ;; (setq consult-project-function #'consult--default-project--function)
+  ;;;; 2. projectile.el (projectile-project-root)
+   (autoload 'projectile-project-root "projectile")
+   (setq consult-project-function (lambda (_) (projectile-project-root)))
+  ;;;; 3. vc.el (vc-root-dir)
+  ;; (setq consult-project-function (lambda (_) (vc-root-dir)))
+  ;;;; 4. locate-dominating-file
+  ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git")))
+)
+#+end_src
+** Consult-dir
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+  (use-package consult-dir
+    :ensure t
+  :straight (consult-dir :host github :repo "karthink/consult-dir")
+    :bind (("C-x C-d" . consult-dir)
+           :map vertico-map
+           ("C-x C-d" . consult-dir)
+           ("C-x C-j" . consult-dir-jump-file)))
+#+end_src
+** Consult-flycheck
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+
+          (use-package consult-flycheck
+          :ensure t
+        :straight (
+  consult-flycheck
+    :host github
+  :repo
+  "minad/consult-flycheck"
+    ))
+#+end_src
+** Consult-eglot
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+     (use-package consult-eglot :ensure t
+       :straight  (consult-eglot
+       :host github
+  :repo "mohkale/consult-eglot"))
+#+end_src
+** Consult-projectile
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+         (use-package consult-projectile :ensure t
+        :straight
+       (consult-projectile
+      :type git :host gitlab
+    :repo "OlMon/consult-projectile"
+  :branch "master"))
+
+
+#+end_src
+** Consult-yasnippet
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+(use-package consult-yasnippet :ensure t)
+#+end_src
+** wgrep
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+(use-package wgrep :ensure t)
+#+end_src
+** marinalia
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+    ;; Enable rich annotations using the Marginalia package
+    (use-package marginalia
+      ;; Either bind `marginalia-cycle' globally or only in the minibuffer
+      :bind (("M-A" . marginalia-cycle)
+             :map minibuffer-local-map
+             ("M-A" . marginalia-cycle))
+
+      ;; The :init configuration is always executed (Not lazy!)
+      :init
+  :general
+  (general-define-key
+    :states 'normal
+  :keymap 'override
+  "?" 'marginalia-cyle)
+      ;; Must be in the :init section of use-package such that the mode gets
+      ;; enabled right away. Note that this forces loading the package.
+      (marginalia-mode))
+#+end_src
+
+** Veritco
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+;; Enable vertico
+(use-package vertico
+  :init
+  (vertico-mode)
+
+  ;; Different scroll margin
+  ;; (setq vertico-scroll-margin 0)
+
+  ;; Show more candidates
+  ;; (setq vertico-count 20)
+
+  ;; Grow and shrink the Vertico minibuffer
+  ;; (setq vertico-resize t)
+
+  ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
+  ;; (setq vertico-cycle t)
+  )
+
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package savehist
+  :init
+  (savehist-mode))
+
+;; A few more useful configurations...
+(use-package emacs
+  :init
+  ;; Add prompt indicator to `completing-read-multiple'.
+  ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
+  (defun crm-indicator (args)
+    (cons (format "[CRM%s] %s"
+                  (replace-regexp-in-string
+                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                   crm-separator)
+                  (car args))
+          (cdr args)))
+  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+
+;; Do not allow the cursor in the minibuffer prompt
+(setq minibuffer-prompt-properties
+      '(read-only t cursor-intangible t face minibuffer-prompt))
+(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
+;; Emacs 28: Hide commands in M-x which do not work in the current mode.
+  ;; Vertico commands are hidden in normal buffers.
+  ;; (setq read-extended-command-predicate
+  ;;       #'command-completion-default-include-p)
+
+  ;; Enable recursive minibuffers
+  (setq enable-recursive-minibuffers t))
+#+end_src
+
+** vertico directory
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+;; Configure directory extension.
+(use-package vertico-directory
+  :after vertico
+  :ensure nil
+  ;; More convenient directory navigation commands
+  :bind (:map vertico-map
+              ("RET" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word))
+  ;; Tidy shadowed file names
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+
+#+end_src
+
+** Orderless
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+(use-package orderless :ensure t
+  :init
+  ;; Configure a custom style dispatcher (see the Consult wiki)
+  ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+  ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+  (setq completion-styles '(substring orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+
+** Vertico quick
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+(use-package quick :ensure nill)
+#+end_src
+** Embark
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+    (use-package embark
+      :ensure t
+
+      :bind
+      (("C-." . embark-act)         ;; pick some comfortable binding
+       ("C-;" . embark-dwim)        ;; good alternative: M-.
+       ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+      :init
+
+      ;; Optionally replace the key help with a completing-read interface
+      (setq prefix-help-command #'embark-prefix-help-command)
+
+      :config
+
+      ;; Hide the mode line of the Embark live/completions buffers
+      (add-to-list 'display-buffer-alist
+                   '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                     nil
+                     (window-parameters (mode-line-format . none)))))
+
+    ;; Consult users will also want the embark-consult package.
+    (use-package embark-consult
+      :ensure t ; only need to install it, embark loads it after consult if found
+      :hook
+      (embark-collect-mode . consult-preview-at-point-mode))
+#+end_src
+
 
 
 ** Add LSP UI
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-    (use-package lsp-ui
-      :ensure t
-      :hook ((lsp-mode . lsp-ui-mode)
-  (lsp-mode . lsp-ui-sideline-mode))
-      :config
-  (setq lsp-ui-sideline-show-hover t)
-    (setq lsp-ui-doc-position 'top))
+  
+  ;;     :hook ((lsp-mode . lsp-ui-mode)
+  ;; (lsp-mode . lsp-ui-sideline-mode))
+  ;;     :config
+  ;; (setq lsp-ui-sideline-show-hover t)
+  ;;   (setq lsp-ui-doc-position 'top))
 #+end_src 
 
 ** Treemacs
@@ -1209,9 +1550,9 @@ benefit others as well.
 
 *** LSP Treemacs
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-  (use-package lsp-treemacs
-    :ensure t
-  :after lsp)
+  ;; (use-package lsp-treemacs
+  ;;   :ensure t
+  
 #+end_src
 
 
@@ -1266,80 +1607,80 @@ benefit others as well.
 ** Ivy
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
 
-  (use-package ivy
-    :ensure t
-    :diminish 
-    :config
-    (setq ivy-use-virtual-buffers t)
-    (setq ivy-count-format "(%d/%d) ")
-    (ivy-mode 1)
-    )
+  ;; (use-package ivy
+  ;;   :ensure t
+  ;;   :diminish 
+  ;;   :config
+  ;;   (setq ivy-use-virtual-buffers t)
+  ;;   (setq ivy-count-format "(%d/%d) ")
+  ;;   (ivy-mode 1)
+  ;;   )
   #+end_src
 ** Prescient
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-      (use-package prescient
-    :after counsel
-      :ensure t)
-  (use-package ivy-prescient :ensure t
-    :config
-  (ivy-prescient-mode))
+  ;;     (use-package prescient
+  ;;   :after counsel
+  ;;     :ensure t)
+  ;; (use-package ivy-prescient :ensure t
+  ;;   :config
+  ;; (ivy-prescient-mode))
   
 #+end_src
 
 ** Faster Symbol searches
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-  (use-package lsp-ivy
-    :ensure t)
+  ;; (use-package lsp-ivy
+  ;;   :ensure t)
 #+end_src
 
 
 ** Ivy Rich
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
 
-  (use-package ivy-rich
-    :ensure t
-    :init
-    (ivy-rich-mode 1)
-   :config
-   (setq ivy-format-function #'ivy-format-function-line)
-   (setq ivy-rich-display-transformers-list
-         (plist-put ivy-rich-display-transformers-list
-                    'ivy-switch-buffer
-                    '(:columns
-                      ((ivy-rich-candidate (:width 40))
-                       (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right))
-                       (ivy-rich-switch-buffer-major-mode (:width 12 :face warning))
-                       (ivy-rich-switch-buffer-project (:width 15 :face success))
-                       (ivy-rich-switch-buffer-path (:width (lambda(x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))
-                      :predicate
-                      (lambda (cand)
-                        (if-let ((buffer (get-buffer cand)))
-                            (with-current-buffer buffer
-                              (not (derived-mode-p 'exwm-mode)))))))))
+  ;; (use-package ivy-rich
+  ;;   :ensure t
+  ;;   :init
+  ;;   (ivy-rich-mode 1)
+  ;;  :config
+  ;;  (setq ivy-format-function #'ivy-format-function-line)
+  ;;  (setq ivy-rich-display-transformers-list
+  ;;        (plist-put ivy-rich-display-transformers-list
+  ;;                   'ivy-switch-buffer
+  ;;                   '(:columns
+  ;;                     ((ivy-rich-candidate (:width 40))
+  ;;                      (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right))
+  ;;                      (ivy-rich-switch-buffer-major-mode (:width 12 :face warning))
+  ;;                      (ivy-rich-switch-buffer-project (:width 15 :face success))
+  ;;                      (ivy-rich-switch-buffer-path (:width (lambda(x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))
+  ;;                     :predicate
+  ;;                     (lambda (cand)
+  ;;                       (if-let ((buffer (get-buffer cand)))
+  ;;                           (with-current-buffer buffer
+  ;;                             (not (derived-mode-p 'exwm-mode)))))))))
   #+end_src
 ** Ivy posframe
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-  (use-package ivy-posframe
-    :ensure t
-    :config
-    (setq ivy-posframe-display-functions-alist
-          '((swiper          . ivy-posframe-display-at-point)
-            (complete-symbol . ivy-posframe-display-at-point)
-            (counsel-M-x . ivy-display-function-fallback)
-            (counsel-esh-history . ivy-posframe-display-at-window-center)
-            (counsel-describe-function . ivy-display-function-fallback)
-            (counsel-describe-variable . ivy-display-function-fallback)
-            (counsel-find-file . ivy-posframe-display-at-window-center)
-            (counsel-recentf . ivy-posframe-display-at-window-center)
-            (counsel-register . ivy-posframe-display-at-frame-bottom-window-center)
-            (dmenu . ivy-posframe-display-at-frame-top-center)
-            (nil . ivy-posframe-display))
-          ivy-posframe-height-alist
-          '((swiper . 20)
-            (dmenu . 20)
-            (t . 10)))
-    (ivy-posframe-mode +1)
-    )
+  ;; (use-package ivy-posframe
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq ivy-posframe-display-functions-alist
+  ;;         '((swiper          . ivy-posframe-display-at-point)
+  ;;           (complete-symbol . ivy-posframe-display-at-point)
+  ;;           (counsel-M-x . ivy-display-function-fallback)
+  ;;           (counsel-esh-history . ivy-posframe-display-at-window-center)
+  ;;           (counsel-describe-function . ivy-display-function-fallback)
+  ;;           (counsel-describe-variable . ivy-display-function-fallback)
+  ;;           (counsel-find-file . ivy-posframe-display-at-window-center)
+  ;;           (counsel-recentf . ivy-posframe-display-at-window-center)
+  ;;           (counsel-register . ivy-posframe-display-at-frame-bottom-window-center)
+  ;;           (dmenu . ivy-posframe-display-at-frame-top-center)
+  ;;           (nil . ivy-posframe-display))
+  ;;         ivy-posframe-height-alist
+  ;;         '((swiper . 20)
+  ;;           (dmenu . 20)
+  ;;           (t . 10)))
+  ;;   (ivy-posframe-mode +1)
+  ;;   )
 #+end_src
 
 
@@ -1379,6 +1720,7 @@ Default to an indentation size of 2
 
 ** Mixed Pitch
 A better verson of variable pitch.
+
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   (use-package mixed-pitch
     :ensure t
@@ -1404,58 +1746,58 @@ A better verson of variable pitch.
 #+end_src
 ** Dired
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-(defhydra hydra-dired (:hint nil :color pink)
-  "
-_+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
-_C_opy             _O_ view other   _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
-_D_elete           _o_pen other     _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
-_R_ename           _M_ chmod        _t_oggle           _g_ revert buf     _e_ ediff          C-c ESC : abort
-_Y_ rel symlink    _G_ chgrp        _E_xtension mark   _s_ort             _=_ pdiff
-_S_ymlink          ^ ^              _F_ind marked      _._ toggle hydra   \\ flyspell
-_r_sync            ^ ^              ^ ^                ^ ^                _?_ summary
-_z_ compress-file  _A_ find regexp
-_Z_ compress       _Q_ repl regexp
+      (defhydra hydra-dired (:hint nil :color pink)
+        "
+      _+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
+      _C_opy             _O_ view other   _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
+      _D_elete           _o_pen other     _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
+      _R_ename           _M_ chmod        _t_oggle           _g_ revert buf     _e_ ediff          C-c ESC : abort
+      _Y_ rel symlink    _G_ chgrp        _E_xtension mark   _s_ort             _=_ pdiff
+      _S_ymlink          ^ ^              _F_ind marked      _._ toggle hydra   \\ flyspell
+      _r_sync            ^ ^              ^ ^                ^ ^                _?_ summary
+      _z_ compress-file  _A_ find regexp
+      _Z_ compress       _Q_ repl regexp
 
-T - tag prefix
-"
-  ("\\" dired-do-ispell)
-  ("(" dired-hide-details-mode)
-  (")" dired-omit-mode)
-  ("+" dired-create-directory)
-  ("=" diredp-ediff)         ;; smart diff
-  ("?" dired-summary)
-  ("$" diredp-hide-subdir-nomove)
-  ("A" dired-do-find-regexp)
-  ("C" dired-do-copy)        ;; Copy all marked files
+      T - tag prefix
+      "
+        ("\\" dired-do-ispell)
+        ("(" dired-hide-details-mode)
+        (")" dired-omit-mode)
+        ("+" dired-create-directory)
+        ("=" diredp-ediff)         ;; smart diff
+        ("?" dired-summary)
+        ("$" diredp-hide-subdir-nomove)
+        ("A" dired-do-find-regexp)
+        ("C" dired-do-copy)        ;; Copy all marked files
   ("D" dired-do-delete)
-  ("E" dired-mark-extension)
-  ("e" dired-ediff-files)
-  ("F" dired-do-find-marked-files)
-  ("G" dired-do-chgrp)
-  ("g" revert-buffer)        ;; read all directories again (refresh)
-  ("i" dired-maybe-insert-subdir)
-  ("l" dired-do-redisplay)   ;; relist the marked or singel directory
-  ("M" dired-do-chmod)
-  ("m" dired-mark)
-  ("O" dired-display-file)
-  ("o" dired-find-file-other-window)
-  ("Q" dired-do-find-regexp-and-replace)
-  ("R" dired-do-rename)
-  ("r" dired-do-rsynch)
-  ("S" dired-do-symlink)
-  ("s" dired-sort-toggle-or-edit)
-  ("t" dired-toggle-marks)
-  ("U" dired-unmark-all-marks)
-  ("u" dired-unmark)
-  ("v" dired-view-file)      ;; q to exit, s to search, = gets line #
-  ("w" dired-kill-subdir)
-  ("Y" dired-do-relsymlink)
-  ("z" diredp-compress-this-file)
-  ("Z" dired-do-compress)
-  ("q" nil)
-  ("." nil :color blue))
+        ("E" dired-mark-extension)
+        ("e" dired-ediff-files)
+        ("F" dired-do-find-marked-files)
+        ("G" dired-do-chgrp)
+        ("g" revert-buffer)        ;; read all directories again (refresh)
+        ("i" dired-maybe-insert-subdir)
+        ("l" dired-do-redisplay)   ;; relist the marked or singel directory
+        ("M" dired-do-chmod)
+        ("m" dired-mark)
+        ("O" dired-display-file)
+        ("o" dired-find-file-other-window)
+        ("Q" dired-do-find-regexp-and-replace)
+        ("R" dired-do-rename)
+        ("r" dired-do-rsynch)
+        ("S" dired-do-symlink)
+        ("s" dired-sort-toggle-or-edit)
+        ("t" dired-toggle-marks)
+        ("U" dired-unmark-all-marks)
+        ("u" dired-unmark)
+        ("v" dired-view-file)      ;; q to exit, s to search, = gets line #
+        ("w" dired-kill-subdir)
+        ("Y" dired-do-relsymlink)
+        ("z" diredp-compress-this-file)
+        ("Z" dired-do-compress)
+        ("q" nil)
+        ("." nil :color blue))
 
-(define-key dired-mode-map "." 'hydra-dired/body)
+      (define-key dired-mode-map "." 'hydra-dired/body)
 #+end_src
 
 ** Theme swticher
@@ -1507,48 +1849,48 @@ T - tag prefix
 #+end_src
 ** window commands
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-  (defhydra rc-hydra-window (:hint nil)
-   "
-Movement      ^Split^            ^Switch^        ^Resize^
-----------------------------------------------------------------
-_M-<left>_  <   _s_ vertical      _b_uffer        _<left>_  <
-_M-<right>_ >   _v_ horizontal    _f_ind file     _<down>_  ↓
-_M-<up>_    ↑   _m_aximize        _x_wap          _<up>_    ↑
-_M-<down>_  ↓   _c_lose           _[_backward     _<right>_ >
-_q_uit          _e_qualize        _]_forward     ^
-^               ^               _K_ill         ^
-^               ^                  ^             ^
-"
-   ;; Movement
-   ("M-<left>" windmove-left)
-   ("M-<down>" windmove-down)
-   ("M-<up>" windmove-up)
-   ("M-<right>" windmove-right)
+    (defhydra rc-hydra-window (:hint nil)
+     "
+  Movement      ^Split^            ^Switch^        ^Resize^
+  ----------------------------------------------------------------
+  _M-<left>_  <   _s_ vertical      _b_uffer        _<left>_  <
+  _M-<right>_ >   _v_ horizontal    _f_ind file     _<down>_  ↓
+  _M-<up>_    ↑   _m_aximize        _x_wap          _<up>_    ↑
+  _M-<down>_  ↓   _c_lose           _[_backward     _<right>_ >
+  _q_uit          _e_qualize        _]_forward     ^
+  ^               ^               _K_ill         ^
+  ^               ^                  ^             ^
+  "
+     ;; Movement
+     ("M-<left>" windmove-left)
+     ("M-<down>" windmove-down)
+     ("M-<up>" windmove-up)
+     ("M-<right>" windmove-right)
 
-   ;; Split/manage
-   ("s" rc/split-window-vertically-and-switch)
-   ("v" rc/split-window-horizontally-and-switch)
-   ("c" evil-window-delete)
-   ("d" evil-window-delete)
-   ("m" delete-other-windows)
-   ("e" balance-windows)
+     ;; Split/manage
+     ("s" rc/split-window-vertically-and-switch)
+     ("v" rc/split-window-horizontally-and-switch)
+     ("c" evil-window-delete)
+     ("d" evil-window-delete)
+     ("m" delete-other-windows)
+     ("e" balance-windows)
 
-   ;; Switch
-   ("b" counsel-switch-buffer)
-   ("f" counsel-find-file)
-   ("P" project-find-file)
-   ("x" ace-swap-window)
-   ("[" previous-buffer)
-   ("]" next-buffer)
-   ("K" kill-this-buffer)
+     ;; Switch
+     ("b" consult-switch-buffer)
+     ("f" consult-find)
+     ("P" project-find-file)
+     ("x" ace-swap-window)
+     ("[" previous-buffer)
+     ("]" next-buffer)
+     ("K" kill-this-buffer)
 
-   ;; Resize
-   ("<left>" windresize-left)
-   ("<right>" windresize-right)
-   ("<down>" windresize-down)
-   ("<up>" windresize-up)
+     ;; Resize
+     ("<left>" windresize-left)
+     ("<right>" windresize-right)
+     ("<down>" windresize-down)
+     ("<up>" windresize-up)
 
-   ("q" nil))
+     ("q" nil))
 #+END_SRC
 ** Flycheck
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
@@ -1567,107 +1909,108 @@ _q_uit          _e_qualize        _]_forward     ^
 #+end_src
 ** Org
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-;; Hydra for org agenda (graciously taken from Spacemacs)
-(defhydra hydra-org-agenda (:pre (setq which-key-inhibit t)
-                                 :post (setq which-key-inhibit nil)
-                                 :hint none)
-  "
-Org agenda (_q_uit)
+        ;; Hydra for org agenda (graciously taken from Spacemacs)
+        (defhydra hydra-org-agenda (:pre (setq which-key-inhibit t)
+                                         :post (setq which-key-inhibit nil)
+                                         :hint none)
+          "
+        Org agenda (_q_uit)
 
-^Clock^      ^Visit entry^              ^Date^             ^Other^
-^-----^----  ^-----------^------------  ^----^-----------  ^-----^---------
-_ci_ in      _SPC_ in other window      _ds_ schedule      _gr_ reload
-_co_ out     _TAB_ & go to location     _dd_ set deadline  _._  go to today
-_cq_ cancel  _RET_ & del other windows  _dt_ timestamp     _gd_ go to date
-_cj_ jump    _o_   link                 _+_  do later      ^^
-^^           ^^                         _-_  do earlier    ^^
-^^           ^^                         ^^                 ^^
-^View^          ^Filter^                 ^Headline^         ^Toggle mode^
-^----^--------  ^------^---------------  ^--------^-------  ^-----------^----
-_vd_ day        _ft_ by tag              _ht_ set status    _tf_ follow
-_vw_ week       _fr_ refine by tag       _hk_ kill          _tl_ log
-_vt_ fortnight  _fc_ by category         _hr_ refile        _ta_ archive trees
-_vm_ month      _fh_ by top headline     _hA_ archive       _tA_ archive files
-_vy_ year       _fx_ by regexp           _h:_ set tags      _tr_ clock report
-_vn_ next span  _fd_ delete all filters  _hp_ set priority  _td_ diaries
-_vp_ prev span  ^^                       ^^                 ^^
-_vr_ reset      ^^                       ^^                 ^^
-^^              ^^                       ^^                 ^^
-"
-  ;; Entry
-  ("hA" org-agenda-archive-default)
-  ("hk" org-agenda-kill)
-  ("hp" org-agenda-priority)
-  ("hr" org-agenda-refile)
-  ("h:" org-agenda-set-tags)
-  ("ht" org-agenda-todo)
-  ;; Visit entry
-  ("o"   link-hint-open-link :exit t)
-  ("<tab>" org-agenda-goto :exit t)
-  ("TAB" org-agenda-goto :exit t)
-  ("SPC" org-agenda-show-and-scroll-up)
-  ("RET" org-agenda-switch-to :exit t)
-  ;; Date
-  ("dt" org-agenda-date-prompt)
-  ("dd" org-agenda-deadline)
-  ("+" org-agenda-do-date-later)
-  ("-" org-agenda-do-date-earlier)
-  ("ds" org-agenda-schedule)
-  ;; View
-  ("vd" org-agenda-day-view)
-  ("vw" org-agenda-week-view)
-  ("vt" org-agenda-fortnight-view)
-  ("vm" org-agenda-month-view)
-  ("vy" org-agenda-year-view)
-  ("vn" org-agenda-later)
-  ("vp" org-agenda-earlier)
-  ("vr" org-agenda-reset-view)
-  ;; Toggle mode
-  ("ta" org-agenda-archives-mode)
-  ("tA" (org-agenda-archives-mode 'files))
-  ("tr" org-agenda-clockreport-mode)
-  ("tf" org-agenda-follow-mode)
-  ("tl" org-agenda-log-mode)
-  ("td" org-agenda-toggle-diary)
-  ;; Filter
-  ("fc" org-agenda-filter-by-category)
-  ("fx" org-agenda-filter-by-regexp)
-  ("ft" org-agenda-filter-by-tag)
-  ("fr" org-agenda-filter-by-tag-refine)
-  ("fh" org-agenda-filter-by-top-headline)
-  ("fd" org-agenda-filter-remove-all)
-  ;; Clock
-  ("cq" org-agenda-clock-cancel)
-  ("cj" org-agenda-clock-goto :exit t)
-  ("ci" org-agenda-clock-in :exit t)
-  ("co" org-agenda-clock-out)
-  ;; Other
-  ("q" nil :exit t)
-  ("gd" org-agenda-goto-date)
-  ("." org-agenda-goto-today)
-  ("gr" org-agenda-redo))
+        ^Clock^      ^Visit entry^              ^Date^             ^Other^
+        ^-----^----  ^-----------^------------  ^----^-----------  ^-----^---------
+        _ci_ in      _SPC_ in other window      _ds_ schedule      _gr_ reload
+        _co_ out     _TAB_ & go to location     _dd_ set deadline  _._  go to today
+        _cq_ cancel  _RET_ & del other windows  _dt_ timestamp     _gd_ go to date
+        _cj_ jump    _o_   link                 _+_  do later      ^^
+        ^^           ^^                         _-_  do earlier    ^^
+        ^^           ^^                         ^^                 ^^
+        ^View^          ^Filter^                 ^Headline^         ^Toggle mode^
+        ^----^--------  ^------^---------------  ^--------^-------  ^-----------^----
+        _vd_ day        _ft_ by tag              _ht_ set status    _tf_ follow
+    :keymaps 'override
+  _vw_ week       _fr_ refine by tag       _hk_ kill          _tl_ log
+        _vt_ fortnight  _fc_ by category         _hr_ refile        _ta_ archive trees
+        _vm_ month      _fh_ by top headline     _hA_ archive       _tA_ archive files
+        _vy_ year       _fx_ by regexp           _h:_ set tags      _tr_ clock report
+        _vn_ next span  _fd_ delete all filters  _hp_ set priority  _td_ diaries
+        _vp_ prev span  ^^                       ^^                 ^^
+        _vr_ reset      ^^                       ^^                 ^^
+        ^^              ^^                       ^^                 ^^
+        "
+          ;; Entry
+          ("hA" org-agenda-archive-default)
+          ("hk" org-agenda-kill)
+          ("hp" org-agenda-priority)
+          ("hr" org-agenda-refile)
+          ("h:" org-agenda-set-tags)
+          ("ht" org-agenda-todo)
+          ;; Visit entry
+          ("o"   link-hint-open-link :exit t)
+          ("<tab>" org-agenda-goto :exit t)
+          ("TAB" org-agenda-goto :exit t)
+          ("SPC" org-agenda-show-and-scroll-up)
+          ("RET" org-agenda-switch-to :exit t)
+          ;; Date
+          ("dt" org-agenda-date-prompt)
+          ("dd" org-agenda-deadline)
+          ("+" org-agenda-do-date-later)
+          ("-" org-agenda-do-date-earlier)
+          ("ds" org-agenda-schedule)
+          ;; View
+          ("vd" org-agenda-day-view)
+          ("vw" org-agenda-week-view)
+          ("vt" org-agenda-fortnight-view)
+          ("vm" org-agenda-month-view)
+          ("vy" org-agenda-year-view)
+          ("vn" org-agenda-later)
+          ("vp" org-agenda-earlier)
+          ("vr" org-agenda-reset-view)
+          ;; Toggle mode
+          ("ta" org-agenda-archives-mode)
+          ("tA" (org-agenda-archives-mode 'files))
+          ("tr" org-agenda-clockreport-mode)
+          ("tf" org-agenda-follow-mode)
+          ("tl" org-agenda-log-mode)
+          ("td" org-agenda-toggle-diary)
+          ;; Filter
+          ("fc" org-agenda-filter-by-category)
+          ("fx" org-agenda-filter-by-regexp)
+          ("ft" org-agenda-filter-by-tag)
+          ("fr" org-agenda-filter-by-tag-refine)
+          ("fh" org-agenda-filter-by-top-headline)
+          ("fd" org-agenda-filter-remove-all)
+          ;; Clock
+          ("cq" org-agenda-clock-cancel)
+          ("cj" org-agenda-clock-goto :exit t)
+          ("ci" org-agenda-clock-in :exit t)
+          ("co" org-agenda-clock-out)
+          ;; Other
+          ("q" nil :exit t)
+          ("gd" org-agenda-goto-date)
+          ("." org-agenda-goto-today)
+          ("gr" org-agenda-redo))
 #+end_src
 ** Avy
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-(defhydra hydra-avy (:exit t :hint nil)
-  "
- Line^^       Region^^        Goto
-----------------------------------------------------------
- [_y_] yank   [_Y_] yank      [_c_] timed char  [_C_] char
- [_m_] move   [_M_] move      [_w_] word        [_W_] any word
- [_k_] kill   [_K_] kill      [_l_] line        [_L_] end of line"
-  ("c" avy-goto-char-timer)
-  ("C" avy-goto-char)
-  ("w" avy-goto-word-1)
-  ("W" avy-goto-word-0)
-  ("l" avy-goto-line)
-  ("L" avy-goto-end-of-line)
-  ("m" avy-move-line)
-  ("M" avy-move-region)
+      (defhydra hydra-avy (:exit t :hint nil)
+        "
+       Line^^       Region^^        Goto
+      ----------------------------------------------------------
+       [_y_] yank   [_Y_] yank      [_c_] timed char  [_C_] char
+       [_m_] move   [_M_] move      [_w_] word        [_W_] any word
+       [_k_] kill   [_K_] kill      [_l_] line        [_L_] end of line"
+        ("c" avy-goto-char-timer)
+        ("C" avy-goto-char)
+        ("w" avy-goto-word-1)
+        ("W" avy-goto-word-0)
+        ("l" avy-goto-line)
+        ("L" avy-goto-end-of-line)
+        ("m" avy-move-line)
+        ("M" avy-move-region)
   ("k" avy-kill-whole-line)
-  ("K" avy-kill-region)
-  ("y" avy-copy-line)
-  ("Y" avy-copy-region))
+        ("K" avy-kill-region)
+        ("y" avy-copy-line)
+        ("Y" avy-copy-region))
 
 #+end_src
 ** YasNippet
@@ -1699,25 +2042,24 @@ _vr_ reset      ^^                       ^^                 ^^
 * Keybinds
 ** Preamble
 #+begin_src emacs-lisp :results none :tangle ~/.emacs.d/init.el
-  (general-define-key
+general-define-key
    :states '(normal motion visual)
    :keymaps 'override
    :prefix "SPC"
 
    ;; Top level functions
    "/" '(rc/rg :which-key "RipGrep")
-   "SPC" '(counsel-M-x :which-key "M-x")
+   "SPC" '(M-x :which-key "M-x")
    "q" '(popper-kill-latest-popup :which-key "kill popup")
    "X" '(org-capture :which-key "Capture")
 #+END_SRC
 ** Files
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   "f" '(nil :which-key "Files")
-  "fd" '(counsel-dired-jump :which-key "Find directory")
-  "ff" '(counsel-find-file :which-key "Find file")
-  "fl" '(counsel-locate :which-key "Locate")
-  "fr" '(counsel-recentf :which-key "Recent Files")
-  "fR" '(counsel-find-file-move :which-key "Move File")
+  "fd" '(consult-dir :which-key "Find directory")
+  "ff" '(consult-find :which-key "Find file")
+  "fl" '(consult-locate :which-key "Locate")
+  "fr" '(consult-recent-files :which-key "Recent Files")
   "fs" '(save :which-key "Save")
 
 #+end_src
@@ -1727,7 +2069,7 @@ _vr_ reset      ^^                       ^^                 ^^
 #+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
   ;; Buffers
   "b" '(nil :which-key "Buffer")
-  "bb" '(persp-counsel-switch-buffer :which-key "Switch buffer")
+  "bb" '(consult-project-buffer :which-key "Switch buffer")
   "bd" '(evil-delete-buffer :which-key "Delete buffer")
   "bm" '(rc/kill-other-buffers :which-key "Kill other buffers")
   "bi" '(ibuffer :which-key "iBuffer")
@@ -1740,32 +2082,32 @@ _vr_ reset      ^^                       ^^                 ^^
 
 ** Code
 #+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
-  ;; lCode
+        ;; lCode
 
-  "c" '(nil :which-key "Code")
-  "cd" '(lsp-ui-peek-find-definitions :which-key "Definition")
+        "c" '(nil :which-key "Code")
+        "cd" '(lsp-ui-peek-find-definitions :which-key "Definition")
   "cR" '(lsp-ui-peek-find-references :which-key "References")
-  "ca" '(lsp-execute-code-action :which-key "Code action")
-  "ci" '(lsp-ui-peek-find-implementation :which-key "Implementations")
-  "cD" '(lsp-goto-type-definition :which-key "Type Def.")
-  "cc" '(lsp-treemacs-call-hierarchy :which-key "Call hierarchy")
-  "ct" '(lsp-treemacs-type-hierarchy :which-key "Type hierarchy")
-  "cs" '(lsp-treemacs-symbols :which-key "Symbol Hierarchy")
-  "cT" '(lsp-treemacs-tree :which-key "Tree")
-  "ce" '(nil :which-key "Errors")
-  "cek" '(flycheck-previous-error :which-key "Prev Error")
-  "cej" '(flycheck-next-error :which-key "Next Error")
-  "ceg" '(flycheck-first-error :which-key "First Error")
-  "cef" '(flycheck-error-list-set-filter :which-key "Filter")
-  "ceG" '((progn (goto-char (point-max)) (flycheck-previour-error)) :which-key "Last Error")
-  "cel" '(counsel-flycheck :which-key "Error List")
-  "cee" '(flycheck-explain-error-at-point :which-key "Explain error")
+        "ca" '(lsp-execute-code-action :which-key "Code action")
+        "ci" '(lsp-ui-peek-find-implementation :which-key "Implementations")
+        "cD" '(lsp-goto-type-definition :which-key "Type Def.")
+        "cc" '(lsp-treemacs-call-hierarchy :which-key "Call hierarchy")
+        "ct" '(lsp-treemacs-type-hierarchy :which-key "Type hierarchy")
+        "cs" '(lsp-treemacs-symbols :which-key "Symbol Hierarchy")
+        "cT" '(lsp-treemacs-tree :which-key "Tree")
+        "ce" '(nil :which-key "Errors")
+        "cek" '(flycheck-previous-error :which-key "Prev Error")
+        "cej" '(flycheck-next-error :which-key "Next Error")
+        "ceg" '(flycheck-first-error :which-key "First Error")
+        "cef" '(flycheck-error-list-set-filter :which-key "Filter")
+        "ceG" '((progn (goto-char (point-max)) (flycheck-previour-error)) :which-key "Last Error")
+        "cel" '(consult-flycheck :which-key "Error List")
+        "cee" '(flycheck-explain-error-at-point :which-key "Explain error")
 
-  "cf" '(nil :which-key "Format")
-  "cfl" '(lsp-format-buffer :which-key "LSP format Buffer")
-  "cfa" '(apheleia-format-buffer :which-key "Apheleia Format")
-  "cfr" '(lsp-format-region :which-key "LSP Format Region")
-  "cft" '(lsp-on-type-formatting :which-key "Toggle On Type Formatting")
+        "cf" '(nil :which-key "Format")
+        "cfl" '(lsp-format-buffer :which-key "LSP format Buffer")
+        "cfa" '(apheleia-format-buffer :which-key "Apheleia Format")
+        "cfr" '(lsp-format-region :which-key "LSP Format Region")
+        "cft" '(lsp-on-type-formatting :which-key "Toggle On Type Formatting")
 #+END_SRC
 
 ** Bookmarks
@@ -1774,8 +2116,7 @@ _vr_ reset      ^^                       ^^                 ^^
   "ma" '(bookmark-set  :which-key "Set a bookmark")
   "mj" '(bookmark-jump-other-window :which-key "Jump to bookmark")
   "mJ" '(bookmark-jump :which-key "Jump Here")
-  "mb" '(counsel-bookmark :which-key "Set or Jump")
-  "md" '(counsel-bookmark-avoid-dired :which-key "Jump to Directory")
+  "mb" '(consult-bookmark :which-key "Set or Jump")
   
 #+end_src
 
@@ -1783,9 +2124,9 @@ _vr_ reset      ^^                       ^^                 ^^
 #+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
        ;;Files.
        "f" '(nil :which-key "files")
-       "fb" '(counsel-bookmark :which-key "bookmarks")
-       "ff" '(counsel-find-file :which-key "find file")
-       "fr" '(counsel-recentf :which-key "recent files")
+       "fb" '(consult-bookmark :which-key "bookmarks")
+       "ff" '(consult-find :which-key "find file")
+       "fr" '(consult-recent-file :which-key "recent files")
        "fR" '(rename-file :which-key "rename file")
        "fs" '(save-buffer :which-key "save buffer")
        "fS" '(evil-write-all :which-key "save all buffers")
@@ -1794,13 +2135,8 @@ _vr_ reset      ^^                       ^^                 ^^
 ** Projects
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
   "p" '(nil :which-key "Projects")
-  "pp" '(counsel-projectile-switch-project :which-key "Switch Project")
-  "pf" '(counsel-projectile-find-file :which-key "Files")
-  "pd" '(counsel-projectile-find-dir :which-key "Directories")
-  "pb" '(counsel-projectile-switch-to-buffer :which-key "Buffers")
-  "pg" '(counsel-projectile-rg :which-key "RipGrep")
-   "pX" '(counsel-projectile-org-capture :which-key "Capture")
-  "pa" '(counsel-projectile-org-agenda :which-key "Agenda")
+  "pp" '(consult-projectile :which-key "Switch Project")
+  "pg" '(consult-rg :which-key "RipGrep")
 #+end_src
 
 ** Hydra
@@ -1820,27 +2156,27 @@ _vr_ reset      ^^                       ^^                 ^^
 
 ** Help
 #+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
-  ;; Help/emacs
-  "h" '(nil :which-key "help/emacs")
+    ;; Help/emacs
+    "h" '(nil :which-key "help/emacs")
 
-  "hv" '(helpful-variable :which-key "des. variable")
-  "hb" '(counsel-descbinds :which-key "des. bindings")
-  "hM" '(describe-mode :which-key "des. mode")
-  "hf" '(helpful-function :which-key "des. func")
-  "hF" '(counsel-describe-face :which-key "des. face")
-  "hk" '(helpful-key :which-key "des. key")
+    "hv" '(helpful-variable :which-key "des. variable")
+    "hb" '(describe-bindings :which-key "des. bindings")
+    "hM" '(describe-mode :which-key "des. mode")
+    "hf" '(helpful-function :which-key "des. func")
+    "hF" '(describe-face :which-key "des. face")
+    "hk" '(helpful-key :which-key "des. key")
+  
+    "hed" '((lambda () (interactive) (jump-to-register 67)) :which-key "edit dotfile")
 
-  "hed" '((lambda () (interactive) (jump-to-register 67)) :which-key "edit dotfile")
+    "hm" '(nil :which-key "switch mode")
+    "hme" '(elisp-mode :which-key "elisp mode")
+    "hmo" '(org-mode :which-key "org mode")
+    "hmt" '(text-mode :which-key "text mode")
 
-  "hm" '(nil :which-key "switch mode")
-  "hme" '(elisp-mode :which-key "elisp mode")
-  "hmo" '(org-mode :which-key "org mode")
-  "hmt" '(text-mode :which-key "text mode")
-
-  "hp" '(nil :which-key "packages")
-  "hpr" 'package-refresh-contents
-  "hpi" 'package-install
-  "hpd" 'package-delete
+    "hp" '(nil :which-key "packages")
+    "hpr" 'package-refresh-contents
+    "hpi" 'package-install
+    "hpd" 'package-delete
 
 #+END_SRC
 
@@ -1872,11 +2208,12 @@ _vr_ reset      ^^                       ^^                 ^^
   "rj" '(jump-to-register :which-key "Jump to")
   "rl" '(list-registers :which-key "List registers")
   "rn" '(number-to-register :which-key "Number to register")
-  "rr" '(counsel-register :which-key "Choose a register")
+  "rr" '(consult-register :which-key "Choose a register")
   "rv" '(view-register :which-key "View register")
   "rw" '(window-configuration-to-register :which-key "Window config to register")
   "r+" '(increment-register :which-key "Increment register")
   "r " '(point-to-register :which-key "Point to Register")
+  "rs" '(consult-register-store :which-key "Store")
 #+end_src
 ** Workspaces
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
