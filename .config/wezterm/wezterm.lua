@@ -3,7 +3,7 @@ local wezterm = require("wezterm")
 return {
 	font = wezterm.font("Spleen 32x64"),
 	font_size = 20,
-	color_scheme = "carbonfox",
+	color_scheme = "Challenger Deep",
 	window_background_opacity = 0.99,
 	bold_brightens_ansi_colors = true,
 	automatically_reload_config = true,
