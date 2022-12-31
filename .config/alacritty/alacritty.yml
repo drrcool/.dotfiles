@@ -2,37 +2,36 @@ live_config_reload: true
 env:
   TERM: xterm-256color
 shell:
-  program: /opt/homebrew/bin/fish
+  program: /bin/zsh
   alt_send_esc: true
-  args: 
+  args:
     - --login
 window:
-  dimensions: 
-    columns: 140
-    lines: 40
+  dimensions:
+    columns: 70
+    lines: 20
   opacity: 0.9
   padding:
     x: 2
     y: 2
-  decorations: buttonless 
   dynamic_padding: false
   startup_mode: Windowed
   dynamic_title: true
-scrolling: 
+scrolling:
   auto-scroll: true
   history: 10000
   multipler: 3
 font:
   normal:
-    family: DankMono Nerd Font
+    family: Anonymice Nerd Font Mono
     style: Regular
   bold:
-    family: DankMono Nerd Font 
+    family: Anonymice Nerd Font Mono
     style: Bold
   italic:
-    family: DankMono Nerd Font 
+    family: Anonymice Nerd Font Mono
     style: Italic
-  size: 20.0
+  size: 15.0
   AppleFontSmoothing: true
   offset:
     x: 0
@@ -41,15 +40,15 @@ font:
     x: 0
     y: 1
   use_this_strokes: true
-draw_bold_text_with_bright_colors:  true
+draw_bold_text_with_bright_colors: true
 mouse_bindings:
-  - {mouse: Right, action: PasteSelection }
+  - { mouse: Right, action: PasteSelection }
 mouse:
   hide_when_typing: true
 visual_bell:
-  animation: Ease 
+  animation: Ease
   duration: 0
-  color: '0xffffff'
+  color: "0xffffff"
 selection:
   # This string contains all characters that are used as separators for
   # "semantic words" in Alacritty.
@@ -63,17 +62,17 @@ cursor:
 # Keybindings
 alt_send_esc: true
 key_bindings:
-  - { key: N,        mods: Command, action: SpawnNewInstance            }
-  - { key: V,        mods: Command, action: Paste                        }
-  - { key: C,        mods: Command, action: Copy                         }
-  - { key: Paste,                   action: Paste                        }
-  - { key: Copy,                    action: Copy                         }
-  - { key: H,        mods: Command, action: Hide                         }
-  - { key: Q,        mods: Command, action: Quit                          }
-  - { key: W,        mods: Command, action: Quit                          }
-  - { key: Equals,        mods: Shift|Command, action: IncreaseFontSize              }
-  - { key: Minus,     mods: Command,  action: DecreaseFontSize }
-  - { key: Key0,    mods: Command, action: ResetFontSize}
+  - { key: N, mods: Command, action: SpawnNewInstance }
+  - { key: V, mods: Command, action: Paste }
+  - { key: C, mods: Command, action: Copy }
+  - { key: Paste, action: Paste }
+  - { key: Copy, action: Copy }
+  - { key: H, mods: Command, action: Hide }
+  - { key: Q, mods: Command, action: Quit }
+  - { key: W, mods: Command, action: Quit }
+  - { key: Equals, mods: Shift|Command, action: IncreaseFontSize }
+  - { key: Minus, mods: Command, action: DecreaseFontSize }
+  - { key: Key0, mods: Command, action: ResetFontSize }
 
 import:
   - ~/.alacritty-colorscheme/themes/challenger_deep.yaml

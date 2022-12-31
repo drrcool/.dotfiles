@@ -57,8 +57,6 @@
 (package! beacon)
 (package! modus-themes)
 (package! focus )
-(package! aggressive-indent )
-(package! cov )
 (package! flycheck-posframe)
 (package! info-colors )
 (package! elpy )
@@ -73,13 +71,18 @@
   )
 (unpin! lsp-mode)
 (unpin! dap-mode)
-(package! org-wild-notifier)
+
 (package! org-modern)
 (package! moe-theme)
-(package! evil-god-state)
 (package! ivy-posframe)
 (package! org-super-agenda)
 (package! org-auto-tangle)
 (package! tsi 
           :recipe (:host github :repo "orzechowskid/tsi.el"))
-
+(package! tsx-mode
+	  :recipe (:host github :repo "orzechowskid/tsx-mode.el" :branch "emacs28"))
+(package! mixed-pitch)
+(package! centered-cursor-mode)
+(package! avy)
+(package! undo-fu)
+(package! quickrun)

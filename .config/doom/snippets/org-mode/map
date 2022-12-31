@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: map
+# key: map
+# --
+(map! :leader
+      :desc "${2:desc}"
+      "${3:bind}" #'${4:function}
+)

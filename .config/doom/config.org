@@ -1,85 +1,76 @@
-#+PROPERTY: :tangle ~/.doom.d/config.el
-* My Emacs Config
+#+Title: Emacs Config
 
 ** My Info:
 #+begin_src emacs-lisp :tangle yes
 (setq user-full-name "Richard Cool"
       user-mail-address "richardjcool@gmail.com")
 #+end_src
-** Change Evil cursor
-#+begin_src emacs-lisp :tangle yes
-(setq evil-normal-state-cursor '(box "light blue")
-      evil-insert-state-cursor '(bar "medium sea green")
-      evil-visual-state-cursor '(hollow "orange"))
-#+end_src
+
+#+RESULTS:
+: richardjcool@gmail.com
+
 
 ** Move to trash to delete
 #+begin_src emacs-lisp :tangle yes
 (setq-default delete-by-moving-to-trash t
               trash-directory "~/.local/share/Trash/files/")
 #+end_src
+
+#+RESULTS:
+: ~/.local/share/Trash/files/
+
 ** Font
 #+begin_src emacs-lisp :tangle yes
-(setq doom-font (font-spec :family "PragmataPro Liga" :size 20)
-      doom-big-font (font-spec :family "PragmataPro Liga" :size 30)
-    doom-variable-pitch-font (font-spec :family "Fantasque Sans Mono Nerd Font" :size 20)
-    doom-unicode-font (font-spec :family "PragmataPro Mono Liga" :size 20)
-    doom-serif-font (font-spec :family "DankMono Nerd Font" :size 20)
+(setq doom-font (font-spec :family "Anonymice Nerd Font Mono" :size 20)
+      doom-big-font (font-spec :family "Anonymice Nerd Font Mono" :size 30)
+      doom-variable-pitch-font (font-spec :family "Fantasque Sans Mono Nerd Font" :size 20)
+      doom-unicode-font (font-spec :family "Spleen 32x64" :size 20)
+      doom-serif-font (font-spec :family "DankMono Nerd Font" :size 20)
 
-    )
+      )
 
 
 (custom-set-faces!
-'(font-lock-comment-face :slant italic)
-'(font-lock-keyword-face :slant italic))
+  '(font-lock-comment-face :slant italic)
+  '(font-lock-keyword-face :slant italic))
+
 #+end_src
 
-** Theme
+#+RESULTS:
+| doom--customize-themes-h-124 |
+
+
+** COMMENT Theme
 #+begin_src emacs-lisp :tangle yes
 (use-package! modus-themes
 :init
-(setq modus-themes-hl-line '(accented intense)
-    modus-themes-subtle-line-numbers t
-    modus-themes-region '(accented bg-only)  ;; accented
-    modus-themes-variable-pitch-ui t
-    modus-themes-fringes 'intense
-    modus-themes-diffs nil
-    modus-themes-italic-constructs t
-    modus-themes-bold-constructs t
-    modus-themes-intense-mouseovers t
-    modus-themes-paren-match '(bold intense)
-    modus-themes-syntax '(alt-syntax yellow-comments green-strings)
-    modus-themes-links '(neutral-underline background)
-    modus-themes-mode-line '(borderless padded accented)
-    modus-themes-tabs-accented nil ;; default
-    modus-themes-completions
-    '((matches . (extrabold intense accented))
-        (selection . (semibold accented intense))
-        (popup . (accented)))
-    modus-themes-headings '((1 . (rainbow 1.4))
-                            (2 . (rainbow 1.3))
-                            (3 . (rainbow 1.2))
-                            (4 . (rainbow bold 1.1))
-                            (t . (rainbow bold)))
-    modus-themes-org-blocks 'tinted-background
-    modus-themes-org-agenda
-    '((header-block . (semibold 1.4))
-        (header-date . (workaholic bold-today 1.2))
-        (event . (accented italic varied))
-        (scheduled . rainbow)
-        (habit . traffic-light))
+  (setq modus-themes-hl-line '(intense)
+  modus-themes-subtle-line-numbers nil
+  modus-themes-region '(no-extend bg-only)
+  modus-themes-variable-pitch-ui nil
+  modus-themes-fringes 'intense
+  modus-themes-diffs nil
+  modus-themes-italic-constructs t
+  modus-themes-bold-constructs  t
+  modus-themes-prompts '( bold intense italic)
+  modus-themes-intense-mouseovers t
+  modus-themes-paren-match '(bold intense)
+  modus-themes-syntax '( yellow-comments)
+  modus-themes-links '(neutral-underline background)
+  modus-themes-mode-line '(moody borderless accented 4 1)
+    modus-themes-org-blocks 'gray-background
     modus-themes-markup '(intense background)
     modus-themes-mail-citations 'intensep
     modus-themes-lang-checkers '(background))
-)
 
 :config
 (modus-themes-load-vivendi)
 (map! :leader
-    :prefix "t" ;; toggle hrr
-    :desc "Toggle Modus theme" "m" #'modus-themes-toggle)
-
+    :prefix "t"
+    :desc "Toggle Modus theme"  #'modus-themes-toggle)
+)
 #+end_src
+
 ** Copilot
 #+begin_src emacs-lisp :tangle yes
 ;; accept completion from copilot and fallback to company
@@ -90,28 +81,10 @@
          :map copilot-completion-map
          ("<tab>" . 'copilot-accept-completion)
          ("TAB" . 'copilot-accept-completion)))
-#+end_src
-* Turn off god-mode
-#+begin_src emacs-lisp :tangle yes
-;; (god-mode)
-#+end_src
-** set a keybind to allow to use god mode in evil
-#+begin_src emacs-lisp :tangle yes
-(evil-define-key 'normal global-map "," 'evil-execute-in-god-state)
-#+end_src
+         #+END_SRC
 
-** Evil god state has a mode line tracker, we dont need two
-#+begin_src emacs-lisp :tangle yes
-(evil-define-key 'normal global-map "," 'evil-execute-in-god-state)
-#+end_src
+         #+RESULTS:
 
-#+RESULTS:
-** Add the ability to cancel out of god mode
-#+begin_src emacs-lisp :tangle yes
-(evil-define-key 'god global-map [escape] 'evil-god-state-bail)
-#+end_src
-
-#+RESULTS:
 
 * Turn on rainbow mode
 #+begin_src emacs-lisp :tangle yes
@@ -123,122 +96,42 @@
 (global-rainbow-mode 1 )
 #+end_src
 
-* Org modern
-#+begin_src emacs-lisp :tangle yes
-(use-package! org-modern
-  :hook (org-mode . org-modern-mode)
-  :config
-  (setq org-modern-star '("◉" "○" "◈" "◇" "✳" "◆" "✸" "▶")
-        org-modern-table-vertical 2
-        org-modern-table-horizontal 4
-        org-modern-list '((43 , "➤") (45 . "–") (42 . "•"))
-        org-modern-footnote (cons nil (cadr org-script-display))
-        org-modern-priority t
-        org-modern-block t
-        org-modern-block-fringe nil
-        org-modern-horizontal-rule t
-        ord-modern-keyword
-        '((t                                                            .t)
-             ("title"               . "𝙏")
-          ("subtitle"            . "𝙩")
-          ("author"              . "𝘼")
-          ("email"               . "@")
-          ("date"                . "𝘿")
-          ("lastmod"             . "✎")
-          ("property"            . "☸")
-          ("options"             . "⌥")
-          ("startup"             . "⏻")
-          ("macro"               . "𝓜")
-          ("bind"                . #("" 0 1 (display (raise -0.1))))
-          ("bibliography"        . "")
-          ("print_bibliography"  . #("" 0 1 (display (raise -0.1))))
-          ("cite_export"         . "⮭")
-          ("print_glossary"      . #("ᴬᶻ" 0 1 (display (raise -0.1))))
-          ("glossary_sources"    . #("" 0 1 (display (raise -0.14))))
-          ("export_file_name"    . "⇒")
-          ("include"             . "⇤")
-          ("setupfile"           . "⇐")
-          ("html_head"           . "🅷")
-          ("html"                . "🅗")
-          ("latex_class"         . "🄻")
-          ("latex_class_options" . #("🄻" 1 2 (display (raise -0.14))))
-          ("latex_header"        . "🅻")
-          ("latex_header_extra"  . "🅻⁺")
-          ("latex"               . "🅛")
-          ("beamer_theme"        . "🄱")
-          ("beamer_color_theme"  . #("🄱" 1 2 (display (raise -0.12))))
-          ("beamer_font_theme"   . "🄱𝐀")
-          ("beamer_header"       . "🅱")
-          ("beamer"              . "🅑")
-          ("attr_latex"          . "🄛")
-          ("attr_html"           . "🄗")
-          ("attr_org"            . "⒪")
-          ("name"                . "⁍")
-          ("header"              . "›")
-          ("caption"             . "☰")
-          ("RESULTS"             . "🠶")
-          ("language"            . "𝙇")
-          ("hugo_base_dir"       . "𝐇")
-          ("latex_compiler"      . "⟾")
-          ("results"             . "🠶")
-          ("filetags"            . "#")
-          ("created"             . "⏱")
-          ("export_select_tags"  . "✔")
-          ("export_exclude_tags" . "❌")))
-  ;; Change faces
-  (custom-set-faces! '(org-modern-tag :inherit (region org-modern-label)))
-  (custom-set-faces! '(org-modern-statistics :inherit org-checkbox-statistics-todo)))
+#+RESULTS:
+: t
 
-(when (modulep! :ui ligatures)
-  (defadvice! +org-init-appearance-h--no-ligatures-a ()
-    :after #'+org-init-appearance-h
-    (set-ligatures! 'org-mode
-                    :name nil
-                    :src_block nil
-                    :src_block_end nil
-                    :quote nil
-                    :quote_end nil)))
+* line numbers
+#+begin_src emacs-lisp :tangle yes
+(global-display-line-numbers-mode 1)
+(setq display-line-numbers-type 'relative)
 #+end_src
 
 #+RESULTS:
-* Org journal
+: relative
+
+* tramp
 #+begin_src emacs-lisp :tangle yes
-(setq org-journal-dir "~/nc/Org/journal/"
-      org-journal-date-prefix "* "
-      org-journal-time-prefix "** "
-      org-journal-date-format "%B %d, %Y (%A) "
-      org-journal-file-format "%Y-%m-%d.org")
+(setq tramp-default-method "ssh")
+
 #+end_src
 
-* Org Mode
+#+RESULTS:
+: ssh
+
+* auto-tangle
 #+begin_src emacs-lisp :tangle yes
-(after! org
-  (setq org-directory "~/org"
-        org-agenda-files '("~/org/agenda.org")
-        org-default-notes-file (expand-file-name "notes.org" org-directory)
-        org-ellipsis " ▼ "
-        org-superstar-headline-bullets-list '("◉" "●" "○" "◆" "●" "○" "◆")
-        org-superstar-itembullet-alist '((?+ . ?➤) (?- . ?✦)) ; changes +/- symbols in item lists
-        org-log-done 'time
-        org-hide-emphasis-markers t
-        ;; ex. of org-link-abbrev-alist in action
-        ;; [[arch-wiki:Name_of_Page][Description]]
-        org-link-abbrev-alist    ; This overwrites the default Doom org-link-abbrev-list
-          '(("google" . "http://www.google.com/search?q=")
-            ("ddg" . "https://duckduckgo.com/?q=")
-            ("wiki" . "https://en.wikipedia.org/wiki/"))
-        org-table-convert-region-max-lines 20000
-        org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
-          '((sequence
-             "TODO(t)"           ; A task that is ready to be tackled
-             "BLOG(b)"           ; Blog writing assignments
-             "PROJ(p)"           ; A project that contains other tasks
-             "WAIT(w)"           ; Something is holding up this task
-             "|"                 ; The pipe necessary to separate "active" states and "inactive" states
-             "DONE(d)"           ; Task has been completed
-             "CANCELLED(c)" )))) ; Task has been cancelled
+(after! org-mode
+ (use-package! org-auto-mode
+   :defer t
+   :hook (org-mode . org-auto-tangle-mode)
+   :config
+   (setq org-auto-tangle-default t))
+)
 #+end_src
-* Ivy Posframe
+
+#+RESULTS:
+
+
+* COMMENT Ivy Posframe
 #+begin_src emacs-lisp :tangle yes
 (setq ivy-posframe-display-functions-alist
       '((swiper                         . ivy-posframe-display-at-point)
@@ -256,13 +149,17 @@
       '((swiper . 20)
         (dmenu . 20)
         (t . 10)))
+(setq ivy-posframe-border-width 0)
 (ivy-posframe-mode 1)
 #+end_src
 
 #+RESULTS:
 : t
 
-* Org Capture
+#+RESULTS:
+: t
+
+* Org
    #+begin_src emacs-lisp :tangle yes
 (after! org
   ;; TODO: extract org-directory into noweb reference so it can be used in all the places
@@ -278,123 +175,680 @@
                                  ("WAIT" . (:foreground "orange" :weight normal))
                                  ("HOLD" . (:inherit warning :weight normal))))
 
-  (custom-set-faces!
-    '(org-level-1 :inherit outline-1 :extend t :weight normal)
-    '(org-level-2 :inherit outline-2 :extend t :weight normal)
-    '(org-level-3 :inherit outline-3 :extend t :weight normal)
-    '(org-level-4 :inherit outline-4 :extend t :weight normal)
-    '(org-scheduled-today :foreground "#fcce7b") ;; warning yellow
-    '(org-scheduled-previously :foreground "#ff665c") ;; error red
-    '(org-imminent-deadline :foreground "#ff665c")
-    '(org-upcoming-deadline :foreground "#fcce7b")
-    '(org-checkbox-statistics-todo :inherit org-todo :weight normal)
-    '(org-headline-todo :inherit org-level-2)
-    )
-  (add-hook 'org-mode-hook 'mixed-pitch-mode)
-  (setq org-fontify-todo-headline nil)
-  (setq org-archive-location "~/Things/archive/%s_archive::"
-        org-refile-targets '(("~/Things/todo.org" :maxlevel . 2)
-                             ("~/Things/someday.org" :maxlevel . 2)
-                             ("~/Things/bookmarks.org" :level . 0))
-        )
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '(
+     (python . t)
+     (shell . t)
+     (js . t)
+     (lua . t)
+     (sql . t)
+     ))
+  (setq python-shell-completion-native-enable nil)
+  (setq org-src-window-setup 'current-window)
+
+   (defun org-babel-execute:typescript (body params)
+    (let ((org-babel-js-cmd "npx ts-node < "))
+      (org-babel-execute:js body params)))
+(setq org-src-fontify-natively t
+      org-src-tab-acts-natively t
+      org-src-window-setup 'current-window)
+
   (setq org-capture-templates
         '(
           ("t" "todo" entry (file +org-capture-todo-file) "* TODO %?")
           ("n" "node" entry (file +org-capture-todo-file) "* Note: ")
           ("p" "process email" entry (file +org-capture-todo-file)
            "* TODO %? %:fromname: %a")
-          ))
-  (setq org-goto-interface 'outline-path-completion
-        org-outline-path-complete-in-steps nil)
-  (defun make-link-to-pull-request (pull_no)
-    (browse-url (concat "https://github.com/dbdrive/triebwerk/pull/" pull_no)))
+          )))
 
-  (defun make-link-to-issue (issue_no)
-    (browse-url (concat "https://github.com/dbdrive/triebwerk/issues/" issue_no)))
-
-  (org-add-link-type "pr" #'make-link-to-pull-request)
-  (org-add-link-type "issue" #'make-link-to-issue)
-  (setq org-table-duration-hour-zero-padding nil)
-  (setq org-agenda-start-day nil                ;; start today
-        org-agenda-span 'day                    ;; and show only today
-        org-agenda-dim-blocked-tasks 'invisible ;; Don't show me any blocked todos. Next actions only - doesn't work for tags searches
-        org-agenda-todo-ignore-scheduled 'future
-        org-agenda-tags-todo-honor-ignore-options t)
-  (setq org-agenda-sorting-strategy '((agenda habit-down time-up priority-down category-keep)
-                                      (todo scheduled-up todo-state-down priority-down category-keep)
-                                      (tags priority-down category-keep)
-                                      (search category-keep)))
-  (org-super-agenda-mode)
-  (setq org-agenda-custom-commands
-        '(
-          ("n" "This sprint or other urgent matters"
-           (
-            (agenda "")
-            ;; TODO: don't show done items
-            (tags-todo "sprint+current" (
-                                         (org-agenda-overriding-header "")
-                                         (org-super-agenda-groups
-                                          '(
-                                            (:name "Talk!"
-                                             :tag "agenda"
-                                             :order 5)
-                                            (:name "Waiting"
-                                             :todo "WAIT"
-                                             :order 9)
-                                            (:name "Leftovers"
-                                             :tag "leftover"
-                                             :order 99)
-                                            (:name "Tasks"
-                                             :anything t
-                                             :order 0)
-                                            ))
-                                         ))
-            )
-           )
-          ))
-  (setq org-agenda-hide-tags-regexp ".*") ;; Hide all tags in agenda view
-  (setq org-agenda-block-separator 9472)     ;; Separate agenda and todos by a straight line
-  (setq org-agenda-skip-scheduled-if-done t) ;; Don't show done items in calendar
-  (setq org-agenda-entry-types '(:deadline :scheduled :timestamp :sexp)) ;; This is the default value
-  (setq org-agenda-skip-deadline-if-done t) ;; Don't show done items in agenda
-  (after! org (setq org-re-reveal-title-slide nil))
-  )
+(map!
+ :leader
+ :prefix "m"
+ :map 'org-src-mode-map
+ (:desc "Accept SRC Edits"
+ :nmv "J" #'org-edit-src-exit)
+ (:desc "Abort SRC Edits"
+ :nmv "X" #'org-edit-src-abort))
 #+end_src
+
+#+RESULTS:
+: org-edit-src-abort
 
 * Set HUGO base directory
 #+begin_src emacs-lisp :tangle yes
 
-(setq org-huge-base-dir "~/org/markdown")
+(setq org-hugo-base-dir "~/org/markdown")
 
 #+end_src
 
 #+RESULTS:
 : ~/org/markdown
-* Theme
+
+** Turn on beacon
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+  (use-package beacon
+  :straight (beacon :fetcher github :repo "Malabarba/beacon")
+    :ensure t
+    :config
+    (beacon-mode +1))
+#+end_src
+
+#+RESULTS:
+
+** Line Highlighting and Fringe
+#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
+  ;; Turn on line highlithting for current line
+  (hl-line-mode 1)
+  ;; Add some margins
+  (set-fringe-mode 10)
+#+END_SRC
+
+#+RESULTS:
+: ((buffer-predicate . doom-buffer-frame-predicate) (right-divider-width . 1) (bottom-divider-width . 1) (vertical-scroll-bars) (tool-bar-lines . 0) (menu-bar-lines . 0) (left-fringe . 10) (right-fringe . 10))
+
+** Keys for Mac
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
+  (setq mac-command-modifier       'meta
+        mac-option-modifier        'meta
+        mac-control-modifier       'control
+        mac-right-option-modifier     'meta
+        mac-right-control-modifier  'control)
+#+end_src
+
+#+RESULTS:
+: control
+
+
+** Manage how new windows are placed
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+    (winner-mode +1)
+  (setq display-buffer-base-action
+    '((display-buffer-reuse-window
+       display-buffer-reuse-mode-window
+       display-buffer-same-window
+       display-buffer-in-previous-window)))
+#+end_src
+
+#+RESULTS:
+| display-buffer-reuse-window | display-buffer-reuse-mode-window | display-buffer-same-window | display-buffer-in-previous-window |
+
+* Customize mode line
+#+begin_src emacs-lisp :tangle yes
+(after! doom-modeline
+    (setq
+     doom-modeline-hud t
+     doom-modeline-minor-modes nil
+          doom-modeline-height 25))
+#+end_src
+
+#+RESULTS:
+: 25
+
+** Mixed Pitch
+A better verson of variable pitch.
+
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+  (use-package! mixed-pitch
+    :defer t
+    :config
+    (setq mixed-pitch-set-height nil)
+    (dolist (face '(org-date org-priority org-tag org-special-keyword))
+      (add-to-list 'mixed-pitch-fixed-pitch-faces face))
+   )
+#+end_src
+
+#+RESULTS:
+
+** Quickrun
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+  (use-package! quickrun
+    :defer t
+    :general
+    (general-def
+     :states 'normal
+     :prefix "SPC"
+     :keymaps 'quickrun--mode-map
+     "cq" '(nil :which-key "quickrun")
+     "cqq" '(quit-window :which-key "Quit")
+     "cqr" '(quickrun :which-key "Run")
+     "cqR" '(quickrun-region :which-key "Run Region")
+     "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
+     "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
+     "cqs" '(quickrun-select :which-key "Select backend")"cq" '(nil :which-key "quickrun")
+     "cqq" '(quit-window :which-key "Quit")
+     "cqr" '(quickrun :which-key "Run")
+     "cqR" '(quickrun-region :which-key "Run Region")
+     "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
+     "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
+     "cqs" '(quickrun-select :which-key "Select backend")
+ ))
+#+end_src
+
+#+RESULTS:
+
+** Auto-revert changed files
+#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
+  (setq global-auto-revert-non-file-buffers t)
+(global-auto-revert-mode 1)
+#+end_src
 
 #+RESULTS:
 : t
-* line numbers
-#+begin_src emacs-lisp :tangle yes
-(global-display-line-numbers-mode 1)
-(setq display-line-numbers-type 'relative)
-#+end_src
 
-* tramp
-#+begin_src emacs-lisp :tangle yes
-(setq tramp-default-method "ssh")
 
-#+end_src
-
-* auto-tangle
+* Treesitter
 #+begin_src emacs-lisp :tangle yes
-(after! org-mode
- (use-package! org-auto-mode
-   :defer t
-   :hook (org-mode . org-auto-tangle-mode)
-   :config
-   (setq org-auto-tangle-default t))
+(after! tree-sitter
+(add-to-list 'tree-sitter-major-mode-language-alist '(tsx-mode . tsx))
 )
 #+end_src
 
 #+RESULTS:
+: ((tsx-mode . tsx) (agda-mode . agda) (sh-mode . bash) (c-mode . c) (caml-mode . ocaml) (csharp-mode . c-sharp) (c++-mode . cpp) (d-mode . d) (css-mode . css) (elm-mode . elm) (elixir-mode . elixir) (go-mode . go) (hcl-mode . hcl) (terraform-mode . hcl) (html-mode . html) (mhtml-mode . html) (nix-mode . nix) (java-mode . java) (javascript-mode . javascript) (js-mode . javascript) (js2-mode . javascript) (js3-mode . javascript) (json-mode . json) (jsonc-mode . json) (julia-mode . julia) (ocaml-mode . ocaml) (php-mode . php) (prisma-mode . prisma) (python-mode . python) (pygn-mode . pgn) (rjsx-mode . javascript) (ruby-mode . ruby) (rust-mode . rust) (rustic-mode . rust) (scala-mode . scala) (swift-mode . swift) (tuareg-mode . ocaml) (typescript-mode . typescript) (zig-mode . zig))
+
+* LSP-UI
+#+begin_src emacs-lisp :tangle yes
+(use-package! lsp-ui
+  :after lsp
+  :hook ((lsp-mode . lsp-ui-mode)
+         (lsp-mode . lsp-ui-sideline-mode))
+  :config
+  (setq lsp-ui-sideline-show-hover t)
+  (setq lsp-ui-doc-position 'top)
+  )
+#+end_src
+
+#+RESULTS:
+
+*TSX Mode
+#+begin_src emacs-lisp :tangle yes
+(use-package! tsi
+  :hook ((web-mode-hook . tsi-typescript-mode)
+         (typescript-mode-hook . tsi-typescript-mode)
+         (tsx-mode-hook . tsi-typescript-mode)
+          (json-mode-hook . tsi-typescript-mode)
+          (css-mode-hook . tsi-css-mode)
+          (scss-mode-hook . tsi-scss-mode))
+  :config
+  (require 'tsi-css)
+  (require 'tsi-json)
+  (require 'tsi-typescript)
+
+)
+
+(use-package! tsx-mode
+
+  :hook (tsx-mode . lsp-deferred)
+  :config
+  (add-to-list 'auto-mode-alist '("\\.[jt]sx?\\'" . tsx-mode))
+
+(map!
+ :leader
+ :prefix "m"
+ :map 'general-override-mode-map
+ (:desc "Toggle All Nodes"
+  :nmv #'tsx-mode-fold-toggle-all-nodes)
+ (:desc "Toggle Coverage"
+        :nmv #'tsx-mode-coverage-toggle)
+ (:desc "Toggle Node"
+        :nvm #'tsx-mode-fold-toggle-node)
+)
+)
+#+end_src
+
+#+RESULTS:
+| lsp-deferred |
+
+* Format on Save
+#+begin_src emacs-lisp :tangle yes
+(use-package! apheleia
+  :config
+  (apheleia-global-mode +1))
+
+#+end_src
+
+#+RESULTS:
+: t
+
+* Hydras
+** Switch Buffers
+#+begin_src emacs-lisp :tangle yes
+(defun my/name-of-buffers (n)
+  "Return the names of the first N buffers from `buffer-list'."
+  (let ((bns
+         (delq nil
+               (mapcar
+                (lambda (b)
+                  (unless (string-match "^ " (setq b (buffer-name b)))
+                    b))
+                (buffer-list)))))
+    (subseq bns 1 (min (1+ n) (length bns)))))
+
+;; Given ("a", "b", "c"), return "1. a, 2. b, 3. c".
+(defun my/number-names (list)
+  "Enumerate and concatenate LIST."
+  (let ((i 0))
+    (mapconcat
+     (lambda (x)
+       (format "%d. %s" (cl-incf i) x))
+     list
+     ", ")))
+
+(defvar my/last-buffers nil)
+
+(defun my/switch-to-buffer (arg)
+  (interactive "p")
+  (switch-to-buffer
+   (nth (1- arg) my/last-buffers)))
+
+(defun my/switch-to-buffer-other-window (arg)
+  (interactive "p")
+  (switch-to-buffer-other-window
+   (nth (1- arg) my/last-buffers)))
+
+ (defhydra hydra:switch-buffer (:exit t
+                                :body-pre (setq my/last-buffers
+                                                (my/name-of-buffers 4)))
+   "
+_o_ther buffers: %s(my/number-names my/last-buffers)
+
+"
+   ("o" my/switch-to-buffer "this window")
+   ("O" my/switch-to-buffer-other-window "other window")
+   ("<escape>" nil))
+#+end_src
+
+
+** LSP
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+  (defhydra hydra:lsp (:exit t :hint nil)
+    "
+   Buffer^^               Server^^                   Symbol
+  -------------------------------------------------------------------------------------
+   [_f_] format           [_M-r_] restart            [_d_] declaration  [_i_] implementation  [_o_] documentation
+   [_m_] imenu            [_S_]   shutdown           [_D_] definition   [_t_] type            [_r_] rename
+   [_x_] execute action   [_M-s_] describe session   [_R_] references   [_s_] signature"
+    ("d" lsp-find-declaration)
+    ("D" lsp-ui-peek-find-definitions)
+    ("R" lsp-ui-peek-find-references)
+    ("i" lsp-ui-peek-find-implementation)
+    ("t" lsp-find-type-definition)
+    ("s" lsp-signature-help)
+    ("o" lsp-describe-thing-at-point)
+    ("r" lsp-rename)
+
+    ("f" lsp-format-buffer)
+    ("m" lsp-ui-imenu)
+    ("x" lsp-execute-code-action)
+
+    ("M-s" lsp-describe-session)
+    ("M-r" lsp-restart-workspace)
+    ("S" lsp-shutdown-workspace))
+#+end_src
+** Dired
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+      (defhydra hydra:dired (:hint nil :color pink)
+        "
+      _+_ mkdir          _v_iew           _m_ark             _(_ details        _i_nsert-subdir    wdired
+      _C_opy             _O_ view other   _U_nmark all       _)_ omit-mode      _$_ hide-subdir    C-x C-q : edit
+      _D_elete           _o_pen other     _u_nmark           _l_ redisplay      _w_ kill-subdir    C-c C-c : commit
+      _R_ename           _M_ chmod        _t_oggle           _g_ revert buf     _e_ ediff          C-c ESC : abort
+      _Y_ rel symlink    _G_ chgrp        _E_xtension mark   _s_ort             _=_ pdiff
+      _S_ymlink          ^ ^              _F_ind marked      _._ toggle hydra   \\ flyspell
+      _r_sync            ^ ^              ^ ^                ^ ^                _?_ summary
+      _z_ compress-file  _A_ find regexp
+      _Z_ compress       _Q_ repl regexp
+
+      T - tag prefix
+      "
+        ("\\" dired-do-ispell)
+        ("(" dired-hide-details-mode)
+        (")" dired-omit-mode)
+        ("+" dired-create-directory)
+        ("=" diredp-ediff)         ;; smart diff
+        ("?" dired-summary)
+        ("$" diredp-hide-subdir-nomove)
+        ("A" dired-do-find-regexp)
+        ("C" dired-do-copy)        ;; Copy all marked files
+  ("D" dired-do-delete)
+        ("E" dired-mark-extension)
+        ("e" dired-ediff-files)
+        ("F" dired-do-find-marked-files)
+        ("G" dired-do-chgrp)
+        ("g" revert-buffer)        ;; read all directories again (refresh)
+        ("i" dired-maybe-insert-subdir)
+        ("l" dired-do-redisplay)   ;; relist the marked or singel directory
+        ("M" dired-do-chmod)
+        ("m" dired-mark)
+        ("O" dired-display-file)
+        ("o" dired-find-file-other-window)
+        ("Q" dired-do-find-regexp-and-replace)
+        ("R" dired-do-rename)
+        ("r" dired-do-rsynch)
+        ("S" dired-do-symlink)
+        ("s" dired-sort-toggle-or-edit)
+        ("t" dired-toggle-marks)
+        ("U" dired-unmark-all-marks)
+        ("u" dired-unmark)
+        ("v" dired-view-file)      ;; q to exit, s to search, = gets line #
+        ("w" dired-kill-subdir)
+        ("Y" dired-do-relsymlink)
+        ("z" diredp-compress-this-file)
+        ("Z" dired-do-compress)
+        ("q" nil)
+        ("." nil :color blue))
+
+      (define-key dired-mode-map "." 'hydra-dired/body)
+#+end_src
+
+#+RESULTS:
+: hydra-dired/body
+
+** Theme swticher
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+           (defhydra rc:themes   (:hint nil)
+             "
+              Dark                ^Light^
+         ----------------------------------------------
+         _1_ one              _z_ one-light
+         _2_ vivendi          _x_ operandi
+         _3_ molokai          _c_ ef-trio-light
+         _4_ snazzy          MORE DARK BELOW
+         _5_ old-hope         _v_     ef-dark
+         _6_ henna            _b_     doom-dark+
+         _7_ kaolin-galaxy    _n_     iosevkm
+         _8_ monokai-machine  _m_     vibrant
+         _9_ xcode                ^
+         _0_ moonlight            ^
+         _-_ laserwave            ^
+         _q_ quit                 ^
+         ^                        ^
+           "
+             ;; Dark
+             ("1" (consult-theme 'doom-one )             "one")
+             ("2" (consult-theme 'modus-vivendi )             "modus-vivendi")
+             ("3" (consult-theme 'doom-molokai )             "molokai")
+             ("4" (consult-theme 'doom-snazzy t )             "snazzy")
+             ("5" (consult-theme 'doom-old-hope )             "old hope")
+             ("6" (consult-theme 'doom-henna )             "henna")
+             ("7" (consult-theme 'kaolin-galaxy )             "jaolin-galaxy")
+             ("8" (consult-theme 'doom-monokai-machine )             "monokai-machine")
+             ("9" (consult-theme 'doom-xcode )             "xcode")
+             ("0" (consult-theme 'doom-moonlight )             "moonlight")
+             ("-" (consult-theme 'doom-laserwave )             "laserwave")
+             ("z" (consult-theme 'doom-one-light )
+              "one-light")
+             ("x" (consult-theme 'modus-operandi )             "operand")
+  ("c" (consult-theme 'ef-trio-light )             "ef-trio-light")
+  ("v" (consult-theme 'ef-dark )             "ef-dark")
+  ("b" (consult-theme 'doom-dark+ )             "doom-dark+")
+  ("n" (consult-theme 'doom-Iosvkem )             "Iosvkem")
+  ("m" (consult-theme 'doom-vibrant )             "vibrant")
+   ("q" nil)
+
+             )
+
+
+
+#+end_src
+
+#+RESULTS:
+: rc:themes/body
+
+** window commands
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+    (defhydra hydra:themes (:hint nil)
+     "
+  Movement      ^Split^            ^Switch^        ^Resize^
+  ----------------------------------------------------------------
+  _M-<left>_  <   _s_ vertical      _b_uffer        _<left>_  <
+  _M-<right>_ >   _v_ horizontal    _f_ind file     _<down>_  ↓
+  _M-<up>_    ↑   _m_aximize        _x_wap          _<up>_    ↑
+  _M-<down>_  ↓   _c_lose           _[_backward     _<right>_ >
+  _q_uit          _e_qualize        _]_forward     ^
+  ^               ^               _K_ill         ^
+  ^               ^                  ^             ^
+  "
+     ;; Movement
+     ("M-<left>" windmove-left)
+     ("M-<down>" windmove-down)
+     ("M-<up>" windmove-up)
+     ("M-<right>" windmove-right)
+
+     ;; Split/manage
+     ("s" rc/split-window-vertically-and-switch)
+     ("v" rc/split-window-horizontally-and-switch)
+     ("c" evil-window-delete)
+     ("d" evil-window-delete)
+     ("m" delete-other-windows)
+     ("e" balance-windows)
+
+     ;; Switch
+     ("b" consult-switch-buffer)
+     ("f" consult-find)
+     ("P" project-find-file)
+     ("x" ace-swap-window)
+     ("[" previous-buffer)
+     ("]" next-buffer)
+     ("K" kill-this-buffer)
+
+     ;; Resize
+     ("<left>" windresize-left)
+     ("<right>" windresize-right)
+     ("<down>" windresize-down)
+     ("<up>" windresize-up)
+
+     ("q" nil))
+#+END_SRC
+
+#+RESULTS:
+: hydra:themes/body
+
+** Flycheck
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+  (defhydra hydra:flycheck
+     (:pre (flycheck-list-errors)
+      :post (quit-windows-on "*Flycheck errors*")
+      :hint nil)
+   "Errors"
+   ("f" flycheck-error-list-set-filter "Filter")
+
+   ("j" flycheck-next-error "Next")
+   ("k" flycheck-previous-error "Previous")
+   ("gg" flycheck-first-error "First")
+   ("G" (progn (goto-char (point-max)) (flycheck-previous-error)) "Last")
+   ("q" nil))
+#+end_src
+
+#+RESULTS:
+: hydra:flycheck/body
+
+** Org
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+        ;; Hydra for org agenda (graciously taken from Spacemacs)
+        (defhydra hydra:org (:pre (setq which-key-inhibit t)
+                                         :post (setq which-key-inhibit nil)
+                                         :hint none)
+          "
+        Org agenda (_q_uit)
+
+        ^Clock^      ^Visit entry^              ^Date^             ^Other^
+        ^-----^----  ^-----------^------------  ^----^-----------  ^-----^---------
+        _ci_ in      _SPC_ in other window      _ds_ schedule      _gr_ reload
+        _co_ out     _TAB_ & go to location     _dd_ set deadline  _._  go to today
+        _cq_ cancel  _RET_ & del other windows  _dt_ timestamp     _gd_ go to date
+        _cj_ jump    _o_   link                 _+_  do later      ^^
+        ^^           ^^                         _-_  do earlier    ^^
+        ^^           ^^                         ^^                 ^^
+        ^View^          ^Filter^                 ^Headline^         ^Toggle mode^
+        ^----^--------  ^------^---------------  ^--------^-------  ^-----------^----
+        _vd_ day        _ft_ by tag              _ht_ set status    _tf_ follow
+    :keymaps 'override
+  _vw_ week       _fr_ refine by tag       _hk_ kill          _tl_ log
+        _vt_ fortnight  _fc_ by category         _hr_ refile        _ta_ archive trees
+        _vm_ month      _fh_ by top headline     _hA_ archive       _tA_ archive files
+        _vy_ year       _fx_ by regexp           _h:_ set tags      _tr_ clock report
+        _vn_ next span  _fd_ delete all filters  _hp_ set priority  _td_ diaries
+        _vp_ prev span  ^^                       ^^                 ^^
+        _vr_ reset      ^^                       ^^                 ^^
+        ^^              ^^                       ^^                 ^^
+        "
+          ;; Entry
+          ("hA" org-agenda-archive-default)
+          ("hk" org-agenda-kill)
+          ("hp" org-agenda-priority)
+          ("hr" org-agenda-refile)
+          ("h:" org-agenda-set-tags)
+          ("ht" org-agenda-todo)
+          ;; Visit entry
+          ("o"   link-hint-open-link :exit t)
+          ("<tab>" org-agenda-goto :exit t)
+          ("TAB" org-agenda-goto :exit t)
+          ("SPC" org-agenda-show-and-scroll-up)
+          ("RET" org-agenda-switch-to :exit t)
+          ;; Date
+          ("dt" org-agenda-date-prompt)
+          ("dd" org-agenda-deadline)
+          ("+" org-agenda-do-date-later)
+          ("-" org-agenda-do-date-earlier)
+          ("ds" org-agenda-schedule)
+          ;; View
+          ("vd" org-agenda-day-view)
+          ("vw" org-agenda-week-view)
+          ("vt" org-agenda-fortnight-view)
+          ("vm" org-agenda-month-view)
+          ("vy" org-agenda-year-view)
+          ("vn" org-agenda-later)
+          ("vp" org-agenda-earlier)
+          ("vr" org-agenda-reset-view)
+          ;; Toggle mode
+          ("ta" org-agenda-archives-mode)
+          ("tA" (org-agenda-archives-mode 'files))
+          ("tr" org-agenda-clockreport-mode)
+          ("tf" org-agenda-follow-mode)
+          ("tl" org-agenda-log-mode)
+          ("td" org-agenda-toggle-diary)
+          ;; Filter
+          ("fc" org-agenda-filter-by-category)
+          ("fx" org-agenda-filter-by-regexp)
+          ("ft" org-agenda-filter-by-tag)
+          ("fr" org-agenda-filter-by-tag-refine)
+          ("fh" org-agenda-filter-by-top-headline)
+          ("fd" org-agenda-filter-remove-all)
+          ;; Clock
+          ("cq" org-agenda-clock-cancel)
+          ("cj" org-agenda-clock-goto :exit t)
+          ("ci" org-agenda-clock-in :exit t)
+          ("co" org-agenda-clock-out)
+          ;; Other
+          ("q" nil :exit t)
+          ("gd" org-agenda-goto-date)
+          ("." org-agenda-goto-today)
+          ("gr" org-agenda-redo))
+#+end_src
+
+#+RESULTS:
+: hydra:org/body
+
+** Avy
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+      (defhydra hydra:avy (:exit t :hint nil)
+        "
+       Line^^       Region^^        Goto
+      ----------------------------------------------------------
+       [_y_] yank   [_Y_] yank      [_c_] timed char  [_C_] char
+       [_m_] move   [_M_] move      [_w_] word        [_W_] any word
+       [_k_] kill   [_K_] kill      [_l_] line        [_L_] end of line"
+        ("c" avy-goto-char-timer)
+        ("C" avy-goto-char)
+        ("w" avy-goto-word-1)
+        ("W" avy-goto-word-0)
+        ("l" avy-goto-line)
+        ("L" avy-goto-end-of-line)
+        ("m" avy-move-line)
+        ("M" avy-move-region)
+  ("k" avy-kill-whole-line)
+        ("K" avy-kill-region)
+        ("y" avy-copy-line)
+        ("Y" avy-copy-region))
+
+#+end_src
+
+#+RESULTS:
+: hydra:avy/body
+
+** YasNippet
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+(defhydra hydra:yasnippet (:color blue :hint nil)
+  "
+              ^YASnippets^
+--------------------------------------------
+  Modes:    Load/Visit:    Actions:
+
+ _g_lobal  _d_irectory    _i_nsert
+ _m_inor   _f_ile         _t_ryout
+ _e_xtra   _l_ist         _n_ew
+         _a_ll
+"
+  ("d" yas-load-directory)
+  ("e" yas-activate-extra-mode)
+  ("i" yas-insert-snippet)
+  ("f" yas-visit-snippet-file :color blue)
+  ("n" yas-new-snippet)
+  ("t" yas-tryout-snippet)
+  ("l" yas-describe-tables)
+  ("g" yas/global-mode)
+  ("m" yas/minor-mode)
+  ("a" yas-reload-all))
+#+end_src
+
+#+RESULTS:
+: hydra:yasnippet/body
+** Code folding
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+ (defhydra hydra:folding (:color red)
+   "
+  _o_pen node    _n_ext fold       toggle _f_orward  _s_how current only
+  _c_lose node   _p_revious fold   toggle _a_ll
+  "
+   ("o" origami-open-node)
+   ("c" origami-close-node)
+   ("n" origami-next-fold)
+   ("p" origami-previous-fold)
+   ("f" origami-forward-toggle-node)
+   ("a" origami-toggle-all-nodes)
+   ("s" origami-show-only-node))
+#+end_src
+
+
+** Keybinds
+#+begin_src emacs-lisp :tangle yes
+(map!
+ :leader
+ :prefix "H"
+(:desc "Themes"
+       :nvm #'hydra:themes/body)
+(:desc "Windows"
+       :nvm #'hydra:windows/body)
+(:desc "Dired"
+       :nvm #'hydra:dired/body)
+(:desc "FlyCheck"
+       :nvm #'hydra:flycheck/body)
+(:desc "Org"
+       :nvm #'hydra:org/body)
+(:desc "Avy"
+       :nvm #'hydra:yasnippet/body)
+(:desc "Folding"
+       :nvm #'hydra:folding/body)
+(:desc "LSP"
+       :nvm #'hydra:lsp/body)
+(:desc "Buffers"
+       :nvm #'hydra:buffers/body)
+(:desc "DAP"
+       :nvm #'hydra-dap))
+#+end_src
+
+#+RESULTS:
+: hydra-dap/body
