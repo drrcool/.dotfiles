@@ -1191,10 +1191,6 @@ This seems like its the paved path, but I'm unsure.
     :ensure t
   :straight t 
     :commands (lsp lsp-deferred)
-    :hook ((typescript-mode . #'lsp)
-	   (tsx-ts-mode . #'lsp)
-	   (js-mode . #'lsp)
-	   (lua-mode . #'lsp))
     :init
     (setq lsp-keymap-prefix "C-c l")
     (setq lsp-modeline-code-actions-segments t)
@@ -1218,27 +1214,28 @@ This seems like its the paved path, but I'm unsure.
 
 *** TEXmode
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
-(straight-use-package '(tsi :type git :host github :repo "orzechowskid/tsi.el"))
-(require 'tsi-css)
-(require 'tsi-json)
-(require 'tsi-typescript)
-(add-hook 'tsx-mode-hook (lambda () (tsi-typescript-mode 1)))
-  (add-hook 'json-mode-hook (lambda () (tsi-json-mode 1)))
-  (add-hook 'css-mode-hook (lambda () (tsi-css-mode 1)))
-(add-hook 'scss-mode-hook (lambda () (tsi-scss-mode 1)))
+  (straight-use-package '(tsi :type git :host github :repo "orzechowskid/tsi.el"))
+  (require 'tsi-css)
+  (require 'tsi-json)
+  (require 'tsi-typescript)
+  (add-hook 'tsx-mode-hook (lambda () (tsi-typescript-mode 1)))
+    (add-hook 'json-mode-hook (lambda () (tsi-json-mode 1)))
+    (add-hook 'css-mode-hook (lambda () (tsi-css-mode 1)))
+  (add-hook 'scss-mode-hook (lambda () (tsi-scss-mode 1)))
 
-(straight-use-package '(tsx-mode :type git :host github :repo "orzechowskid/tsx-mode.el" :branch "emacs29"))
-(add-to-list 'auto-mode-alist '("\\.[jt]sx\?\\'" . tsx-mode))
-(general-def
-  :prefix ","
-  :states 'motion
-  :keymaps 'general-override-mode-map
-  "" nil
+  (straight-use-package '(tsx-mode :type git :host github :repo "orzechowskid/tsx-mode.el" :branch "emacs29"))
+  (add-to-list 'auto-mode-alist '("\\.[jt]sx\?\\'" . tsx-mode))
+  (general-def
+    :prefix ","
+    :states 'motion
+    :keymaps 'general-override-mode-map
+    "" nil
 
-  "z" '(tsx-mode-fold-toggle-all-nodes :which-key "Toggle Fold all nodes")
-  "c" '(tsx-mode-coverage-toggle :which-key "Toggle Coverage")
-  "tab" '(tsx-mode-fold-toggle-node :which-key "Toggle Fold here")
- )
+    "z" '(tsx-mode-fold-toggle-all-nodes :which-key "Toggle Fold all nodes")
+    "c" '(tsx-mode-coverage-toggle :which-key "Toggle Coverage")
+    "tab" '(tsx-mode-fold-toggle-node :which-key "Toggle Fold here")
+   )
+  (add-hook 'tsx-mode #'lsp-deferred)
 #+END_SRC
 
 #+RESULTS:
@@ -1343,15 +1340,15 @@ benefit others as well.
 *** Enable =lua-mode=
 
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el :results none 
-      (use-package lua-mode
-      :straight (lua-mode :repo "immerrr/lua-mode" :fetcher github)
-	:ensure t
-	:after (tree-sitter lsp)
-
+  (use-package lua-mode
+    :straight (lua-mode :repo "immerrr/lua-mode" :fetcher github)
+    :ensure t
+    :after (tree-sitter lsp)
+    :hook (lua-mode . lsp-deferred)
     :init
-	(add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
-	(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
-      )
+    (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
+    (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+    )
 #+END_SRC
 
 * Completion
@@ -1547,30 +1544,6 @@ benefit others as well.
 
 #+RESULTS:
 
-** marinalia
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-    ;; Enable rich annotations using the Marginalia package
-    (use-package marginalia 
-      :straight (marginalia :host github :repo "minad/marginalia")
-      ;; Either bind `marginalia-cycle' globally or only in the minibuffer
-      :bind (("M-A" . marginalia-cycle)
-             :map minibuffer-local-map
-             ("M-A" . marginalia-cycle))
-
-      ;; The :init configuration is always executed (Not lazy!)
-      :init
-  :general
-  (general-def
-    :states 'normal
-  :keymap 'override
-  "?" 'marginalia-cyle)
-      ;; Must be in the :init section of use-package such that the mode gets
-      ;; enabled right away. Note that this forces loading the package.
-      (marginalia-mode))
-#+end_src
-
-#+RESULTS:
-: marginalia-cycle
 
 ** Veritco
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
@@ -1887,6 +1860,114 @@ Default to an indentation size of 2
 
 #+RESULTS:
 : rc-hydra-variable-fonts/body
+** Swich Buffers
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+
+ (defun my/name-of-buffers (n)
+  "Return the names of the first N buffers from `buffer-list'."
+  (let ((bns
+         (delq nil
+               (mapcar
+                (lambda (b)
+                  (unless (string-match "^ " (setq b (buffer-name b)))
+                    b))
+                (buffer-list)))))
+    (subseq bns 1 (min (1+ n) (length bns)))))
+
+;; Given ("a", "b", "c"), return "1. a, 2. b, 3. c".
+(defun my/number-names (list)
+  "Enumerate and concatenate LIST."
+  (let ((i 0))
+    (mapconcat
+     (lambda (x)
+       (format "%d. %s" (cl-incf i) x))
+     list
+     ", ")))
+
+(defvar my/last-buffers nil)
+
+(defun my/switch-to-buffer (arg)
+  (interactive "p")
+  (switch-to-buffer
+   (nth (1- arg) my/last-buffers)))
+
+(defun my/switch-to-buffer-other-window (arg)
+  (interactive "p")
+  (switch-to-buffer-other-window
+   (nth (1- arg) my/last-buffers)))
+
+(global-set-key
+ "\C-o"
+ (defhydra my/switch-to-buffer (:exit t
+                                :body-pre (setq my/last-buffers
+                                                (my/name-of-buffers 4)))
+   "
+_o_ther buffers: %s(my/number-names my/last-buffers)
+
+"
+   ("o" my/switch-to-buffer "this window")
+   ("O" my/switch-to-buffer-other-window "other window")
+   ("<escape>" nil)))
+#+end_src
+
+
+** LSP
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+  (defhydra hydra-lsp (:exit t :hint nil)
+    "
+   Buffer^^               Server^^                   Symbol
+  -------------------------------------------------------------------------------------
+   [_f_] format           [_M-r_] restart            [_d_] declaration  [_i_] implementation  [_o_] documentation
+   [_m_] imenu            [_S_]   shutdown           [_D_] definition   [_t_] type            [_r_] rename
+   [_x_] execute action   [_M-s_] describe session   [_R_] references   [_s_] signature"
+    ("d" lsp-find-declaration)
+    ("D" lsp-ui-peek-find-definitions)
+    ("R" lsp-ui-peek-find-references)
+    ("i" lsp-ui-peek-find-implementation)
+    ("t" lsp-find-type-definition)
+    ("s" lsp-signature-help)
+    ("o" lsp-describe-thing-at-point)
+    ("r" lsp-rename)
+
+    ("f" lsp-format-buffer)
+    ("m" lsp-ui-imenu)
+    ("x" lsp-execute-code-action)
+
+    ("M-s" lsp-describe-session)
+    ("M-r" lsp-restart-workspace)
+    ("S" lsp-shutdown-workspace))
+#+end_src
+** Straight
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+(defhydra hydra-straight-helper (:hint nil)
+  "
+_c_heck all       |_f_etch all     |_m_erge all      |_n_ormalize all   |p_u_sh all
+_C_heck package   |_F_etch package |_M_erge package  |_N_ormlize package|p_U_sh package
+----------------^^+--------------^^+---------------^^+----------------^^+------------||_q_uit||
+_r_ebuild all     |_p_ull all      |_v_ersions freeze|_w_atcher start   |_g_et recipe
+_R_ebuild package |_P_ull package  |_V_ersions thaw  |_W_atcher quit    |prun_e_ build"
+  ("c" straight-check-all)
+  ("C" straight-check-package)
+  ("r" straight-rebuild-all)
+  ("R" straight-rebuild-package)
+  ("f" straight-fetch-all)
+  ("F" straight-fetch-package)
+  ("p" straight-pull-all)
+  ("P" straight-pull-package)
+  ("m" straight-merge-all)
+  ("M" straight-merge-package)
+  ("n" straight-normalize-all)
+  ("N" straight-normalize-package)
+  ("u" straight-push-all)
+  ("U" straight-push-package)
+  ("v" straight-freeze-versions)
+  ("V" straight-thaw-versions)
+  ("w" straight-watcher-start)
+  ("W" straight-watcher-quit)
+  ("g" straight-get-recipe)
+  ("e" straight-prune-build)
+  ("q" nil))
+#+end_src
 
 ** Dired
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
@@ -2207,6 +2288,23 @@ Default to an indentation size of 2
 
 #+RESULTS:
 : hydra-yasnippet/body
+** Code folding
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+(global-set-key
+ (kbd "H-C-f")
+ (defhydra hydra-folding (:color red)
+   "
+  _o_pen node    _n_ext fold       toggle _f_orward  _s_how current only
+  _c_lose node   _p_revious fold   toggle _a_ll
+  "
+   ("o" origami-open-node)
+   ("c" origami-close-node)
+   ("n" origami-next-fold)
+   ("p" origami-previous-fold)
+   ("f" origami-forward-toggle-node)
+   ("a" origami-toggle-all-nodes)
+   ("s" origami-show-only-node)))
+#+end_src
 
 
 * Keybinds
@@ -2228,7 +2326,7 @@ Default to an indentation size of 2
   "f" '(nil :which-key "Files")
   "fd" '(ido-dired :which-key "Find directory")
   "ff" '(ido-find-file :which-key "Find file")
-  "fr" '(consult-recent-files :which-key "Recent Files")
+  "fr" '(recentf-open-files :which-key "Recent Files")
   "fs" '(save :which-key "Save")
 
 #+end_src
@@ -2242,7 +2340,7 @@ Default to an indentation size of 2
     ;; Buffers
     "b" '(nil :which-key "Buffer")
     "bb" '(consult-project-buffer :which-key "Switch (proj) buffer")
-    "bB" '(buffler-switch-buffer :which-key "Switch any buffer")
+    "bB" '(bufler-switch-buffer :which-key "Switch any buffer")
     "bd" '(evil-delete-buffer :which-key "Delete buffer")
     "bm" '(rc/kill-other-buffers :which-key "Kill other buffers")
     "bi" '(ibuffer :which-key "iBuffer")
@@ -2322,8 +2420,16 @@ Default to an indentation size of 2
   "He" '(hydra-flycheck/body :which-key "Diagnostics")
   "Ho" '(hydra-org-agenda/body :which-key "Org Agenda")
   "Ha" '(hydra-avy/body :which-key "Avy")
-  "Hy" '(hydra-yasnippet :which-key "YASnippet")
+  "Hy" '(hydra-yasnippet/body :which-key "YASnippet")
+  "Hz" '(hydra-folding/body :which-key "Folding")
+  "Hl" '(hydra-lsp/body :which-key "LSP")
+  "Hb" '(my/switch-to-buffer/body :which-key "Switch to Buffer")
+  "HD" '(hydra-dap :which-key "DAP")
+  
 #+END_SRC
+
+#+RESULTS:
+| dap-hydra/body | :which-key | DAP |
 
 ** Help
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
@@ -2350,6 +2456,26 @@ Default to an indentation size of 2
     "hpd" 'package-delete
 
 #+END_SRC
+
+** Debug
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+  "D" '(nil :which-key "Debug")
+  "Db" '(dap-breakpoint-toggle :which-key "Toggle BP")
+  "DD" '(dap-breakpoint-delete :which-key "Delete BP")
+  "DA" '(dap-breakpoint-add :which-key "Add BP")
+  "D+" '(dap-step-in :which-key "Step In")
+  "D>" '(dap-next :which-key "Next")
+  "D-" '(dap-step-out :which-key "Step out")
+  "D'" '(dap-continue :which-key "continue")
+  "De" '(dap-debug-edit-template :which-key "Edit current template")
+  "Dn" '(dap-debug :which-key "Create and run a new dap config")
+  "Dl" '(dap-debug-last :which-key "Debug using the last template you used")
+  "Dr" '(dap-debug-recent :which-key "debug w/ recent template")
+            "Do" '(dap-go-to-output-buffer :which-key "Output")              
+  
+
+
+#+end_src
 
 ** Window
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
@@ -2527,3 +2653,78 @@ CLOSED: [2022-12-29 Thu 06:28]
 | lambda | nil | (setq gc-cons-percentage 0.1)                                                                 |
 
 
+* Adding python support
+
+First we need to add the lsp server to our local environment.  We use `pyls` for this.
+#+begin_src sh
+  pip install --user "python-language-server[all]"
+#+end_src
+*Note:* There are many language servers for python. If this one doesn't work out, checkout the `lsp-mode`
+[[http://emacs.lsp.github.io/lsp-mode/page/languages/][documentation]] to try some others.
+
+Setup with `use-package`:
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+    (use-package python-mode
+      :ensure t
+      :straight t
+      :hook (python-mode . lsp-deferred)
+      :custom
+      (dap-python-debuffer 'debugpy)
+      :config
+      (require 'dap-python)
+
+  )
+#+end_src
+Setup emacs to use `virtualenv`.  The `pyenv-activate` command will tell `lsp-mode` and `dap-mode` to use the virtual env.
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+  (use-package pyvenv
+  :ensure t
+  :straight t
+  :config
+    (pyvenv-mode 1))
+
+#+end_src
+** Term mode colors
+The =eterm-256color= enchances the output of =term-mode=. It requires =ncurses=. You can get that with you package manager (including with =brew install ncurses= on mac).
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+    (use-package eterm-256color
+  :ensure t
+  :straight t
+  :hook (term-mode . eterm-256color-mode))
+
+#+end_src
+
+** Vterm
+Vterm is a more modern terminal for Emacs and is quite faster than =term=.
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
+  (use-package vterm
+    :ensure t
+    :straight t
+    :commands vterm
+    :config
+    (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
+    (setq vterm-max-scrollback 1000)
+    )
+#+end_src
+*** TODO Need to handle the compiler properly to get this to work.
+
+
+* Configure Dap
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none* Configure Dap
+  (use-package dap-mode
+    :ensure t
+    :straight t
+
+    :custom
+    (lsp-enable-dap-auto-configure t)
+    :config
+    (dap-ui-mode +1)
+
+    (general-define-key
+     :prefix "SPC"
+     :keymaps 'override
+     :states '(normal motion visual)
+     "HD" '(dap-hydra :which-key "Debug")))
+ #+end_src
+
+#+end_src
