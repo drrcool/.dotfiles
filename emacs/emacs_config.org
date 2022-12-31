@@ -1,5 +1,4 @@
-
-Title: Emacs Configuration
+itle: Emacs Configuration
 #+PROPERTY: header-Ares :results none :tangle ~/.emacs.d/init.el
 #+auto_tangle: t
 
@@ -8,8 +7,41 @@ Title: Emacs Configuration
 This is my first attempt at a fully-feature emacs configuration. In many ways, I have little idea of what I'm doing. I've used emacs for years without these features, but with the advent of LSP would like to learn more about to make emacs work the best for my workflow as possible. I've learned a lot via DOOM emacs, but now I want to ensure I have a system that caters to my personal need.
 
 * Setup:
-I got tired of emacs asking if it was ok to follow a symlink on every boot and the attempts I made to suppress that didn't work. So instead, we tangle directly to =init.el= and save this org file under version control.
+I got tired of emacs asking if it was ok to follow a symliink on every boot and the attempts I made to suppress that didn't work. So instead, we tangle directly to =init.el= and save this org file under version control.
 
+** Define where we go for packages
+
+** Straight.el
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+#+end_src
+
+#+RESULTS:
+: t
+
+** Setup use-package
+
+#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
+  ;;Initalize use-package
+  (unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+  (require 'use-package)
+
+
+
+#+END_SRC
 * Initial Quick setup
 These are the random one-off configurations that help make Emacs better, but didn't fall into a great category.  Things like removing the unneeded ui elements from the screen or suppressing annoying dialogs that you always answer yes to.
 ** Remove some of the features of the UI that we don't need (toolbars, menubars, scroll bars, and splash screen)
@@ -27,25 +59,39 @@ These are the random one-off configurations that help make Emacs better, but did
   (scroll-bar-mode -1)
   (display-time-mode 1)
 #+END_SRC
+
+#+RESULTS:
+: t
+
 ** Make deleted files go to trash
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (setq delete-by-moving-to-trash t
 trash-directory "~/.local/share/Trash/files/")
 #+end_src
 
+#+RESULTS:
+: ~/.local/share/Trash/files/
+
 ** Turn on beacon
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package beacon
+  :straight (beacon :fetcher github :repo "Malabarba/beacon")
     :ensure t
     :config
     (beacon-mode +1))
 #+end_src
+
+#+RESULTS:
+: t
 
 ** DONE Suppress execute confirm
 CLOSED: [2022-12-28 Wed 17:26]
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
  (setq org-confirm-babel-evaluate nil)
 #+end_src
+
+#+RESULTS:
+
 ** DONE Keep little files from littering
 CLOSED: [2022-12-28 Wed 18:13]
 
@@ -61,6 +107,9 @@ CLOSED: [2022-12-28 Wed 17:27]
 
 #+end_src
 
+#+RESULTS:
+| /Users/rcool2/.emacs.d/eln-cache/ | /opt/homebrew/Cellar/emacs-plus@30/30.0.50/Emacs.app/Contents/native-lisp/ |
+
 ** Load custom lisp files
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (load (expand-file-name "rc-funcs.el" user-emacs-directory))
@@ -68,11 +117,18 @@ CLOSED: [2022-12-28 Wed 17:27]
   (load custom-file)
 #+end_src
 
+#+RESULTS:
+: t
+
 ** Suppress emacs from asking if it should follow symlink files
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
 (setq vc-follow-symlinks t)
 (setq vc-suppress-confirm t)
 #+end_src
+
+#+RESULTS:
+: t
+
 ** Turn on line numbers
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   ;; Turn on line numbers in every buffer
@@ -80,10 +136,16 @@ CLOSED: [2022-12-28 Wed 17:27]
   ;; With vim bindings, relatives let us use j and k better
   (setq display-line-numbers-type 'relative)
 #+END_SRC
+
+#+RESULTS:
+: relative
+
 ** Disable lockfiles
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
 (setq create-lockfiles nil)
 #+end_src
+
+#+RESULTS:
 
 ** Line Highlighting and Fringe
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
@@ -92,11 +154,19 @@ CLOSED: [2022-12-28 Wed 17:27]
   ;; Add some margins
   (set-fringe-mode 10)
 #+END_SRC
+
+#+RESULTS:
+: ((vertical-scroll-bars) (left-fringe . 10) (right-fringe . 10))
+
 ** Add escape to kill prompts
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   ;; Make escape kill prompts
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 #+END_SRC
+
+#+RESULTS:
+: keyboard-escape-quit
+
 ** Keys for Mac
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (setq mac-command-modifier       'meta
@@ -105,6 +175,9 @@ CLOSED: [2022-12-28 Wed 17:27]
         mac-right-option-modifier     'meta
         mac-right-control-modifier  'control)
 #+end_src
+
+#+RESULTS:
+: control
 
 ** DONE Turn on garbage collection
 CLOSED: [2022-12-28 Wed 18:13]
@@ -131,12 +204,16 @@ CLOSED: [2022-12-28 Wed 18:13]
 
 
 #+end_src
+
+#+RESULTS:
+| lambda  | nil | (message Emacs ready in %s with %d garbage collections. (format %.2f seconds (float-time (time-subtract after-init-time before-init-time))) gcs-done) |                                                                                  |
+| lambda  | nil | (setq gc-cons-percentage 0.1)                                                    |                                                                                  |
+| closure | (t) | nil                                                                              | (message Emacs ready in %s with %d garbage collections. (format %.2f seconds (float-time (time-subtract after-init-time before-init-time))) gcs-done) |
+| closure | (t) | nil                                                                              | (setq gc-cons-percentage 0.1)                                                    |
+
 ** Manage how new windows are placed
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-  (use-package winner-mode
-    :ensure t
-    :config
-    (winner-mode +1))
+    (winner-mode +1)
   (setq display-buffer-base-action
     '((display-buffer-reuse-window
        display-buffer-reuse-mode-window
@@ -144,56 +221,36 @@ CLOSED: [2022-12-28 Wed 18:13]
        display-buffer-in-previous-window)))
 #+end_src
 
-** Define where we go for packages
+#+RESULTS:: t
 
-** Straight.el
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 6))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-#+end_src
-
-#+RESULTS:
-
-** Setup use-package
-
-#+BEGIN_SRC emacs-lisp :results none :tangle ~/.emacs.d/init.el
-;;Initalize use-package
-(unless (package-installed-p 'use-package)
-(package-install 'use-package))
-
-(require 'use-package)
-(require 'quelpa-use-package)
-
-#+END_SRC
 
 * Build the UI we want
 ** Install a better mode line
 
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
-  (use-package doom-modeline
-    :ensure t
-    :init (doom-modeline-mode 1)
-    :config
-    (setq doom-modeline-hud nil)
-    (setq doom-modeline-minor-modes nil)
-    (setq rc-doom-modeline-text-height 200)
-    (setq doom-modeline-height 35)
-    )
-  (use-package all-the-icons
-    :ensure t
-    :if (display-graphic-p))
+    (use-package doom-modeline
+  :straight (doom-modeline :repo "seagle0128/doom-modeline" :fetcher github)
+      :ensure t
+      :init (doom-modeline-mode 1)
+      :config
+      (setq doom-modeline-hud nil)
+      (setq doom-modeline-minor-modes nil)
+      (setq rc-doom-modeline-text-height 200)
+      (setq doom-modeline-height 35)
+      )
+    (use-package all-the-icons
+:straight (all-the-icons
+ :repo "domtronn/all-the-icons.el"
+ :fetcher github
+ :files (:defaults "data"))
+      :ensure t
+      :if (display-graphic-p))
 
 #+END_SRC
+
+#+RESULTS:
+: t
+
 ** Themes:
 *** Setup Modus Themes
 
@@ -201,6 +258,7 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package modus-themes
   :ensure t
+  :straight (modus-themes :fetcher sourcehut :repo "protesilaos/modus-themes")
   :init
   (setq modus-themes-hl-line '(intense)
   modus-themes-subtle-line-numbers nil
@@ -230,25 +288,54 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 
 #+END_SRC
 
+** Mixed Pitch
+A better verson of variable pitch.
+
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
+  (use-package mixed-pitch
+    :ensure t
+    :straight (mixed-pitch :fetcher gitlab :repo "jabranham/mixed-pitch")
+    :defer t
+    :config
+    (setq mixed-pitch-set-height nil)
+    (dolist (face '(org-date org-priority org-tag org-special-keyword))
+      (add-to-list 'mixed-pitch-fixed-pitch-faces face))
+   )
+#+end_src
+
+#+RESULTS:
+
 *** doom-themes
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
-  (use-package doom-themes
-  :after mixed-pitch
-    :ensure t
-    :config
-    (setq doom-themes-enable-bold t
-          doom-themes-enable-italic t)
-    (load-theme 'doom-1337 t)
+    (use-package doom-themes
+    :straight t
+    :after mixed-pitch
+      :ensure t
+      :config
+      (setq doom-themes-enable-bold t
+      doom-themes-enable-italic t)
+      (load-theme 'doom-1337 t)
 
-    (doom-themes-visual-bell-config)
-    (doom-themes-neotree-config)
-    (setq doom-themes-treemacs-theme "doom-atom")
-    (doom-themes-treemacs-config)
-    (doom-themes-org-config))
-#+end_src
+      (doom-themes-visual-bell-config)
+      (doom-themes-neotree-config)
+      (setq doom-themes-treemacs-theme "doom-atom")
+      (doom-themes-treemacs-config)
+      (doom-themes-org-config)
+  )
+  
+    (load-theme 'doom-Iosvkem t)
+  #+end_src
+
+  #+RESULTS:
+
 *** Kaolin Themes
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-    (use-package kaolin-themes
+    (use-package kaolin-themes 
+    :straight (kaolin-themes
+ :fetcher github
+ :repo "ogdenwebb/emacs-kaolin-themes"
+ :old-names (kaolin-theme)
+ :files (:defaults "themes/*.el"))
       :ensure t
       :config
       (setq kaolin-themes-modeline-border nil)
@@ -258,6 +345,7 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package ef-themes
       :ensure t
+      :straight (ef-themes :host github :repo "protesilaos/ef-themes")
       :init
       (setq ef-themes-headings
 	    (quote ((1 . (variable-pitch 1.1))
@@ -265,43 +353,45 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 		    (3 . (regular))
 		    (4 . (regular))))))
 #+end_src
-*** Set out theme
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-  (load-theme 'doom-acario-dark t)
-#+end_src
+
 
 
 ** Setup our fonts
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
- (set-face-attribute 'default nil :family "Anonymice Nerd Font Mono" :height 220)
+   (set-face-attribute 'default nil :family "PragmataProMonoLiga Nerd Font" :height 200)
 
- ;; Proportionally spaced typeface
- (set-face-attribute 'variable-pitch nil :family "OpenDyslexicAlta NF" :height 1.0)
+   ;; Proportionally spaced typeface
+   (set-face-attribute 'variable-pitch nil :family "Anonymice Nerd Font Mono" :height 1.0)
 
- ;; Monospaced typeface
- (set-face-attribute 'fixed-pitch nil :family "Comic Sans MS" :height 1.5)
+   ;; Monospaced typeface
+   (set-face-attribute 'fixed-pitch nil :family "Spleen 32x64" :height 1.5)
 
 
- (if (facep 'mode-line-active)
-     (set-face-attribute 'mode-line-active nil :family "Spleen 32x64" :height 200) ; For 29+
-   (set-face-attribute 'mode-line nil :family "Spleen 32x64" :height 200))
-(set-face-attribute 'mode-line-inactive nil :family "Anonymice Nerd Font Mono" :height 200)
+   (if (facep 'mode-line-active)
+       (set-face-attribute 'mode-line-active nil :family "Spleen 32x64" :height 200) ; For 29+
+     (set-face-attribute 'mode-line nil :family "Spleen 32x64" :height 200))
+  (set-face-attribute 'mode-line-inactive nil :family "Anonymice Nerd Font Mono" :height 200)
 #+END_SRC
+
+#+RESULTS:
+
 ** Update the help docs
 
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
-(use-package helpful
-  :ensure t)
-(global-set-key (kbd "C-c C-d") #'helpful-at-point)
-(global-set-key (kbd "C-h F") #'helpful-function)
-(global-set-key (kbd "C-h C") #'helpful-command)
-(setq counsel-describe-function-function #'helpful-callable)
-(setq counsel-describe-variable-function #'helpful-variable)
+  (use-package helpful
+  :straight (helpful :repo "Wilfred/helpful" :fetcher github)
+
+    :ensure t)
+  (global-set-key (kbd "C-c C-d") #'helpful-at-point)
+  (global-set-key (kbd "C-h F") #'helpful-function)
+
+  (global-set-key (kbd "C-h C") #'helpful-command)
 
 #+END_SRC
 ** Popper.el - tame popups
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package popper
+  :straight (popper :fetcher github :repo "karthink/popper")
     :ensure t
     :bind (("C-`" . popper-toggle-latest) 
            ("M-`" . popper-cycle)
@@ -337,6 +427,9 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package general
     :ensure t
+    :straight (general
+ :fetcher github
+ :repo "noctuid/general.el")
     :config
     (general-auto-unbind-keys)
     (general-evil-setup t))
@@ -347,16 +440,23 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 
 ** Ace window
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-    (use-package ace-window :defer t :ensure t)
+    (use-package ace-window 
+    :straight (ace-window :repo "abo-abo/ace-window"
+            :fetcher github)
+    :defer t :ensure t)
 #+end_src
 ** Diminish
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-    (use-package diminish :ensure t)
+    (use-package diminish 
+:straight (diminish :fetcher github :repo "myrjola/diminish.el")
+    :ensure t)
 #+end_src
 ** Bufler 
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package bufler
       :ensure t
+      :straight (bufler :fetcher github :repo "alphapapa/bufler.el"
+        :files (:defaults (:exclude "helm-bufler.el")))
       :config
       (setq bufler-filter-buffer-modes nil
            bufler-filter-buffer-name-regexps nil)
@@ -398,24 +498,25 @@ I like to do this even if I don't plan on the modus themes being my main theme o
 This class of settings I think of as those that I need in order to work best with the editor.  How can I commicate. Plugins that affect how I communicate via keybindings, mouse, whatever should go here.
 ** Avy
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-(use-package avy :ensure t)
+(use-package avy :ensure t :straight (avy :repo "abo-abo/avy"
+     :fetcher github))
 #+end_src
 
 ** Undo-fu
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-(use-package undo-fu :ensure t)
+(use-package undo-fu :ensure t :straight (undo-fu :fetcher codeberg :repo "ideasman42/emacs-undo-fu"))
 #+end_src
 ** flycheck
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-    (use-package flycheck
+    (use-package flycheck :straight (flycheck :repo "flycheck/flycheck" :fetcher github)
   :ensure t
     :config
   (global-flycheck-mode))
 
-  (use-package exec-path-from-shell
+  (use-package exec-path-from-shell :straight (exec-path-from-shell :fetcher github :repo "purcell/exec-path-from-shell")
   :ensure t
   :config
-  (exec-path-from-shell-initialize)):
+  (exec-path-from-shell-initialize))
   
 #+end_src
 
@@ -423,61 +524,75 @@ This class of settings I think of as those that I need in order to work best wit
 
 ** Evil
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
-  (defun modeline-face-color ()
-    (let ((color (cond ((minibufferp) '("#1d1d1f" . "#ffffff"))
-                       ((evil-insert-state-p) '("#331612" . "#ffffff"))
-                       ((evil-emacs-state-p) '("#1a2b14" . "#ffffff"))
-                       ((evil-visual-state-p) '("#5a5c21" . "#ffffff"))
-                       ((evil-replace-state-p) '("#1a403e" . "#ffffff"))
-                       ((evil-motion-state-p) '("#677691" . "#ffffff"))
-                       ((buffer-modified-p) '("#2b1a40" . "#ffffff"))
-                       (t '("#1d1d1f" . "#ffffff")))))
-      (set-face-background 'mode-line (car color))
-      (set-face-foreground 'mode-line (cdr color))))
-  (use-package evil
-    :ensure t
-    :init
-    (setq evil-want-fine-under t)
-    (setq evil-want-keybinding nil)
-    (setq evil-want-Y-yank-to-eol t)
-    (setq evil-undo-system 'undo-fu)
-    (setq evil-search-module 'evil-search)
-    :config
+    (defun modeline-face-color ()
+      (let ((color (cond ((minibufferp) '("#1d1d1f" . "#ffffff"))
+			 ((evil-insert-state-p) '("#331612" . "#ffffff"))
+			 ((evil-emacs-state-p) '("#1a2b14" . "#ffffff"))
+			 ((evil-visual-state-p) '("#5a5c21" . "#ffffff"))
+			 ((evil-replace-state-p) '("#1a403e" . "#ffffff"))
+			 ((evil-motion-state-p) '("#677691" . "#ffffff"))
+			 ((buffer-modified-p) '("#2b1a40" . "#ffffff"))
+			 (t '("#1d1d1f" . "#ffffff")))))
+	(set-face-background 'mode-line (car color))
+	(set-face-foreground 'mode-line (cdr color))))
+    (use-package evil
+      :ensure t
+      :straight (evil :repo "emacs-evil/evil"
+	:fetcher github
+	:files (:defaults
+		"doc/build/texinfo/evil.texi"
+		(:exclude "evil-test-helpers.el")))
+      :init
+      (setq evil-want-fine-under t)
+      (setq evil-want-keybinding nil)
+      (setq evil-want-Y-yank-to-eol t)
+      (setq evil-undo-system 'undo-fu)
+      (setq evil-search-module 'evil-search)
+      :config
 
-    (evil-set-initial-state 'dashboard-mode 'motion)
-    (evil-set-initial-state 'debugger-mode 'motion)
-    (evil-set-initial-state 'pdf-view-mode 'motion)
-    (evil-set-initial-state 'bufler-list-mode 'emacs)
-    (evil-set-initial-state 'inferior-python-mode 'emacs)
-    (evil-set-initial-state 'term-mode 'emacs)
-    (evil-set-initial-state 'calc-mode 'emacs)
-    (define-key evil-window-map "\C-q" 'evil-delete-buffer) ;; Maps C-w C-q to evil-delete-buffer (The first C-w puts you into evil-window-map)
-    (define-key evil-window-map "\C-w" 'kill-this-buffer)
-    (define-key evil-motion-state-map "\C-b" 'evil-scroll-up) ;; Makes C-b how C-u is
-    (add-hook 'post-command-hook 'modeline-face-color)
+      (evil-set-initial-state 'dashboard-mode 'motion)
+      (evil-set-initial-state 'debugger-mode 'motion)
+      (evil-set-initial-state 'pdf-view-mode 'motion)
+      (evil-set-initial-state 'bufler-list-mode 'emacs)
+      (evil-set-initial-state 'inferior-python-mode 'emacs)
+      (evil-set-initial-state 'term-mode 'emacs)
+      (evil-set-initial-state 'calc-mode 'emacs)
+      (define-key evil-window-map "\C-q" 'evil-delete-buffer) ;; Maps C-w C-q to evil-delete-buffer (The first C-w puts you into evil-window-map)
+      (define-key evil-window-map "\C-w" 'kill-this-buffer)
+      (define-key evil-motion-state-map "\C-b" 'evil-scroll-up) ;; Makes C-b how C-u is
+      (add-hook 'post-command-hook 'modeline-face-color)
 
-    ;; ----- Setting cursor colors
-    (setq evil-emacs-state-cursor    '("#649bce" box))
-    (setq evil-normal-state-cursor   '("#d9a871" box))
-    (setq evil-operator-state-cursor '("#ebcb8b" hollow))
-    (setq evil-visual-state-cursor   '("#677691" box))
-    (setq evil-insert-state-cursor   '("#eb998b" (bar . 2)))
-    (setq evil-replace-state-cursor  '("#eb998b" hbar))
-    (setq evil-motion-state-cursor   '("#ad8beb" box))
-    (evil-mode +1))
-  (use-package evil-collection
-    :ensure t
-    :after evil
-  :diminish
-    :config
-    (setq evil-collection-mode-list '(dired (custom cus-edit) (package-menu package) calc diff-mode))
-    (evil-collection-init))
+      ;; ----- Setting cursor colors
+      (setq evil-emacs-state-cursor    '("#649bce" box))
+      (setq evil-normal-state-cursor   '("#d9a871" box))
+      (setq evil-operator-state-cursor '("#ebcb8b" hollow))
+      (setq evil-visual-state-cursor   '("#677691" box))
+      (setq evil-insert-state-cursor   '("#eb998b" (bar . 2)))
+      (setq evil-replace-state-cursor  '("#eb998b" hbar))
+      (setq evil-motion-state-cursor   '("#ad8beb" box))
+  (with-eval-after-load 'copilot
+    (evil-define-key 'insert copilot-mode-map
+		     (kbd "<tab>") #'my/copilot-tab))
+      (evil-mode +1))
+    (use-package evil-collection
+      :ensure t
+      :after evil
+      :straight
+      (evil-collection :fetcher github
+		   :repo "emacs-evil/evil-collection"
+		   :files (:defaults "modes"))
+    :diminish
+      :config
+      (setq evil-collection-mode-list '(dired (custom cus-edit) (package-menu package) calc diff-mode))
+      (evil-collection-init))
 #+END_SRC
 *** evil-surround
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 
   (use-package evil-surround
-    :ensure t
+    :ensure t 
+    :straight 
+    (evil-surround :repo "emacs-evil/evil-surround" :fetcher github :old-names (surround))
     :config
     (global-evil-surround-mode 1)
     )
@@ -485,6 +600,7 @@ This class of settings I think of as those that I need in order to work best wit
 *** evil-exchange
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package evil-exchange
+    :straight (evil-exchange :fetcher github :repo "Dewdrops/evil-exchange")
   :ensure t
     :config
   (evil-exchange-install)
@@ -494,22 +610,22 @@ This class of settings I think of as those that I need in order to work best wit
 *** visual star
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package evil-visualstar
+    :straight (evil-visualstar :repo "bling/evil-visualstar" :fetcher github)
   :ensure t
     :config
   (global-evil-visualstar-mode 1))
 #+end_src
 *** evil dvorak
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-(use-package evil-dvorak :ensure t)
+(use-package evil-dvorak :ensure t :straight (evil-dvorak :fetcher github  :repo "jbranso/evil-dvorak"))
 #+end_src
 *** evil-escape
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 
     (use-package evil-escape
     :ensure t
-    :straight (evil-escape :host github
-    :repo "syl20bnr/evil-escape"
-    :files (:defaults))
+
+   :straight (evil-escape :fetcher github :repo "emacsorphanage/evil-escape")
     :custom
     (setq-default evil-escape-key-sequence "jk")
     (setq-default evil-escape-key-delay 0.5))
@@ -535,8 +651,7 @@ This class of settings I think of as those that I need in order to work best wit
         :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
         :ensure t
   :config
-  (with-eval-after-load 'company
-  (delq 'company-preview-if-just-one-frontend company-frontends))
+
   (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
   (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
   )
@@ -546,7 +661,9 @@ This class of settings I think of as those that I need in order to work best wit
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package yasnippet
    :ensure t
-   
+  :straight (yasnippet :repo "joaotavora/yasnippet"
+           :fetcher github
+           :files ("yasnippet.el" "snippets")) 
    :config
    (setq yas-snippet-dirs '("~/.doom.d/snippets"))
    (yas-global-mode 1))
@@ -556,6 +673,8 @@ This class of settings I think of as those that I need in order to work best wit
 
    (use-package which-key
      :ensure t
+     :straight (which-key :repo "justbur/emacs-which-key"
+           :fetcher github)
      :init (which-key-mode)
      :diminish which-key-mode
      :config
@@ -565,11 +684,12 @@ This class of settings I think of as those that I need in order to work best wit
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
     (use-package rainbow-delimiters
      :ensure t
-    :hook (prog-mode . rainbow-delimiters-mode)
+     :straight (rainbow-delimiters :fetcher github :repo "Fanael/rainbow-delimiters")
+    :hook (prog-mode . rainbow-delimiters-mode)) 
   #+end_src
 ** hydra
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
-  (use-package hydra :ensure t)
+  (use-package hydra :ensure t :straight t)
   (defhydra hydra-text-scale (:timeout 4)
             "scale text"
             ("j" text-scale-increase "in")
@@ -581,6 +701,9 @@ This class of settings I think of as those that I need in order to work best wit
   (use-package quickrun
     :defer t
     :ensure t
+    :straight (quickrun
+ :repo "emacsorphanage/quickrun"
+ :fetcher github)
     :general
     (general-def
      :states 'normal
@@ -604,7 +727,8 @@ This class of settings I think of as those that I need in order to work best wit
 ** Install rainbow mode
 This lets us see hex colors
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
-  (use-package rainbow-mode :ensure t :diminish)
+  (use-package rainbow-mode :ensure t :diminish :straight (rainbow-mode :repo "emacsmirror/rainbow-mode" :fetcher github)
+  )
   (define-globalized-minor-mode global-rainbow-mode rainbow-mode
     (lambda ()
       (when (not (memq major-mode
@@ -616,6 +740,7 @@ This lets us see hex colors
 ** Recent files
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package recentf
+
                :ensure nil
                :config
                (setq recentf-max-saved-items 200)
@@ -625,25 +750,19 @@ This lets us see hex colors
 #+end_src
 ** Projectile
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-  (use-package projectile
+  (use-package projectile :straight (projectile :fetcher github :repo "bbatsov/projectile")
     :ensure t
   :diminish
     )
 
-  (use-package counsel-projectile
-    :ensure t
-    :after projectile
-  :diminish
-    :init
-    (counsel-projectile-mode +1)
-    )
 
 #+end_src
 
 ** Workspaces with perspective
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package perspective
-    :ensure t
+:straight (perspective :fetcher github :repo "nex3/perspective-el")
+:ensure t
     :bind
     ("C-x C-b" . persp-list-buffers)
     :custom
@@ -671,6 +790,7 @@ This lets us see hex colors
 Above is a function for all the "stuff" we want to do when org-mode starts. We attach that to a hook when org-mode starts. 
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package org
+  :straight nil
     :ensure t
     :hook (org-mode . rc/prettify-symbols-setup)
     :hook (org-capture-mode . evil-insert-state)
@@ -916,8 +1036,8 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
    "s" '(org-schedule :which-key "schedule")
    "S" '(jib/org-schedule-tomorrow :which-key "schedule tmrw")
    "d" '(org-deadline :which-key "deadline")
-   "g" '(counsel-org-goto :which-key "goto heading")
-   "t" '(counsel-org-tag :which-key "set tags")
+   "g" '(consult-org-heading :which-key "goto heading")
+   "t" '(org-tag :which-key "set tags")
    "p" '(org-set-property :which-key "set property")
    "r" '(jib/org-refile-this-file :which-key "refile in file")
    "e" '(org-export-dispatch :which-key "export org")
@@ -942,7 +1062,7 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 
    "il" '(org-insert-link :which-key "org-insert-link")
    "l" '(org-insert-link :which-key "org-insert-link") ;; More convenient access
-   "iL" '(counsel-org-link :which-key "counsel-org-link")
+   "iL" '(org-link :which-key "org-link")
    "it" '(jb-hydra-org-table/body :which-key "tables")
 
    "is" '(nil :which-key "insert stamp")
@@ -980,11 +1100,14 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
     (kbd "b") 'org-agenda-earlier)
 #+end_src
 
+#+RESULTS:
+
 **** Evil org
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (fset 'evil-redirect-digit-argument 'ignore) ;; before evil-org loaded
     (use-package evil-org
       :ensure t
+      :straight (evil-org :fetcher github :repo "Somelauw/evil-org-mode")
       :diminish evil-org-mode
       :after org
       :config
@@ -997,13 +1120,14 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 #+end_src
 ** Auto  :tangle org files
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
-  (use-package org-auto-tangle
-    :ensure t
-    :defer t
-  :diminish
-    :hook (org-mode . org-auto-tangle-mode)
-    :config
-    (setq org-auto-tangle-default t))
+   (use-package org-auto-tangle
+     :ensure t
+     :straight (org-auto-tangle :repo "yilkalargaw/org-auto-tangle" :fetcher github)
+     :defer t
+   :diminish
+     :hook (org-mode . org-auto-tangle-mode)
+     :config
+     (setq org-auto-tangle-default t))
   #+end_src
 ** Org-projectile
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
@@ -1040,119 +1164,165 @@ Above is a function for all the "stuff" we want to do when org-mode starts. We a
 
   (use-package tree-sitter
     :ensure t
+    :straight (tree-sitter :repo "emacs-tree-sitter/elisp-tree-sitter"
+             :fetcher github
+             :branch "release"
+             :files (:defaults (:exclude "lisp/tree-sitter-tests.el")))
     :config
     (global-tree-sitter-mode)
     (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
   (add-to-list 'tree-sitter-major-mode-language-alist '(tex-mode . tsx))
   (use-package tree-sitter-langs
+  :straight (tree-sitter-langs :repo "emacs-tree-sitter/tree-sitter-langs"
+                   :fetcher github
+                   :branch "release"
+                   :files (:defaults
+                           "queries"))
     :ensure t
     :after tree-sitter)
   #+end_src
 
-** LSP via EGlOT
+* LSP MODE
 This seems like its the paved path, but I'm unsure.
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
-    (use-package eglot
-     :hook (tsx-mode #'eglot)
-  :ensure t)
+
+    (use-package lsp-mode
+    :ensure t
+  :straight t 
+    :commands (lsp lsp-deferred)
+    :hook ((typescript-mode . #'lsp)
+	   (tsx-ts-mode . #'lsp)
+	   (js-mode . #'lsp)
+	   (lua-mode . #'lsp))
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    (setq lsp-modeline-code-actions-segments t)
+    :config
+    (with-eval-after-load 'lsp-mode
+      (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)))
+
+
+      (use-package lsp-ui
+  :straight t
+      :ensure t
+      :hook ((lsp-mode . lsp-ui-mode)
+  (lsp-mode . lsp-ui-sideline-mode))
+      :config
+  (setq lsp-ui-sideline-show-hover t)
+    (setq lsp-ui-doc-position 'top))
 #+end_src
+
+#+RESULTS:
+| lsp-ui-sideline-mode | lsp-ui-mode |
+
 *** TEXmode
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
-    (use-package tsx-mode
-      :ensure t
-      :straight '(tsx-mode
-                  :type git :host github
-                  :epo "orzechowskid/tsx-mode.el"
-                  :branch "emacs29")
+(straight-use-package '(tsi :type git :host github :repo "orzechowskid/tsi.el"))
+(require 'tsi-css)
+(require 'tsi-json)
+(require 'tsi-typescript)
+(add-hook 'tsx-mode-hook (lambda () (tsi-typescript-mode 1)))
+  (add-hook 'json-mode-hook (lambda () (tsi-json-mode 1)))
+  (add-hook 'css-mode-hook (lambda () (tsi-css-mode 1)))
+(add-hook 'scss-mode-hook (lambda () (tsi-scss-mode 1)))
 
-      :init
-      (add-to-list 'auto-mode-alist '("\\.[jt]sx?\\'" . tsx-mode))
+(straight-use-package '(tsx-mode :type git :host github :repo "orzechowskid/tsx-mode.el" :branch "emacs29"))
+(add-to-list 'auto-mode-alist '("\\.[jt]sx\?\\'" . tsx-mode))
+(general-def
+  :prefix ","
+  :states 'motion
+  :keymaps 'general-override-mode-map
+  "" nil
 
-      :general
-      (general-def
-        :prefix ","
-        :states 'motion
-        :keymaps 'general-override-mode-map
-        "" nil
+  "z" '(tsx-mode-fold-toggle-all-nodes :which-key "Toggle Fold all nodes")
+  "c" '(tsx-mode-coverage-toggle :which-key "Toggle Coverage")
+  "tab" '(tsx-mode-fold-toggle-node :which-key "Toggle Fold here")
+ )
+#+END_SRC
 
-        "z" '(tsx-mode-fold-toggle-all-nodes :which-key "Toggle Fold all nodes")
-        "c" '(tsx-mode-coverage-toggle :which-key "Toggle Coverage")
-        "tab" '(tsx-mode-fold-toggle-node :which-key "Toggle Fold here")
-        ))
-
-
-    (use-package coverlay
-      :ensure t
-      :straight '(coverlay :type git
-                           :host github :repo "twada/coverlay.el"))
-    (use-package css-in-js-mode
-      :ensure t :straight '(css-in-js-mode :type git :host github :repo "orzechowskid/tree-sitter-css-in-js"))
-    (use-package origami :ensure t
-      :straight '(origamd
-                  :type git
-                  :host github
-                  :repo "gregsexton/origami.el"))
+#+RESULTS:
 
 
-    (use-package corfu
-      :ensure t
-      :straight (corfu :host github :repo "minad/corfu")
-     :custom
-     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-    ;; (corfu-auto t)                 ;; Enable auto completion
-     (corfu-separator ?\s)          ;; Orderless field separator
-    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-     (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-     (corfu-preview-current t)    ;; Disable current candidate preview
-     (corfu-preselect 'prompt)      ;; Preselect the prompt
-    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
-    ;; (corfu-scroll-margin 5)        ;; Use scroll margin
+#+begin_src emacs-lisp :tangle yes
 
-    ;; Enable Corfu only for certain modes.
-     :hook ((prog-mode . corfu-mode)
-            (shell-mode . corfu-mode)
-            (eshell-mode . corfu-mode))
 
-    ;; Recommended: Enable Corfu globally.
-    ;; This is recommended since Dabbrev can be used globally (M-/).
-    ;; See also `corfu-excluded-modes'.
-    :init
-    (global-corfu-mode))
-
-  ;; A few more useful configurations...
-  (use-package emacs
-    :init
-    ;; TAB cycle if there are only few candidates
-    (setq completion-cycle-threshold 3)
-
-    ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
-    ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
-    ;; (setq read-extended-command-predicate
-    ;;       #'command-completion-default-include-p)
-
-    ;; Enable indentation+completion using the TAB key.
-    ;; `completion-at-point' is often bound to M-TAB.
-    (setq tab-always-indent 'complete))
-                                       #+END_SRC
-                                       
-*** TSI.el
-=tsi.el= provides a tree-sitter powered set of indentation rules for ts, json, and css files
-#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
-  (use-package tsi
-  :ensure t
-        :after tree-sitter
-        :quelpa (tsi :fetcher github :repo "orzechowskid/tsi.el")
-        ;; define autoload definitions which when actually invoked will cause package to be loaded
-        :commands (tsi-typescript-mode tsi-json-mode tsi-css-mode)
-        :init
-        (add-hook 'tsx-mode-hook (lambda () (tsi-typescript-mode 1)))
-        (add-hook 'js-mode-hook (lambda () (tsi-typescript-mode 1)))
-        (add-hook 'json-mode-hook (lambda () (tsi-json-mode 1)))
-        (add-hook 'css-mode-hook (lambda () (tsi-css-mode 1)))
-        (add-hook 'scss-mode-hook (lambda () (tsi-scss-mode 1))))
+      (use-package coverlay
+	:ensure t
+	:straight '(coverlay :type git
+			     :host github :repo "twada/coverlay.el"))
 #+end_src
 
+#+RESULTS:
+
+#+begin_src emacs-lisp :tangle yes
+
+
+(use-package css-in-js-mode
+  
+	:ensure t :straight '(css-in-js-mode :type git :host github :repo "orzechowskid/tree-sitter-css-in-js"))
+      (use-package origami :ensure t
+	:straight '(origamd
+		    :type git
+		    :host github
+		    :repo "gregsexton/origami.el"))
+
+#+end_src
+
+#+RESULTS:
+
+#+begin_src emacs-lisp :tangle yes
+
+  (use-package corfu
+    :ensure t
+    :straight (corfu :host github :repo "minad/corfu")
+   :custom
+   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  ;; (corfu-auto t)                 ;; Enable auto completion
+   (corfu-separator ?\s)          ;; Orderless field separator
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+   (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+   (corfu-preview-current t)    ;; Disable current candidate preview
+   (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+  ;; (corfu-scroll-margin 5)        ;; Use scroll margin
+
+  ;; Enable Corfu only for certain modes.
+   :hook ((prog-mode . corfu-mode)
+	  (shell-mode . corfu-mode)
+	  (eshell-mode . corfu-mode))
+
+  ;; Recommended: Enable Corfu globally.
+  ;; This is recommended since Dabbrev can be used globally (M-/).
+  ;; See also `corfu-excluded-modes'.
+  :init
+  (global-corfu-mode))
+
+#+end_src
+
+#+RESULTS:
+| corfu-mode |
+
+#+begin_src emacs-lisp :tangle yes
+
+    ;; A few more useful configurations...
+    (use-package emacs
+      :init
+      ;; TAB cycle if there are only few candidates
+      (setq completion-cycle-threshold 3)
+
+      ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
+      ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+      ;; (setq read-extended-command-predicate
+      ;;       #'command-completion-default-include-p)
+
+      ;; Enable indentation+completion using the TAB key.
+      ;; `completion-at-point' is often bound to M-TAB.
+      (setq tab-always-indent 'complete))
+#+end_src
+
+#+RESULTS:
+                                       
 *** Formatting on Save
 We use =apheleia= to handle our formatting. This packages can do many different languages so including it here will
 benefit others as well.
@@ -1161,29 +1331,35 @@ benefit others as well.
   (use-package apheleia
     :ensure t
   :diminish
+  :straight '(apheleia :type git :host github :repo "raxod502/apheleia")
     :config
     (apheleia-global-mode +1))
  #+end_src
+
+ #+RESULTS:
+ : t
 
 ** Simple Lua
 *** Enable =lua-mode=
 
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el :results none 
-    (use-package lua-mode
-      :ensure t
-      :after (tree-sitter eglot)
+      (use-package lua-mode
+      :straight (lua-mode :repo "immerrr/lua-mode" :fetcher github)
+	:ensure t
+	:after (tree-sitter lsp)
 
-  :init
-      (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
-      (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
-    )
+    :init
+	(add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
+	(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+      )
 #+END_SRC
 
 * Completion
 ** Consult
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
+#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
   ;; Example configuration for Consult
   (use-package consult
+  :straight (consult :type git :host github :repo "minad/consult")
     ;; Replace bindings. Lazily loaded due by `use-package'.
     :bind (;; C-c bindings (mode-specific-map)
 	   ("C-c h" . consult-history)
@@ -1297,6 +1473,10 @@ benefit others as well.
     ;; (setq consult-project-function (lambda (_) (locate-dominating-file "." ".git"))))
      )
 #+end_src
+
+#+RESULTS:
+: consult-history
+
 ** Consult-dir
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package consult-dir
@@ -1307,6 +1487,9 @@ benefit others as well.
            ("C-x C-d" . consult-dir)
            ("C-x C-j" . consult-dir-jump-file)))
 #+end_src
+
+#+RESULTS:
+
 ** Consult-flycheck
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 
@@ -1319,13 +1502,16 @@ benefit others as well.
   "minad/consult-flycheck"
     ))
 #+end_src
-** Consult-eglot
+
+#+RESULTS:
+
+* Consult-eglot
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-     (use-package consult-eglot :ensure t
-       :straight  (consult-eglot
-       :host github
-  :repo "mohkale/consult-eglot"))
+     (use-package consult-lsp :ensure t :straight t)
 #+end_src
+
+#+RESULTS:
+
 ** Consult-projectile
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
          (use-package consult-projectile :ensure t
@@ -1337,6 +1523,9 @@ benefit others as well.
 
 
 #+end_src
+
+#+RESULTS:
+
 ** Consult-yasnippet
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 	(use-package consult-yasnippet
@@ -1345,14 +1534,24 @@ benefit others as well.
     :repo "mohkale/consult-yasnippet")
     )
 #+end_src
+
+#+RESULTS:
+
 ** wgrep
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-(use-package wgrep :ensure t)
+(use-package wgrep :ensure t :straight (wgrep
+ :fetcher github
+ :repo "mhayashi1120/Emacs-wgrep"
+ :files ("wgrep.el")))
 #+end_src
+
+#+RESULTS:
+
 ** marinalia
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     ;; Enable rich annotations using the Marginalia package
-    (use-package marginalia
+    (use-package marginalia 
+      :straight (marginalia :host github :repo "minad/marginalia")
       ;; Either bind `marginalia-cycle' globally or only in the minibuffer
       :bind (("M-A" . marginalia-cycle)
              :map minibuffer-local-map
@@ -1369,6 +1568,9 @@ benefit others as well.
       ;; enabled right away. Note that this forces loading the package.
       (marginalia-mode))
 #+end_src
+
+#+RESULTS:
+: marginalia-cycle
 
 ** Veritco
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
@@ -1434,11 +1636,12 @@ benefit others as well.
       (setq enable-recursive-minibuffers t))
 #+end_src
 
+#+RESULTS:
+
 ** vertico directory
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 ;; Configure directory extension.
-(use-package vertico-directory
-  :after vertico
+(use-package vertico-directory  :after vertico
   :ensure nil
   ;; More convenient directory navigation commands
   :bind (:map vertico-map
@@ -1450,9 +1653,13 @@ benefit others as well.
 
 #+end_src
 
+#+RESULTS:
+: vertico-directory-delete-word
+
 ** Orderless
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (use-package orderless :ensure t
+:straight (orderless :host github :repo "oantolin/orderless") 
   :init
   ;; Configure a custom style dispatcher (see the Consult wiki)
   ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
@@ -1462,13 +1669,19 @@ benefit others as well.
         completion-category-overrides '((file (styles partial-completion)))))
 #+end_src
 
+#+RESULTS:
+
 ** Vertico quick
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (use-package vertico-quick :ensure nil)
 #+end_src
+
+#+RESULTS:
+
 ** Embark
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (use-package embark
+    :straight (embark :host github :repo "oantolin/embark")
       :ensure t
 
       :bind
@@ -1491,93 +1704,138 @@ benefit others as well.
 
     ;; Consult users will also want the embark-consult package.
     (use-package embark-consult
+    :straight (embark-consult :host github :repo "oantolin/embark")
       :ensure t ; only need to install it, embark loads it after consult if found
       :hook
       (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
 
+#+RESULTS:
+| consult-preview-at-point-mode |
+
 
 
 ** Treemacs
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
-  (use-package treemacs
+    (use-package treemacs
+    :straight (treemacs :host github :repo "Alexander-Miller/treemacs" :branch "master")
+      :ensure t
+      :defer t
+      :config
+      (setq treemacs-position 'right
+	    width 50))
+
+    (use-package lsp-treemacs
     :ensure t
-    :defer t
-    :config
-    (setq treemacs-position 'right
-          width 50))
+    :straight t
+  :after lsp)
 #+end_src
+
+
+#+RESULTS:
 
 
 *** Treemacs-evil
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package treemacs-evil
+  :straight (treemacs-evil :host github :repo "Alexander-Miller/treemacs" :branch "master")
     :ensure t
     :config
     )
 
 #+end_src
 
+#+RESULTS:
+
 
 *** Treemacs-projectile
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package treemacs-projectile
+  :straight (treemacs-projectile :host github :repo "Alexander-Miller/treemacs" :branch "master")
     :ensure t
     )
 
 #+end_src
+
+#+RESULTS:
 
 
 
 *** treemacs-magit
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package treemacs-magit
+  :straight (treemacs-magit :host github :repo "Alexander-Miller/treemacs" :branch "master")
+
     :ensure t
     )
 
 #+end_src
 
+#+RESULTS:
+
 
 *** treemacs-icons-dired
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-(use-package treemacs-icons-dired :ensure t)
+(use-package treemacs-icons-dired :ensure t 
+:straight (treemacs-icons-dired :host github :repo "Alexander-Miller/treemacs" :branch "master")
+  :hook (dired-mode . treemacs-icons-dired-mode))
 #+end_src
+
+#+RESULTS:
+| treemacs-icons-dired-mode |
 
 
 *** treemacs-perspective
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-(use-package treemacs-perspective :ensure t)
+(use-package treemacs-perspective :ensure t
+:straight (treemacs-perspective :host github :repo "Alexander-Miller/treemacs" :branch "master")
+  :config
+  (treemacs-set-scope-type 'Perspectives))
 #+end_src
+
+#+RESULTS:
+: t
 
 
 *** treemacs-all-the-icons
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-(use-package treemacs-all-the-icons :ensure t)
+(use-package treemacs-all-the-icons :ensure t 
+:straight (treemacs-all-the-icons :host github :repo "Alexander-Miller/treemacs" :branch "master")
+  :config
+  (treemacs-load-theme "all-the-icons"))
 #+end_src
+
+#+RESULTS:
+: t
 
 
 ** Prescient
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-  ;;     (use-package prescient
-  ;;   :after counsel
-  ;;     :ensure t)
-  ;; (use-package ivy-prescient :ensure t
-  ;;   :config
-  ;; (ivy-prescient-mode))
-  
+        (use-package prescient
+        :straight t
+          :ensure t)
+      (use-package vertico-prescient :ensure t :straight t
+      :config
+(vertico-prescient-mode +1)
+  )
 #+end_src
+
+#+RESULTS:
 
 
 * Magit
 
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
     (use-package magit
+    :straight t
     :ensure t
     :commands (magit-status magit-get-current-branch)
     :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
   #+end_src
+
+  #+RESULTS:
 
 
 * Editing Configuration
@@ -1588,33 +1846,31 @@ Default to an indentation size of 2
 (setq-default evil-shift-width tab-width)
 #+end_src
 
+#+RESULTS:
+: 2
+
 ** Spaces not tabs
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (setq-default indent-tabs-mode nil)
 #+end_src
 
+#+RESULTS:
+
 ** Comments:
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
   (use-package evil-nerd-commenter
+  :straight (evil-nerd-commenter :host github :repo "redguardtoo/evil-nerd-commenter")
     :ensure t
     :bind
     ("M-/" . evilnc-comment-or-uncomment-lines))
 
 #+end_src
 
-** Mixed Pitch
-A better verson of variable pitch.
+#+RESULTS:
+: evilnc-comment-or-uncomment-lines
 
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
-  (use-package mixed-pitch
-    :ensure t
-    :defer t
-    :config
-    (setq mixed-pitch-set-height nil)
-    (dolist (face '(org-date org-priority org-tag org-special-keyword))
-      (add-to-list 'mixed-pitch-fixed-pitch-faces face))
-   )
-#+end_src
+
+#+RESULTS:
 
 * Hydra
 ** Fonts
@@ -1628,6 +1884,10 @@ A better verson of variable pitch.
     ("c" (set-face-attribute 'variable-pitch nil :family "Source Sans Pro" :slant 'normal :weight 'normal :height 160) "Source Sans Pro")
   )
 #+end_src
+
+#+RESULTS:
+: rc-hydra-variable-fonts/body
+
 ** Dired
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
       (defhydra hydra-dired (:hint nil :color pink)
@@ -1684,6 +1944,9 @@ A better verson of variable pitch.
       (define-key dired-mode-map "." 'hydra-dired/body)
 #+end_src
 
+#+RESULTS:
+: hydra-dired/body
+
 ** Theme swticher
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
            (defhydra rc-hydra-theme-switcher (:hint nil)
@@ -1705,25 +1968,25 @@ A better verson of variable pitch.
          ^                        ^
            "
              ;; Dark
-             ("1" (load-theme 'doom-one t)             "one")
-             ("2" (load-theme 'modus-vivendi t)             "modus-vivendi")
-             ("3" (load-theme 'doom-molokai t)             "molokai")
-             ("4" (load-theme 'doom-snazzy t )             "snazzy")
-             ("5" (load-theme 'doom-old-hope t)             "old hope")
-             ("6" (load-theme 'doom-henna t)             "henna")
-             ("7" (load-theme 'kaolin-galaxy t)             "jaolin-galaxy")
-             ("8" (load-theme 'doom-monokai-machine t)             "monokai-machine")
-             ("9" (load-theme 'doom-xcode t)             "xcode")
-             ("0" (load-theme 'doom-moonlight t)             "moonlight")
-             ("-" (load-theme 'doom-laserwave t)             "laserwave")
-             ("z" (load-theme 'doom-one-light t)
+             ("1" (consult-theme 'doom-one )             "one")
+             ("2" (consult-theme 'modus-vivendi )             "modus-vivendi")
+             ("3" (consult-theme 'doom-molokai )             "molokai")
+             ("4" (consult-theme 'doom-snazzy t )             "snazzy")
+             ("5" (consult-theme 'doom-old-hope )             "old hope")
+             ("6" (consult-theme 'doom-henna )             "henna")
+             ("7" (consult-theme 'kaolin-galaxy )             "jaolin-galaxy")
+             ("8" (consult-theme 'doom-monokai-machine )             "monokai-machine")
+             ("9" (consult-theme 'doom-xcode )             "xcode")
+             ("0" (consult-theme 'doom-moonlight )             "moonlight")
+             ("-" (consult-theme 'doom-laserwave )             "laserwave")
+             ("z" (consult-theme 'doom-one-light )
               "one-light")
-             ("x" (load-theme 'modus-operandi t)             "operand")
-  ("c" (load-theme 'ef-trio-light t)             "ef-trio-light")
-  ("v" (load-theme 'ef-dark t)             "ef-dark")
-  ("b" (load-theme 'doom-dark+ t)             "doom-dark+")
-  ("n" (load-theme 'doom-Iosvkem t)             "Iosvkem")
-  ("m" (load-theme 'doom-vibrant t)             "vibrant")
+             ("x" (consult-theme 'modus-operandi )             "operand")
+  ("c" (consult-theme 'ef-trio-light )             "ef-trio-light")
+  ("v" (consult-theme 'ef-dark )             "ef-dark")
+  ("b" (consult-theme 'doom-dark+ )             "doom-dark+")
+  ("n" (consult-theme 'doom-Iosvkem )             "Iosvkem")
+  ("m" (consult-theme 'doom-vibrant )             "vibrant")
    ("q" nil)
 
              )
@@ -1731,6 +1994,10 @@ A better verson of variable pitch.
 
 
 #+end_src
+
+#+RESULTS:
+: rc-hydra-theme-switcher/body
+
 ** window commands
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
     (defhydra rc-hydra-window (:hint nil)
@@ -1776,6 +2043,10 @@ A better verson of variable pitch.
 
      ("q" nil))
 #+END_SRC
+
+#+RESULTS:
+: rc-hydra-window/body
+
 ** Flycheck
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (defhydra hydra-flycheck
@@ -1791,6 +2062,10 @@ A better verson of variable pitch.
    ("G" (progn (goto-char (point-max)) (flycheck-previous-error)) "Last")
    ("q" nil)) 
 #+end_src
+
+#+RESULTS:
+: hydra-flycheck/body
+
 ** Org
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
         ;; Hydra for org agenda (graciously taken from Spacemacs)
@@ -1874,6 +2149,10 @@ A better verson of variable pitch.
           ("." org-agenda-goto-today)
           ("gr" org-agenda-redo))
 #+end_src
+
+#+RESULTS:
+: hydra-org-agenda/body
+
 ** Avy
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
       (defhydra hydra-avy (:exit t :hint nil)
@@ -1897,6 +2176,10 @@ A better verson of variable pitch.
         ("Y" avy-copy-region))
 
 #+end_src
+
+#+RESULTS:
+: hydra-avy/body
+
 ** YasNippet
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (defhydra hydra-yasnippet (:color blue :hint nil)
@@ -1922,6 +2205,9 @@ A better verson of variable pitch.
   ("a" yas-reload-all))
 #+end_src
 
+#+RESULTS:
+: hydra-yasnippet/body
+
 
 * Keybinds
 ** Preamble
@@ -1940,41 +2226,47 @@ A better verson of variable pitch.
 ** Files
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   "f" '(nil :which-key "Files")
-  "fd" '(consult-dir :which-key "Find directory")
-  "ff" '(consult-find :which-key "Find file")
-  "fl" '(consult-locate :which-key "Locate")
+  "fd" '(ido-dired :which-key "Find directory")
+  "ff" '(ido-find-file :which-key "Find file")
   "fr" '(consult-recent-files :which-key "Recent Files")
   "fs" '(save :which-key "Save")
 
 #+end_src
 
+#+RESULTS:
+| save | :which-key | Save |
+
 
 ** Buffers
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
-  ;; Buffers
-  "b" '(nil :which-key "Buffer")
-  "bb" '(consult-project-buffer :which-key "Switch buffer")
-  "bd" '(evil-delete-buffer :which-key "Delete buffer")
-  "bm" '(rc/kill-other-buffers :which-key "Kill other buffers")
-  "bi" '(ibuffer :which-key "iBuffer")
-  "br" '(revert-buffer :which-key "Revert buffer")
-  "bn" '(next-buffer :which-key "Next")
-  "bp" '(previous-buffer :which-key "Prev")
+    ;; Buffers
+    "b" '(nil :which-key "Buffer")
+    "bb" '(consult-project-buffer :which-key "Switch (proj) buffer")
+    "bB" '(buffler-switch-buffer :which-key "Switch any buffer")
+    "bd" '(evil-delete-buffer :which-key "Delete buffer")
+    "bm" '(rc/kill-other-buffers :which-key "Kill other buffers")
+    "bi" '(ibuffer :which-key "iBuffer")
+    "br" '(revert-buffer :which-key "Revert buffer")
+    "bn" '(next-buffer :which-key "Next")
+    "bp" '(previous-buffer :which-key "Prev")
 
 
 #+END_SRC
+
+#+RESULTS:
+| previous-buffer | :which-key | Prev |
 
 ** Code
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   ;; lCode
 
   "c" '(nil :which-key "Code")
-  "cd" '(xref-find-defintion :which-key "Definition")
+  "cd" '(xref-find-definition :which-key "Definition")
   "cR" '(xref-find-references :which-key "References")
-  "ca" '(eglot-code-actions :which-key "Code action")
-  "ci" '(eglot-find-implementation :which-key "Implementations")
-  "cD" '(eglot-find-type-definition :which-key "Type Def.")
-  "cr" '(eglot-rename :which-key "Rename Symbol")
+  "ca" '(lsp-execute-code-actions :which-key "Code action")
+  "ci" '(lsp-ui-peek-find-implementation :which-key "Implementations")
+  "cD" '(lsp-ui-peek-findre-type-definition :which-key "Type Def.")
+  "cr" '(lsp-rename :which-key "Rename Symbol")
 
 
 
@@ -1988,9 +2280,9 @@ A better verson of variable pitch.
   "cee" '(flycheck-explain-error-at-point :which-key "Explain error")
 
   "cf" '(nil :which-key "Format")
-  "cfl" '(eglot-format-buffer :which-key "LSP format Buffer")
+  "cfl" '(lsp-format-buffer :which-key "LSP format Buffer")
   "cfa" '(apheleia-format-buffer :which-key "Apheleia Format")
-  "cfr" '(eglot-format :which-key "LSP Format Region")
+  "cfr" '(lsp-format-region :which-key "LSP Format Region")
 #+END_SRC
 
 ** Bookmarks
@@ -2003,30 +2295,26 @@ A better verson of variable pitch.
   
 #+end_src
 
-** Files
-#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
-       ;;Files.
-       "f" '(nil :which-key "files")
-       "fb" '(consult-bookmark :which-key "bookmarks")
-       "ff" '(consult-find :which-key "find file")
-       "fr" '(consult-projectile-recentf :which-key "recent files")
-       "fR" '(rename-file :which-key "rename file")
-       "fs" '(save-buffer :which-key "save buffer")
-       "fS" '(evil-write-all :which-key "save all buffers")
-#+END_SRC
 
 ** Projects
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   "p" '(nil :which-key "Projects")
-  "pp" '(consult-projectile :which-key "Switch Project")
+  "pp" '(consult-projectile-switch-project :which-key "Switch Project")
   "pg" '(consult-rg :which-key "RipGrep")
-#+end_src
+  "pf" '(consult-projectile-find-file :which-key "find file")
+  "pr" '(consult-projectile-recentf :which-key "recent files")
+  "pb" '(consult-projectile-switch-to-buffer :which-key "buffers")
+
+  
+#+END_SRC
+
+#+RESULTS:
+| consult-projectile-buffer | :which-key | buffers |
 
 ** Hydra
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
   ;; Hydras
   "H" '(nil :which-key "Hydras")
-  "Hs" '(hydra-text-scale/body :which-key "Scale text")
   "Ht" '(rc-hydra-theme-switcher/body :which-key "themes")
   "Hf" '(rc-hydra-variable-fonts/body :which-key "mixed-pitch face")
   "Hw" '(rc-hydra-window/body :which-key "Window Control")
@@ -2128,19 +2416,15 @@ CLOSED: [2022-12-30 Fri 03:49]
   "tE" '(eshell :which-key "Eshell (HERE)")
   "td" '(dired-single :which-key "Dired")
   "tp" '(treemacs :which-key "Treemacs")
-  ) ;; End SPC prefix block
+  "to" '(function :which-key "description")
+  )
 #+end_src
 
 
 ** DONE Global keybinds
 CLOSED: [2022-12-29 Thu 06:28]
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
-  (general-def
-    :keymaps 'override
-
-    ;; Emacs
-    "M-x" 'counsel-M-x
-    )
+  
   (general-def
     :keymaps 'override
     :states '(normal motion)
@@ -2196,7 +2480,7 @@ CLOSED: [2022-12-29 Thu 06:28]
      "er" '(eval-region :which-key "eval-region")
      "eb" '(eval-buffer :which-key "eval-buffer")
 
-     "g" '(counsel-imenu :which-key "imenu")
+     "g" '(consult-imenu :which-key "imenu")
      "c" '(check-parens :which-key "check parens")
      "I" '(indent-region :which-key "indent-region")
      "b" '(nil :which-key "org src")
@@ -2208,10 +2492,15 @@ CLOSED: [2022-12-29 Thu 06:28]
     )
 #+end_src
 
+#+RESULTS:
+
 
 * Dashboard
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
   (use-package dashboard
+  :straight (dashboard :fetcher github
+	   :repo "emacs-dashboard/emacs-dashboard"
+	   :files (:defaults "banners"))
     :ensure t
     :config
     (dashboard-setup-startup-hook))
@@ -2221,11 +2510,20 @@ CLOSED: [2022-12-29 Thu 06:28]
   (setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*"))    )
 
   #+end_src
+
+  #+RESULTS:
+  | lambda | nil | (get-buffer-create *dashboard*) |
+
 * kill the scratch on startup
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el 
 (add-hook 'emacs-startup-hook (lambda ()
                                 (when (get-buffer "*scratch*")
                                   (kill-buffer "*scratch*"))))
 #+end_src
+
+#+RESULTS:
+| lambda | nil | (when (get-buffer *scratch*) (kill-buffer *scratch*))                                         |
+| lambda | nil | (message Emacs ready in %s with %d garbage collections. (format %.2f seconds (float-time (time-subtract after-init-time before-init-time))) gcs-done) |
+| lambda | nil | (setq gc-cons-percentage 0.1)                                                                 |
 
 
