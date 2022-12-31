@@ -23,7 +23,7 @@
 #+begin_src emacs-lisp :tangle yes
 (setq doom-font (font-spec :family "Anonymice Nerd Font Mono" :size 20)
       doom-big-font (font-spec :family "Anonymice Nerd Font Mono" :size 30)
-      doom-variable-pitch-font (font-spec :family "Fantasque Sans Mono Nerd Font" :size 20)
+      doom-variable-pitch-font (font-spec :family "Iosevka" :size 20)
       doom-unicode-font (font-spec :family "Spleen 32x64" :size 20)
       doom-serif-font (font-spec :family "DankMono Nerd Font" :size 20)
 
@@ -37,7 +37,7 @@
 #+end_src
 
 #+RESULTS:
-| doom--customize-themes-h-124 |
+| doom--customize-themes-h-40 | doom--customize-themes-h-44 |
 
 
 ** COMMENT Theme
@@ -228,14 +228,13 @@
 
 ** Turn on beacon
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
-  (use-package beacon
-  :straight (beacon :fetcher github :repo "Malabarba/beacon")
-    :ensure t
+  (use-package! beacon
     :config
     (beacon-mode +1))
 #+end_src
 
 #+RESULTS:
+: t
 
 ** Line Highlighting and Fringe
 #+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
@@ -246,7 +245,7 @@
 #+END_SRC
 
 #+RESULTS:
-: ((buffer-predicate . doom-buffer-frame-predicate) (right-divider-width . 1) (bottom-divider-width . 1) (vertical-scroll-bars) (tool-bar-lines . 0) (menu-bar-lines . 0) (left-fringe . 10) (right-fringe . 10))
+: ((buffer-predicate . doom-buffer-frame-predicate) (right-divider-width . 1) (bottom-divider-width . 1) (menu-bar-lines . 1) (vertical-scroll-bars) (tool-bar-lines . 0) (left-fringe . 10) (right-fringe . 10))
 
 ** Keys for Mac
 #+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
@@ -346,7 +345,6 @@ A better verson of variable pitch.
 #+end_src
 
 #+RESULTS:
-: ((tsx-mode . tsx) (agda-mode . agda) (sh-mode . bash) (c-mode . c) (caml-mode . ocaml) (csharp-mode . c-sharp) (c++-mode . cpp) (d-mode . d) (css-mode . css) (elm-mode . elm) (elixir-mode . elixir) (go-mode . go) (hcl-mode . hcl) (terraform-mode . hcl) (html-mode . html) (mhtml-mode . html) (nix-mode . nix) (java-mode . java) (javascript-mode . javascript) (js-mode . javascript) (js2-mode . javascript) (js3-mode . javascript) (json-mode . json) (jsonc-mode . json) (julia-mode . julia) (ocaml-mode . ocaml) (php-mode . php) (prisma-mode . prisma) (python-mode . python) (pygn-mode . pgn) (rjsx-mode . javascript) (ruby-mode . ruby) (rust-mode . rust) (rustic-mode . rust) (scala-mode . scala) (swift-mode . swift) (tuareg-mode . ocaml) (typescript-mode . typescript) (zig-mode . zig))
 
 * LSP-UI
 #+begin_src emacs-lisp :tangle yes
@@ -460,6 +458,9 @@ _o_ther buffers: %s(my/number-names my/last-buffers)
    ("<escape>" nil))
 #+end_src
 
+#+RESULTS:
+: hydra:switch-buffer/body
+
 
 ** LSP
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el :results none
@@ -530,7 +531,7 @@ _o_ther buffers: %s(my/number-names my/last-buffers)
         ("S" dired-do-symlink)
         ("s" dired-sort-toggle-or-edit)
         ("t" dired-toggle-marks)
-        ("U" dired-unmark-all-marks)
+        ("U" dired-unmark-al-marks)
         ("u" dired-unmark)
         ("v" dired-view-file)      ;; q to exit, s to search, = gets line #
         ("w" dired-kill-subdir)
@@ -538,7 +539,7 @@ _o_ther buffers: %s(my/number-names my/last-buffers)
         ("z" diredp-compress-this-file)
         ("Z" dired-do-compress)
         ("q" nil)
-        ("." nil :color blue))
+        ("." nil :color blue)
 
       (define-key dired-mode-map "." 'hydra-dired/body)
 #+end_src
@@ -548,7 +549,7 @@ _o_ther buffers: %s(my/number-names my/last-buffers)
 
 ** Theme swticher
 #+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
-           (defhydra rc:themes   (:hint nil)
+           (defhydra hydr:a:themes   (:hint nil)
              "
               Dark                ^Light^
          ----------------------------------------------
@@ -829,25 +830,25 @@ _o_ther buffers: %s(my/number-names my/last-buffers)
  :leader
  :prefix "H"
 (:desc "Themes"
-       :nvm #'hydra:themes/body)
+       :nvm "t" #'hydra:themes/body)
 (:desc "Windows"
-       :nvm #'hydra:windows/body)
+       :nvm "w" #'hydra:windows/body)
 (:desc "Dired"
-       :nvm #'hydra:dired/body)
+       :nvm "d" #'hydra:dired/body)
 (:desc "FlyCheck"
-       :nvm #'hydra:flycheck/body)
+       :nvm "f" #'hydra:flycheck/body)
 (:desc "Org"
-       :nvm #'hydra:org/body)
+       :nvm "o" #'hydra:org/body)
 (:desc "Avy"
-       :nvm #'hydra:yasnippet/body)
+       :nvm "a" #'hydra:yasnippet/body)
 (:desc "Folding"
-       :nvm #'hydra:folding/body)
+       :nvm "z" #'hydra:folding/body)
 (:desc "LSP"
-       :nvm #'hydra:lsp/body)
+       :nvm "l" #'hydra:lsp/body)
 (:desc "Buffers"
-       :nvm #'hydra:buffers/body)
+       :nvm "b" #'hydra:buffers/body)
 (:desc "DAP"
-       :nvm #'hydra-dap))
+       :nvm "D" #'hydra-dap))
 #+end_src
 
 #+RESULTS:
