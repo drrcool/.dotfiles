@@ -1,4 +1,17 @@
 #+Title: Emacs Config
+** Keys for Mac
+#+begin_src emacs-lisp  :tangle yes
+  (setq mac-command-modifier       'meta
+        mac-option-modifier        'meta
+        mac-control-modifier       'control
+        mac-right-option-modifier     'meta
+        mac-right-control-modifier  'control)
+#+end_src
+
+#+RESULTS:
+: control
+
+
 
 ** My Info:
 #+begin_src emacs-lisp :tangle yes
@@ -37,7 +50,7 @@
 #+end_src
 
 #+RESULTS:
-| doom--customize-themes-h-40 | doom--customize-themes-h-44 |
+| doom--customize-themes-h-40 | doom--customize-themes-h-62 |
 
 
 ** COMMENT Theme
@@ -64,7 +77,6 @@
     modus-themes-lang-checkers '(background))
 
 :config
-(modus-themes-load-vivendi)
 (map! :leader
     :prefix "t"
     :desc "Toggle Modus theme"  #'modus-themes-toggle)
@@ -84,6 +96,7 @@
          #+END_SRC
 
          #+RESULTS:
+         : copilot-accept-completion
 
 
 * Turn on rainbow mode
@@ -227,7 +240,7 @@
 : ~/org/markdown
 
 ** Turn on beacon
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp :tangle yes
   (use-package! beacon
     :config
     (beacon-mode +1))
@@ -237,7 +250,7 @@
 : t
 
 ** Line Highlighting and Fringe
-#+BEGIN_SRC emacs-lisp  :tangle ~/.emacs.d/init.el
+#+BEGIN_SRC emacs-lisp  :tangle yes
   ;; Turn on line highlithting for current line
   (hl-line-mode 1)
   ;; Add some margins
@@ -247,21 +260,8 @@
 #+RESULTS:
 : ((buffer-predicate . doom-buffer-frame-predicate) (right-divider-width . 1) (bottom-divider-width . 1) (menu-bar-lines . 1) (vertical-scroll-bars) (tool-bar-lines . 0) (left-fringe . 10) (right-fringe . 10))
 
-** Keys for Mac
-#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
-  (setq mac-command-modifier       'meta
-        mac-option-modifier        'meta
-        mac-control-modifier       'control
-        mac-right-option-modifier     'meta
-        mac-right-control-modifier  'control)
-#+end_src
-
-#+RESULTS:
-: control
-
-
 ** Manage how new windows are placed
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp :tangle yes
     (winner-mode +1)
   (setq display-buffer-base-action
     '((display-buffer-reuse-window
@@ -288,7 +288,7 @@
 ** Mixed Pitch
 A better verson of variable pitch.
 
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp :tangle yes
   (use-package! mixed-pitch
     :defer t
     :config
@@ -301,7 +301,7 @@ A better verson of variable pitch.
 #+RESULTS:
 
 ** Quickrun
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp :tangle yes
   (use-package! quickrun
     :defer t
     :general
@@ -328,7 +328,7 @@ A better verson of variable pitch.
 #+RESULTS:
 
 ** Auto-revert changed files
-#+begin_src emacs-lisp  :tangle ~/.emacs.d/init.el
+#+begin_src emacs-lisp  :tangle yesl
   (setq global-auto-revert-non-file-buffers t)
 (global-auto-revert-mode 1)
 #+end_src
@@ -409,131 +409,123 @@ A better verson of variable pitch.
 
 #+RESULTS:
 : t
+* Keybinds with Hercules
+#+end_src
+
+#+RESULTS:
+: rc/add-keymap-to-hercules
 
 ** LSP
-  ;;   ("d" lsp-find-declaration)
-  ;;   ("D" lsp-ui-peek-find-definitions)
-  ;;   ("R" lsp-ui-peek-find-references)
-  ;;   ("i" lsp-ui-peek-find-implementation)
-  ;;   ("t" lsp-find-type-definition)
-  ;;   ("s" lsp-signature-help)
-  ;;   ("o" lsp-describe-thing-at-point)
-  ;;   ("r" lsp-rename)
+#+begin_src emacs-lisp :tangle yes
+(general-def
+  :prefix-map 'rc/lsp-map
+"d"   #'lsp-find-declaration
+"D"   #'lsp-ui-peek-find-definitions
+"R"   #'lsp-ui-peek-find-references
+"i"   #'lsp-ui-peek-find-implementation
+"t"   #'lsp-find-type-definition
+"s"   #'lsp-signature-help
+"o"   #'lsp-describe-thing-at-point
+"r"   #'lsp-rename
 
-  ;;   ("f" lsp-format-buffer)
-  ;;   ("m" lsp-ui-imenu)
-  ;;   ("x" lsp-execute-code-action)
-
-  ;;   ("M-s" lsp-describe-session)
-  ;;   ("M-r" lsp-restart-workspace)
-  ;;   ("S" lsp-shutdown-workspace))
+"f"   #'lsp-format-buffer
+"m"   #'lsp-ui-imenu
+"x"   #'lsp-execute-code-action
+)
+(hercules-def
+:toggle-funs #'rc/lsp-map-mode
+:keymap 'rc/lsp-map
+:transient t)
+(map!
+ :leader
+ :prefix "H"
+ :desc "LSP"
+ :nm "L" #'lsp-map-mode
+ )
 #+end_src
+
+#+RESULTS:
+: lsp-map-mode
 
 ** Flycheck
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
-   ;; ("f" flycheck-error-list-set-filter "Filter")
-
-   ;; ("j" flycheck-next-error "Next")
-   ;; ("k" flycheck-previous-error "Previous")
-   ;; ("gg" flycheck-first-error "First")
-   ;; ("G" (progn (goto-char (point-max)) (flycheck-previous-error)) "Last")
+#+begin_src emacs-lisp :tangle yes
+(general-def
+:prefix-map 'rc/flycheck-map
+   "f" #'flycheck-error-list-set-filter
+   "j" #'flycheck-next-error
+   "k" #'flycheck-previous-error
+)
+(hercules-def
+ :toggle-funs #'rc/flycheck-mode
+ :keymap 'rc/flycheck-map
+ :transient t)
+(map!
+ :leader
+ :prefix "H"
+ :desc "Flycheck"
+ :nm "f" #'rc/flycheck-mode)
 #+end_src
 
 #+RESULTS:
-: hydra:flycheck/body
-
-** Org
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
-        ;; Hydra for org agenda (graciously taken from Spacemacs)
-          ;; ;; Entry
-          ;; ("hA" org-agenda-archive-default)
-          ;; ("hk" org-agenda-kill)
-          ;; ("hp" org-agenda-priority)
-          ;; ("hr" org-agenda-refile)
-          ;; ("h:" org-agenda-set-tags)
-          ;; ("ht" org-agenda-todo)
-          ;; ;; Visit entry
-          ;; ("o"   link-hint-open-link :exit t)
-          ;; ("<tab>" org-agenda-goto :exit t)
-          ;; ("TAB" org-agenda-goto :exit t)
-          ;; ("SPC" org-agenda-show-and-scroll-up)
-          ;; ("RET" org-agenda-switch-to :exit t)
-          ;; ;; Date
-          ;; ("dt" org-agenda-date-prompt)
-          ;; ("dd" org-agenda-deadline)
-          ;; ("+" org-agenda-do-date-later)
-          ;; ("-" org-agenda-do-date-earlier)
-          ;; ("ds" org-agenda-schedule)
-          ;; ;; View
-          ;; ("vd" org-agenda-day-view)
-          ;; ("vw" org-agenda-week-view)
-          ;; ("vt" org-agenda-fortnight-view)
-          ;; ("vm" org-agenda-month-view)
-          ;; ("vy" org-agenda-year-view)
-          ;; ("vn" org-agenda-later)
-          ;; ("vp" org-agenda-earlier)
-          ;; ("vr" org-agenda-reset-view)
-          ;; ;; Toggle mode
-          ;; ("ta" org-agenda-archives-mode)
-          ;; ("tA" (org-agenda-archives-mode 'files))
-          ;; ("tr" org-agenda-clockreport-mode)
-          ;; ("tf" org-agenda-follow-mode)
-          ;; ("tl" org-agenda-log-mode)
-          ;; ("td" org-agenda-toggle-diary)
-          ;; ;; Filter
-          ;; ("fc" org-agenda-filter-by-category)
-          ;; ("fx" org-agenda-filter-by-regexp)
-          ;; ("ft" org-agenda-filter-by-tag)
-          ;; ("fr" org-agenda-filter-by-tag-refine)
-          ;; ("fh" org-agenda-filter-by-top-headline)
-          ;; ("fd" org-agenda-filter-remove-all)
-          ;; ;; Clock
-          ;; ("cq" org-agenda-clock-cancel)
-          ;; ("cj" org-agenda-clock-goto :exit t)
-          ;; ("ci" org-agenda-clock-in :exit t)
-          ;; ("co" org-agenda-clock-out)
-          ;; ;; Other
-          ;; ("q" nil :exit t)
-          ;; ("gd" org-agenda-goto-date)
-          ;; ("." org-agenda-goto-today)
-          ;; ("gr" org-agenda-redo))
-#+end_src
-
-#+RESULTS:
-: hydra:org/body
+: rc/flycheck-mode
 
 ** Avy
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
-  ;;       ("c" avy-goto-char-timer)
-  ;;       ("C" avy-goto-char)
-  ;;       ("w" avy-goto-word-1)
-  ;;       ("W" avy-goto-word-0)
-  ;;       ("l" avy-goto-line)
-  ;;       ("L" avy-goto-end-of-line)
-  ;;       ("m" avy-move-line)
-  ;;       ("M" avy-move-region)
-  ;; ("k" avy-kill-whole-line)
-  ;;       ("K" avy-kill-region)
-  ;;       ("y" avy-copy-line)
-  ;;       ("Y" avy-copy-region))
-
+#+begin_src emacs-lisp :tangle yes
+(general-def
+  :prefix-map 'rc/avy-map
+"c" #'avy-goto-char-timer
+"C" #'avy-goto-char
+"w" #'avy-goto-word-1
+"W" #'avy-goto-word-0
+"l" #'avy-goto-line
+"L" #'avy-goto-end-of-line
+"m" #'avy-move-line
+"M" #'avy-move-region
+"k" #'avy-kill-whole-line
+"K" #'avy-kill-region
+"y" #'avy-copy-line
+"Y" #'avy-copy-region
+)
+(hercules-def
+ :toggle-funs #'rc/avy-mode
+ :keymap 'rc/avy-map
+ :transient t
+)
+(map!
+ :leader
+ :prefix "H"
+ :desc "Avy"
+ :nm "a" #'rc/avi-mode)
 #+end_src
 
 #+RESULTS:
-: hydra:avy/body
+: rc/avi-mode
 
 ** YasNippet
-#+begin_src emacs-lisp :tangle ~/.emacs.d/init.el
-  ;; ("d" yas-load-directory)
-  ;; ("e" yas-activate-extra-mode)
-  ;; ("i" yas-insert-snippet)
-  ;; ("f" yas-visit-snippet-file :color blue)
-  ;; ("n" yas-new-snippet)
-  ;; ("t" yas-tryout-snippet)
-  ;; ("l" yas-describe-tables)
-  ;; ("g" yas/global-mode)
-  ;; ("m" yas/minor-mode)
-  ;; ("a" yas-reload-all))
+#+begin_src emacs-lisp :tangle yes
+(general-def
+  :prefix-map 'rc/snippet-map
+  "d" #'yas-load-directory
+  "e" #'yas-activate-extra-mode
+  "i" #'yas-insert-snippet
+  "f" #'yas-visit-snippet-file :color blue
+  "n" #'yas-new-snippet
+  "t" #'yas-tryout-snippet
+  "l" #'yas-describe-tables
+  "g" #'yas/global-mode
+  "m" #'yas/minor-mode
+  "a" #'yas-reload-all
+)
+(hercules-def
+ :toggle-funs #'rc/snippet-mode
+ :keymap 'rc/snippet-map
+ :transiet t)
+
+(map!
+ :leader
+ :prefix "H"
+ :desc "Snippet"
+ :nm "s" #'rc/snippet-mode)
 #+end_src
 
 #+RESULTS:
@@ -561,6 +553,9 @@ A better verson of variable pitch.
 )
 #+end_src
 
+#+RESULTS:
+: rc/origami-mode
+
 
 
 * Hercules
@@ -587,6 +582,9 @@ A better verson of variable pitch.
  :nm "b" #'rc/buffer-mod)
 
 #+end_src
+
+#+RESULTS:
+: rc/buffer-mod
 
 #+end_src
 
@@ -652,6 +650,7 @@ A better verson of variable pitch.
 #+end_src
 
 #+RESULTS:
+: my-dired-mode
 
 * mu4e
 #+begin_src emacs-lisp :tangle yes
