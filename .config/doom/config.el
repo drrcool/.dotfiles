@@ -1,8 +1,8 @@
-(setq mac-command-modifier       'meta
-      mac-option-modifier        'meta
-      mac-control-modifier       'control
-      mac-right-option-modifier     'meta
-      mac-right-control-modifier  'control)
+  (setq mac-command-modifier       'meta
+        mac-option-modifier        'meta
+        mac-control-modifier       'control
+        mac-right-option-modifier     'meta
+        mac-right-control-modifier  'control)
 
 (setq user-full-name "Richard Cool"
       user-mail-address "richardjcool@gmail.com")
@@ -105,21 +105,21 @@
 
 (setq org-hugo-base-dir "~/org/markdown")
 
-(use-package! beacon
-  :config
-  (beacon-mode +1))
+  (use-package! beacon
+    :config
+    (beacon-mode +1))
 
-;; Turn on line highlithting for current line
-(hl-line-mode 1)
-;; Add some margins
-(set-fringe-mode 10)
+  ;; Turn on line highlithting for current line
+  (hl-line-mode 1)
+  ;; Add some margins
+  (set-fringe-mode 10)
 
-(winner-mode +1)
-(setq display-buffer-base-action
-  '((display-buffer-reuse-window
-     display-buffer-reuse-mode-window
-     display-buffer-same-window
-     display-buffer-in-previous-window)))
+    (winner-mode +1)
+  (setq display-buffer-base-action
+    '((display-buffer-reuse-window
+       display-buffer-reuse-mode-window
+       display-buffer-same-window
+       display-buffer-in-previous-window)))
 
 (after! doom-modeline
     (setq
@@ -127,35 +127,35 @@
      doom-modeline-minor-modes nil
           doom-modeline-height 25))
 
-(use-package! mixed-pitch
-  :defer t
-  :config
-  (setq mixed-pitch-set-height nil)
-  (dolist (face '(org-date org-priority org-tag org-special-keyword))
-    (add-to-list 'mixed-pitch-fixed-pitch-faces face))
- )
+  (use-package! mixed-pitch
+    :defer t
+    :config
+    (setq mixed-pitch-set-height nil)
+    (dolist (face '(org-date org-priority org-tag org-special-keyword))
+      (add-to-list 'mixed-pitch-fixed-pitch-faces face))
+   )
 
-(use-package! quickrun
-   :defer t
-   :general
-   (general-def
-    :states 'normal
-    :prefix "SPC"
-    :keymaps 'quickrun--mode-map
-    "cq" '(nil :which-key "quickrun")
-    "cqq" '(quit-window :which-key "Quit")
-    "cqr" '(quickrun :which-key "Run")
-    "cqR" '(quickrun-region :which-key "Run Region")
-    "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
-    "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
-    "cqs" '(quickrun-select :which-key "Select backend")"cq" '(nil :which-key "quickrun")
-    "cqq" '(quit-window :which-key "Quit")
-    "cqr" '(quickrun :which-key "Run")
-    "cqR" '(quickrun-region :which-key "Run Region")
-    "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
-    "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
-    "cqs" '(quickrun-select :which-key "Select backend")
-))
+  (use-package! quickrun
+    :defer t
+    :general
+    (general-def
+     :states 'normal
+     :prefix "SPC"
+     :keymaps 'quickrun--mode-map
+     "cq" '(nil :which-key "quickrun")
+     "cqq" '(quit-window :which-key "Quit")
+     "cqr" '(quickrun :which-key "Run")
+     "cqR" '(quickrun-region :which-key "Run Region")
+     "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
+     "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
+     "cqs" '(quickrun-select :which-key "Select backend")"cq" '(nil :which-key "quickrun")
+     "cqq" '(quit-window :which-key "Quit")
+     "cqr" '(quickrun :which-key "Run")
+     "cqR" '(quickrun-region :which-key "Run Region")
+     "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
+     "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
+     "cqs" '(quickrun-select :which-key "Select backend")
+ ))
 
 (after! tree-sitter
 (add-to-list 'tree-sitter-major-mode-language-alist '(tsx-mode . tsx))
@@ -275,29 +275,29 @@
  :desc "Avy"
  :nm "a" #'rc/avi-mode)
 
-(general-def
-  :prefix-map 'rc/snippet-map
-  "d" #'yas-load-directory
-  "e" #'yas-activate-extra-mode
-  "i" #'yas-insert-snippet
-  "f" #'yas-visit-snippet-file
-  "n" #'yas-new-snippet
-  "t" #'yas-tryout-snippet
-  "l" #'yas-describe-tables
-  "g" #'yas/global-mode
-  "m" #'yas/minor-mode
-  "a" #'yas-reload-all
-)
-(hercules-def
- :toggle-funs #'rc/snippet-mode
- :keymap 'rc/snippet-map
- :transient t
-)
- (map!
- :leader
- :prefix "H"
- :desc "Snippet"
- :nm "s" #'rc/snippet-mode)
+;; (general-def
+;;   :prefix-map 'rc/snippet-map
+;;   "d" #'yas-load-directory
+;;   "e" #'yas-activate-extra-mode
+;;   "i" #'yas-insert-snippet
+;;   "f" #'yas-visit-snippet-file
+;;   "n" #'yas-new-snippet
+;;   "t" #'yas-tryout-snippet
+;;   "l" #'yas-describe-tables
+;;   "g" #'yas/global-mode
+;;   "m" #'yas/minor-mode
+;;   "a" #'yas-reload-all
+;; )
+;; (hercules-def
+;;  :toggle-funs #'rc/snippet-mode
+;;  :keymap 'rc/snippet-map
+;;  :transiet t)
+
+;; (map!
+;;  :leader
+;;  :prefix "H"
+;;  :desc "Snippet"
+;;  :nm "s" #'rc/snippet-mode)
 
 (general-def
   :prefix-map 'rc/origami-map
@@ -419,12 +419,12 @@
           ("/gmail-work/[Gmail]/Sent Mail" :key ?W)
           ))
 
-  (add-to-list 'mu4e-bookmarks
+  (add-to-list 'mu4e-bookmark
                (make-mu4e-bookmark
                 :name "Inbox - Personal Gmail"
                 :query "maildir:/gmail-personal/INBOX"
                 :key ?p))
-  (add-to-list 'mu4e-bookmarks
+  (add-to-list 'mu4e-bookmark
                (make-mu4e-bookmark
                 :name "Inbox - Work Gmail"
                 :query "maildir:/gmail-work/INBOX"

@@ -1,4 +1,5 @@
 #+Title: Emacs Config
+
 ** Keys for Mac
 #+begin_src emacs-lisp  :tangle yes
   (setq mac-command-modifier       'meta
@@ -503,33 +504,32 @@ A better verson of variable pitch.
 
 ** YasNippet
 #+begin_src emacs-lisp :tangle yes
-(general-def
-  :prefix-map 'rc/snippet-map
-  "d" #'yas-load-directory
-  "e" #'yas-activate-extra-mode
-  "i" #'yas-insert-snippet
-  "f" #'yas-visit-snippet-file :color blue
-  "n" #'yas-new-snippet
-  "t" #'yas-tryout-snippet
-  "l" #'yas-describe-tables
-  "g" #'yas/global-mode
-  "m" #'yas/minor-mode
-  "a" #'yas-reload-all
-)
-(hercules-def
- :toggle-funs #'rc/snippet-mode
- :keymap 'rc/snippet-map
- :transiet t)
+;; (general-def
+;;   :prefix-map 'rc/snippet-map
+;;   "d" #'yas-load-directory
+;;   "e" #'yas-activate-extra-mode
+;;   "i" #'yas-insert-snippet
+;;   "f" #'yas-visit-snippet-file
+;;   "n" #'yas-new-snippet
+;;   "t" #'yas-tryout-snippet
+;;   "l" #'yas-describe-tables
+;;   "g" #'yas/global-mode
+;;   "m" #'yas/minor-mode
+;;   "a" #'yas-reload-all
+;; )
+;; (hercules-def
+;;  :toggle-funs #'rc/snippet-mode
+;;  :keymap 'rc/snippet-map
+;;  :transiet t)
 
-(map!
- :leader
- :prefix "H"
- :desc "Snippet"
- :nm "s" #'rc/snippet-mode)
+;; (map!
+;;  :leader
+;;  :prefix "H"
+;;  :desc "Snippet"
+;;  :nm "s" #'rc/snippet-mode)
 #+end_src
 
 #+RESULTS:
-: hydra:yasnippet/body
 ** Code folding
 #+begin_src emacs-lisp :tangle yes
 (general-def
@@ -677,12 +677,12 @@ A better verson of variable pitch.
           ("/gmail-work/[Gmail]/Sent Mail" :key ?W)
           ))
 
-  (add-to-list 'mu4e-bookmarks
+  (add-to-list 'mu4e-bookmark
                (make-mu4e-bookmark
                 :name "Inbox - Personal Gmail"
                 :query "maildir:/gmail-personal/INBOX"
                 :key ?p))
-  (add-to-list 'mu4e-bookmarks
+  (add-to-list 'mu4e-bookmark
                (make-mu4e-bookmark
                 :name "Inbox - Work Gmail"
                 :query "maildir:/gmail-work/INBOX"
@@ -771,7 +771,7 @@ A better verson of variable pitch.
             (save-excursion (message-add-header "Bcc:\n"))))
 
 ;; mu4e address completion
-(add-hook 'mu4e-compose-mode-hook' 'company-mode')
+(add-hook 'mu4e-compose-mode-hook' 'company-mode)
 #+end_src
 
 * Set some sane defaults
