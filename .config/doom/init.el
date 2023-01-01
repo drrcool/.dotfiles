@@ -34,7 +34,7 @@
        ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
        ;;       (emoji +github +ascii +unicode)  ; 🙂
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
-       hydra
+       ;;hydra
        ;;indent-guides     ; highlighted indent columns
        ( ligatures +extra +pragmata-pro )         ; ligatures and symbols to make your code pretty again
        ;;minimap           ; show a map of the code on the side
@@ -42,7 +42,7 @@
        ;;nav-flash         ; blink cursor line after big motions
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
-       (popup +all +defaults)   ; tame sudden yet inevitable temporary windows
+       (popup +defaults)   ; tame sudden yet inevitable temporary windows
        ;;tabs              ; a tab bar for Emacs
        ( treemacs +lsp)          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
@@ -107,9 +107,6 @@
        tree-sitter       ; syntax and parsing, sitting in a tree...
        ;;upload            ; map local to remote projects via ssh/ftp
 
-       ;;:os
-       ;;(:if IS-MAC macos)  ; improve compatibility with macOS
-       (tty +osc)  ; improve the terminal Emacs experience
 
        :lang
        ;;agda              ; types of types of types of types...

@@ -86,3 +86,4 @@
 (package! avy)
 (package! undo-fu)
 (package! quickrun)
+(package! hercules)
