@@ -23,15 +23,15 @@ scrolling:
   multipler: 3
 font:
   normal:
-    family: PragmataProMonoLiga Nerd Font
+    family: Iosevka Term
     style: Regular
   bold:
-    family: PragmataProMonoLiga Nerd Font
+    family: Iosevka Term
     style: Bold
   italic:
-    family: PragmataProMonoLiga Nerd Font
+    family: Iosevka Term
     style: Italic
-  size: 15.0
+  size: 18.0
   AppleFontSmoothing: true
   offset:
     x: 0
@@ -75,4 +75,4 @@ key_bindings:
   - { key: Key0, mods: Command, action: ResetFontSize }
 
 import:
-  - ~/.alacritty-colorscheme/themes/challenger_deep.yaml
+  - ./farside.alacritty
