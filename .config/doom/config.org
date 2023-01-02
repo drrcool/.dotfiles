@@ -13,6 +13,20 @@
 : control
 
 
+** Tab completion
+#+begin_src emacs-lisp :tangle yes
+
+(use-package! company
+  :bind
+  (:map company-active-map
+        ("<tab>" . company-complete-selection))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idl-delay 0.0))
+#+end_src
+
+#+RESULTS:
+: company-indent-or-complete-common
 
 ** My Info:
 #+begin_src emacs-lisp :tangle yes
@@ -33,13 +47,48 @@
 #+RESULTS:
 : ~/.local/share/Trash/files/
 
+** Window
+*** Take new window space from all other windows (not just current)
+#+begin_src emacs-lisp :tangle yes
+(setq-default window-combination-resize t)
+#+end_src
+
+*** Show the list of buffers when splitting
+#+begin_src emacs-lisp :tangle yes
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (counsel-ibuffer))
+#+end_src
+
+** Better undo
+#+begin_src emacs-lisp :tangle yes
+(after! undo-fu
+  (setq undo-limit 10000000 ;; 1MB
+        undo-strong-limit 100000000 ;;100MB
+        undo-outer-limit 1000000000) ;; 1GB
+(setq undo-fu-allow-undo-in-region t
+      undo-fu-ignore-keyboard-quit t))
+;;Evil undo
+(after! evil
+  (setq evil-want-fine-undo t))
+#+end_src
+
+** Recent files
+Files edited when using =emacsclient= are not stored by =recentf=.  So emacs forgets about your most recently opened files. A quick fix is to hook into the /recentf-save-list/ command to the /delete-frame-functions/ and /delete-terminal-functions/ which get execute each time a frame/terminal is deleted.
+#+begin_src emacs-lisp :tangle yes
+(when (daemonp)
+  (add-hook! '(delete-frame-functions delete-terminal-functions)
+             (let ((inhibit-message t))
+               (recentf-save-list)
+               (savehist-save))))
+#+end_src
 ** Font
 #+begin_src emacs-lisp :tangle yes
-(setq doom-font (font-spec :family "Spleen 32x64" :size 20)
-      doom-big-font (font-spec :family "Anonymice Nerd Font Mono" :size 30)
-      doom-variable-pitch-font (font-spec :family "Iosevka" :size 20)
+(setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 20)
+      doom-big-font (font-spec :family "Iosevka Aile" :size 30)
+      doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 20)
       doom-unicode-font (font-spec :family "Spleen 32x64" :size 20)
-      doom-serif-font (font-spec :family "DankMono Nerd Font" :size 20)
+      doom-serif-font (font-spec :family "Iosevka Aile" :size 20)
 
       )
 
@@ -51,38 +100,70 @@
 #+end_src
 
 #+RESULTS:
-| doom--customize-themes-h-40 | doom--customize-themes-h-62 |
+| doom--customize-themes-h-103 | doom--customize-themes-h-104 | doom--customize-themes-h-105 |
 
 
 ** COMMENT Theme
 #+begin_src emacs-lisp :tangle yes
 (use-package! modus-themes
-:init
+  :init
   (setq modus-themes-hl-line '(intense)
-  modus-themes-subtle-line-numbers nil
-  modus-themes-region '(no-extend bg-only)
-  modus-themes-variable-pitch-ui nil
-  modus-themes-fringes 'intense
-  modus-themes-diffs nil
-  modus-themes-italic-constructs t
-  modus-themes-bold-constructs  t
-  modus-themes-prompts '( bold intense italic)
-  modus-themes-intense-mouseovers t
-  modus-themes-paren-match '(bold intense)
-  modus-themes-syntax '( yellow-comments)
-  modus-themes-links '(neutral-underline background)
-  modus-themes-mode-line '(moody borderless accented 4 1)
-    modus-themes-org-blocks 'gray-background
-    modus-themes-markup '(intense background)
-    modus-themes-mail-citations 'intensep
-    modus-themes-lang-checkers '(background))
+        modus-themes-subtle-line-numbers nil
+        modus-themes-region '(no-extend bg-only)
+        modus-themes-variable-pitch-ui nil
+        modus-themes-fringes 'intense
+        modus-themes-diffs nil
+        modus-themes-italic-constructs t
+        modus-themes-bold-constructs  t
+        modus-themes-prompts '( bold intense italic)
+        modus-themes-intense-mouseovers t
+        modus-themes-paren-match '(bold intense)
+        modus-themes-syntax '( yellow-comments)
+        modus-themes-links '(neutral-underline background)
+        modus-themes-mode-line '(moody borderless accented 4 1)
+        modus-themes-org-blocks 'gray-background
+        modus-themes-markup '(intense background)
+        modus-themes-mail-citations 'intensep
+        modus-themes-lang-checkers '(background))
+
+(defun +modus-themes-tweak-packages ()
+  (modus-themes-with-colors
+    (set-face-attribute 'cursor nil :background (modus-themes-color 'blue))
+  (set-face-attribute 'font-lock-type-face nil :foreground (modus-themes-color 'magenta-alt))
+  (custom-set-faces
+   `(evil-mc-cursor-default-face ((,class :background ,magenta-intense-bg)))
+   ;; Tweak gutters
+   `(git-gutter-fr:added ((,class :foreground ,green-fringe-bg)))
+   `(git-gutter-fr:deleted ((,class :foreground ,red-fringe-bg)))
+   `(git-gutter-fr:modified ((,class :foreground ,yellow-fringe-bg)))
+   ;;Modeline
+   `(doom-modeline-evil-normal-state ((,class :foreground ,greeen-alt-other)))
+   `(doom-modeline-evil-insert-state ((,class :foreground ,red-alt-other)))
+   `(doom-modeline-evil-visual-state ((,class :foreground ,magenta-alt)))
+   `(doom-modeline-evil-operator-state ((,class :foreground ,blue-alt)))
+   `(doom-modeline-evil-motion-state ((,class :foreground ,blue-alt-other)))
+   `(doom-modeline-evil-replace-state ((,class :foreground ,yellow-alt)))
+   ;; Tweak diff-hl-mode
+   `(diff-hl-insert ((,class :foreground ,green-fringe-bg)))
+   `(diff-hl-delete ((,class :foreground ,red-fringe-bg)))
+   `(diff-hl-change ((,class :foreground ,yellow-fringe-bg)))
+   ;; Tweek solaire mode
+   `(solaire-default-face ((,class :inherit default :background :foreground ,fg-dim)))
+   `(solaire-line-number-face ((,class :inherit solaire-default-face :foreground ,fg-unfocused)))
+   `(solaire-hl-line-face ((,class :inherit :background ,bg-active)))
+   `(solaire-org-hide-face ((,class :inherit :background ,bg-alt :foreground ,bg_alt)))
+   `(fill-column-indicator ((,class :height 0.3 :background ,bg-inactive :foreground ,bg-inactive))))))
+
+(add-hook 'modus-themes-after-load-theme-hook #'+modus-themes-tweak-packages)
 
 :config
 (map! :leader
-    :prefix "t"
-    :desc "Toggle Modus theme"  #'modus-themes-toggle)
-)
+      :prefix "t"
+      :desc "Toggle modus theme" "m" #'modus-themes-toggle))
 #+end_src
+
+#+RESULTS:
+: t
 
 ** Copilot
 #+begin_src emacs-lisp :tangle yes
@@ -133,13 +214,11 @@
 
 * auto-tangle
 #+begin_src emacs-lisp :tangle yes
-(after! org-mode
  (use-package! org-auto-mode
    :defer t
    :hook (org-mode . org-auto-tangle-mode)
    :config
    (setq org-auto-tangle-default t))
-)
 #+end_src
 
 #+RESULTS:
@@ -176,6 +255,7 @@
 * Org
    #+begin_src emacs-lisp :tangle yes
 (after! org
+
   ;; TODO: extract org-directory into noweb reference so it can be used in all the places
   (setq org-directory "~/org"
         org-agenda-files '(

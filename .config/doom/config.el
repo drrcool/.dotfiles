@@ -4,17 +4,47 @@
       mac-right-option-modifier     'meta
       mac-right-control-modifier  'control)
 
+(use-package! company
+  :bind
+  (:map company-active-map
+        ("<tab>" . company-complete-selection))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idl-delay 0.0))
+
 (setq user-full-name "Richard Cool"
       user-mail-address "richardjcool@gmail.com")
 
 (setq-default delete-by-moving-to-trash t
               trash-directory "~/.local/share/Trash/files/")
 
-(setq doom-font (font-spec :family "Spleen 32x64" :size 20)
-      doom-big-font (font-spec :family "Anonymice Nerd Font Mono" :size 30)
-      doom-variable-pitch-font (font-spec :family "Iosevka" :size 20)
+(setq-default window-combination-resize t)
+
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (counsel-ibuffer))
+
+(after! undo-fu
+  (setq undo-limit 10000000 ;; 1MB
+        undo-strong-limit 100000000 ;;100MB
+        undo-outer-limit 1000000000) ;; 1GB
+(setq undo-fu-allow-undo-in-region t
+      undo-fu-ignore-keyboard-quit t))
+;;Evil undo
+(after! evil
+  (setq evil-want-fine-undo t))
+
+(when (daemonp)
+  (add-hook! '(delete-frame-functions delete-terminal-functions)
+             (let ((inhibit-message t))
+               (recentf-save-list)
+               (savehist-save))))
+
+(setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 20)
+      doom-big-font (font-spec :family "Iosevka Aile" :size 30)
+      doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 20)
       doom-unicode-font (font-spec :family "Spleen 32x64" :size 20)
-      doom-serif-font (font-spec :family "DankMono Nerd Font" :size 20)
+      doom-serif-font (font-spec :family "Iosevka Aile" :size 20)
 
       )
 
@@ -44,15 +74,14 @@
 
 (setq tramp-default-method "ssh")
 
-(after! org-mode
- (use-package! org-auto-mode
-   :defer t
-   :hook (org-mode . org-auto-tangle-mode)
-   :config
-   (setq org-auto-tangle-default t))
-)
+(use-package! org-auto-mode
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
 
 (after! org
+
   ;; TODO: extract org-directory into noweb reference so it can be used in all the places
   (setq org-directory "~/org"
         org-agenda-files '(

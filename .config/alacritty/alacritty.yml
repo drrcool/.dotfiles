@@ -23,13 +23,13 @@ scrolling:
   multipler: 3
 font:
   normal:
-    family: Anonymice Nerd Font Mono
+    family: PragmataProMonoLiga Nerd Font
     style: Regular
   bold:
-    family: Anonymice Nerd Font Mono
+    family: PragmataProMonoLiga Nerd Font
     style: Bold
   italic:
-    family: Anonymice Nerd Font Mono
+    family: PragmataProMonoLiga Nerd Font
     style: Italic
   size: 15.0
   AppleFontSmoothing: true

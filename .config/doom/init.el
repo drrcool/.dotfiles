@@ -21,7 +21,7 @@
        ;;layout            ; auie,ctsrnm is the superior home row
 
        :completion
-       ( company +tng  )           ; the ultimate code completion backend
+       ( company  )           ; the ultimate code completion backend
        ;;(helm +fuzzy +icons)              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
        (ivy +childframe +prescient +fonts +icons +fuzzy)               ; a search engine for love and life
@@ -74,9 +74,9 @@
        ;;vc                ; version-control and Emacs, sitting in a tree
 
        :term
-       ;;eshell            ; the elisp shell that works everywhere
+       eshell            ; the elisp shell that works everywhere
        ;;shell             ; simple shell REPL for Emacs
-       ;;term              ; basic terminal emulator for Emacs
+       term              ; basic terminal emulator for Emacs
        vterm             ; the best terminal emulation in Emacs
 
        :checkers

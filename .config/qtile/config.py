@@ -1,36 +1,24 @@
-# Copyright (c) 2010 Aldo Cortesi
-# Copyright (c) 2010, 2014 dequis
-# Copyright (c) 2012 Randall Ma
-# Copyright (c) 2012-2014 Tycho Andersen
-# Copyright (c) 2012 Craig Barnes
-# Copyright (c) 2013 horsik
-# Copyright (c) 2013 Tao Sauvage
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
+# -*- coding: utf-8 -*-
+import os
+import socket
 from libqtile import bar, layout, widget
 from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 
+colors = {
+"border_active": "33b1ff", #  #33b1ff
+"border_inactive": "484848", # #484848 is grey.
+"tree_background": "161616",
+"tree_active_bg": "484848",
+"tree_active_fg": "be95ff",
+"tree_inactive_bg":"282828",
+"tree_inactive_fg": "e4e4e5"
+}
+
 mod = "mod4"
-terminal = guess_terminal()
+terminal = "alacritty"
+myBrowser = "firefox"
 
 keys = [
     # A list of available commands that can be bound to keys can be found
@@ -40,7 +28,6 @@ keys = [
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
     Key([mod], "j", lazy.layout.down(), desc="Move focus down"),
     Key([mod], "k", lazy.layout.up(), desc="Move focus up"),
-    Key([mod], "space", lazy.layout.next(), desc="Move window focus to other window"),
     # Move windows between left/right columns or move up/down in current stack.
     # Moving out of range in Columns layout will create new column.
     Key([mod, "shift"], "h", lazy.layout.shuffle_left(), desc="Move window to the left"),
@@ -54,18 +41,12 @@ keys = [
     Key([mod, "control"], "j", lazy.layout.grow_down(), desc="Grow window down"),
     Key([mod, "control"], "k", lazy.layout.grow_up(), desc="Grow window up"),
     Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
-    # Toggle between split and unsplit sides of stack.
-    # Split = all windows displayed
-    # Unsplit = 1 window displayed, like Max layout, but still with
-    # multiple stack panes
-    Key(
-        [mod, "shift"],
-        "Return",
-        lazy.layout.toggle_split(),
-        desc="Toggle between split and unsplit sides of stack",
-    ),
+
+
     Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
-    # Toggle between different layouts as defined below
+    Key([mod, "shift"], "Return", lazy.spawncmd(), desc="Spawn a command using a prompt widget" ),
+
+        # Toggle between different layouts as defined below
     Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
@@ -99,57 +80,107 @@ for i in groups:
         ]
     )
 
+layout_theme = {"border_width": 3,
+                "margin": 10,
+                "border_focus": colors["border_active"],
+                "border_normal": colors["border_inactive"],
+                }
+
 layouts = [
-    layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=4),
-    layout.Max(),
-    # Try more layouts by unleashing below layouts.
-     layout.Stack(num_stacks=2),
-     layout.Bsp(),
-    # layout.Matrix(),
-     layout.MonadTall(),
-    # layout.MonadWide(),
-     layout.RatioTile(),
-    # layout.Tile(),
-    # layout.TreeTab(),
-    # layout.VerticalTile(),
-     layout.Zoomy(),
+    layout.Max(**layout_theme),
+    layout.MonadTall(**layout_theme),
+    layout.RatioTile(**layout_theme),
+    layout.TreeTab(
+    font = "Ubuntu",
+    fontsize = 12,
+    sections = ["FIRST", "SECOND", "THIRD", "FOURTH"],
+    section_fontsize=12,
+        border_width=2,
+        bg_color= colors["tree_background"],
+        active_bg = colors["tree_active_bg"],
+        active_fg = colors["tree_active_fg"],
+        inactive_bg = colors["tree_inactive_bg"],
+        inactive_fg = colors["tree_inactive_fg"],
+        padding_left = 0,
+        padding_x = 0,
+        padding_y = 5,
+        section_top = 10,
+        section_bottom = 20,
+        level_shift=8,
+        vspace=3,
+        panel_width = 200,
+    ),
+    layout.VerticalTile(**layout_theme),
+    layout.Stack(num_stacks=4,**layout_theme),
+
+    # layout.Columns(**layout_theme)
+    # layout.Bsp(**layout_theme),
+    # layout.Matrix(**layout_theme),
+    # layout.MonadWide(**layout_theme),
+    # layout.Tile(shift_windows=True, **layout_theme),
+    # layout.Zoomy(**layout_theme),
 ]
+
+colors = [
+["#282828", "#484848"],
+["#ee5396", "#f16da6"],
+["#25be6a", "#46c880"],
+["#08bdba", "#2dc7c4"],
+["#78a9ff", "#8cb6ff"],
+["#be95ff", "#c8a5ff"],
+["#33b1ff", "#52bdff"],
+["#dfdfe0", "#e4e4e5"],
+]
+
+prompt = "{0}@{1}: ".format(os.environ["USER"], socket.gethostname())
 
 widget_defaults = dict(
-    font="sans",
-    fontsize=12,
-    padding=3,
+    font="Ubuntu Bold",
+   fontsize = 12,
+    padding = 2,
+    background=colors[0]
 )
-extension_defaults = widget_defaults.copy()
 
-screens = [
-    Screen(
-        bottom=bar.Bar(
-            [
-                widget.CurrentLayout(),
-                widget.GroupBox(),
-                widget.Prompt(),
-                widget.WindowName(),
-                widget.Chord(
-                    chords_colors={
-                        "launch": ("#ff0000", "#ffffff"),
-                    },
-                    name_transform=lambda name: name.upper(),
-                ),
-                widget.TextBox("default config", name="default"),
-                widget.TextBox("Press &lt;M-r&gt; to spawn", foreground="#d75f5f"),
-                # NB Systray is incompatible with Wayland, consider using StatusNotifier instead
-                # widget.StatusNotifier(),
-                widget.Systray(),
-                widget.Clock(format="%Y-%m-%d %a %I:%M %p"),
-                widget.QuickExit(),
-            ],
-            24,
-            # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
-            # border_color=["ff00ff", "000000", "ff00ff", "000000"]  # Borders are magenta
+standard_separator = widget.Sep(
+    linewidth=0,
+    padding=6,
+    foreground=colors[0],
+    background=colors[4]
+)
+def init_widget_list():
+    widgets_list = [
+        standard_separator,
+        widget.Image(
+            filename = "~/.config/qtile/icons/python-white.png",
+            scale="False",
+            mouse_callbacks = {"Button1": lambda: qtile.cmd_spawn(myTerm)}
         ),
-    ),
-]
+        standard_separator,
+        widget.GroupBox(
+            font = "Ubuntu Bold",
+            fontsize=11,
+            margin_y = 3,
+            margin_x = 0,
+            padding_y = 5,
+            padding_x = 3,
+            borderwidth=3,
+            active = colors[5],
+            inactive = colors[6],
+            rounded=True,
+            highlight_color = colors[1],
+            highlight_method = "line",
+            this_current_screen_border = colors[3],
+            this_screen_border = colors[4],
+            other_current_screen_border = colors[2],
+            other_screen_border=colors[1],
+            foreground=colors[2],
+            background=colors[0]
+        )
+        ]
+
+if __name__ in ["config", "__main__"]:
+    screens = Screen(top=bar.Bar(widgets=init_widget_list(), opacity=1.0, size=2.0))
+    widgets_list = init_widget_list()
 
 # Drag floating layouts.
 mouse = [
@@ -182,9 +213,6 @@ reconfigure_screens = True
 # If things like steam games want to auto-minimize themselves when losing
 # focus, should we respect this or not?
 auto_minimize = True
-
-# When using the Wayland backend, this can be used to configure input devices.
-wl_input_rules = None
 
 # XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
 # string besides java UI toolkits; you can see several discussions on the
