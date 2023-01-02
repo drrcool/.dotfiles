@@ -35,7 +35,7 @@
 
 ** Font
 #+begin_src emacs-lisp :tangle yes
-(setq doom-font (font-spec :family "Anonymice Nerd Font Mono" :size 20)
+(setq doom-font (font-spec :family "Spleen 32x64" :size 20)
       doom-big-font (font-spec :family "Anonymice Nerd Font Mono" :size 30)
       doom-variable-pitch-font (font-spec :family "Iosevka" :size 20)
       doom-unicode-font (font-spec :family "Spleen 32x64" :size 20)
@@ -560,7 +560,10 @@ A better verson of variable pitch.
 
 * Hercules
 #+begin_src emacs-lisp :tangle yes
-
+(hercules-def
+ :toggle-funs #'rc/window-mode
+ :keymap 'evil-window-map
+ :transient t)
 
 (map!
  :leader
@@ -579,7 +582,7 @@ A better verson of variable pitch.
 (map!
  :leader
  :desc "Buffers"
- :nm "b" #'rc/buffer-mod)
+ :nm "b" #'rc/buffer-mode)
 
 #+end_src
 
@@ -615,16 +618,16 @@ A better verson of variable pitch.
   "O" #'dired-display-file
   "o" #'dired-find-file-other-window
   "Q" #'dired-do-find-regexp-and-replace
-  "R" #'dired-do-rename
-  "r" #'dired-do-rsynch
-  "S" #'dired-do-symlink
-  "s" #'dired-sort-toggle-or-edit
-  "t" #'dired-toggle-marks
-  "U" #'dired-unmark-all-marks
-  "u" #'dired-unmark
-  "v" #'dired-view-file      ;; q to exit, s to search, = gets line #
-  "w" #'dired-kill-subdir
-  "Y" #'dired-do-relsymlink
+  ;; "R" #'dired-do-rename
+  ;; "r" #'dired-do-rsynch
+  ;; "S" #'dired-do-symlink
+  ;; "s" #'dired-sort-toggle-or-edit
+  ;; "t" #'dired-toggle-marks
+  ;; "U" #'dired-unmark-all-marks
+  ;; "u" #'dired-unmark
+  ;; "v" #'dired-view-file      ;; q to exit, s to search, = gets line #
+  ;; "w" #'dired-kill-subdir
+  ;; "Y" #'dired-do-relsymlink
   "z" #'diredp-compress-this-file
   "Z" #'dired-do-compress
   )
@@ -648,162 +651,3 @@ A better verson of variable pitch.
  :nm "d" #'my-dired-mode)
                 )
 #+end_src
-
-#+RESULTS:
-: my-dired-mode
-
-* mu4e
-#+begin_src emacs-lisp :tangle yes
-(after! mu4e
-
-(delete 'mu4e evil-collection-mode-list)
-(delete 'mu4e-conversation evil-collection-mode-list)
-
-(use-package! mu4e
-
-  :config
-  (setq mu4e-mu-binary (executable-find "mu"))
-  (setq mu4e-maildir "~/.maildir")
-  (setq mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
-  (setq mu4e-update-interval 300)
-  (setq mu4e-attachment-dir "~/Desktop")
-  (setq mu4e-change-filenames-with-moving t)
-  (setq mu4e-user-mail-address-list '("richardjcool@gmail.com"
-                                      "rcool@netflix.com"))
-  (setq mu4e-maildir-shortcuts
-        '(("/gmail-personal/INBOX" :key ?p)
-          ("/gmail-personal/[Gmail]/Sent Mail" :key ?P)
-          ("/gmail-work/INBOX"  :key ?w)
-          ("/gmail-work/[Gmail]/Sent Mail" :key ?W)
-          ))
-
-  (add-to-list 'mu4e-bookmark
-               (make-mu4e-bookmark
-                :name "Inbox - Personal Gmail"
-                :query "maildir:/gmail-personal/INBOX"
-                :key ?p))
-  (add-to-list 'mu4e-bookmark
-               (make-mu4e-bookmark
-                :name "Inbox - Work Gmail"
-                :query "maildir:/gmail-work/INBOX"
-                :key ?w))
-
-  (setq mu4e-contexts
-        `(,(make-mu4e-context
-            :name "gmail"
-            :enter-func
-            (lambda () (mu4e-message "Enter richardjcool@gmail.com context"))
-            :leave-func
-            (lambda () (mu4e-message "Leave richardjcool@gmail.com context"))
-            :match-func
-            (lambda (msg)
-              (when msg
-                mu4e-message-contact-field-matches msg
-                :to "richardjcool@gmail.com")))
-          :vars '(( user-mail-address . "richardjcool@gmail.com" )
-                  (user-full-name "Richard Cool")
-                  (mu4e-drafts-folder . "/gmail-personal/Drafts")
-                  (mu4e-refile-folder . "/gmail-personal/Archive")
-                  (mu4e-sent-folder . "/gmail-personal/Sent")
-                  (mu4e-trash-folder . "/gmail-personal/Trash")))
-        ,(make-mu4e-context
-            :name "gmail-work"
-            :enter-func
-            (lambda () (mu4e-message "Enter rcool@netflix.com"))
-            :leave-func
-            (lambda () (mu4e-message "Leave rcool@netflix.com"))
-            :match-func
-            (lambda (msg)
-              (when msg
-                mu4e-message-contact-field-matches msg
-                :to "rcool@netflix.com")))
-          :vars '(( user-mail-address . "rcool@netflix.com" )
-                  (user-full-name "Richard Cool")
-                  (mu4e-drafts-folder . "/gmail-work/Drafts")
-                  (mu4e-refile-folder . "/gmail-work/Archive")
-                  (mu4e-sent-folder . "/gmail-work/Sent")
-                  (mu4e-trash-folder . "/gmail-work/Trash")))
-
-
-#+end_src
-
-* mu4e send
-#+begin_src emacs-lisp :tangle yes
-
-(setq epa-pinentry-mode 'loopback)
-(auth-source-forget-all-cached)
-
-;; Don't keep message compose buffers around)
-(setq message-kill-buffer-on-exit t)
-
-;;send function
-(setq send-mail-function 'sendmail-send-it
-      message-send-mail-function 'sendmail-send-it)
-
-;;send program;
-;; this is external
-(setq sendmail-program (executable-find "msmtp"))
-
-;; Select the right sender email from context
-(setq message-sendmail-evelope-from 'header)
-
-;; choose from account before sending
-;; this is a custom function
-(defun rcool/set-msmtp-account ()
-  (if (message-mail-p)
-      (save-exursion
-       (let*
-           ((from (save-restriction
-                    (message-narrow-to-headers)
-                    (message-fetch-field "from")))
-            (account
-             (cond
-              ((string-match "richardjcool@gmail.com" from) "gmail")
-              ((string-match "rcool@netflix.com from" from) "gmail-work"))))
-         (setq message-sendmail-extra-arguments (list '"-a" account))))))
-(add-hook 'message-send-mail-hook 'rcool/set-msmtp-account)
-
-;; mu4e cc & bcc
-(add-hook 'mu4e-compose-mode-hook
-          (defun rcool/add-cc-and-bcc ()
-            "My function to automatically add cc and bcc headers. this is in the mu3e compose mode."
-            (save-excursion (message-add-header "Cc:\n"))
-            (save-excursion (message-add-header "Bcc:\n"))))
-
-;; mu4e address completion
-(add-hook 'mu4e-compose-mode-hook' 'company-mode)
-#+end_src
-
-* Set some sane defaults
-#+begin_src emacs-lisp :tangle yes
-
-;; store link to message if in header view
-(setq org-mu4e-link-query-in-headers-mode nil )
-
-;; dont have to confirm to quit
-(setq mu4e-confirm-quit nil)
-
-;; number of visible headers in h split view
-(setq mu4e-headers-visible-lines 20 )
-
-;; don't show threading by default
-(setq mu4e-headers-show-threads nil)
-
-            ;; hide annoying mu4e recieving messages
-(setq mu4e-hide-index-messages t )
-
-                ;;customize the replay quote string
-(setq message-citation-line-format "%N @ %Y-%m-%d %H:%M :\n")
-
-                ;; Mx find-function RET message-citation-line-format for docs:
-(setq message-citation-line-function 'message-insert-formatted-citation-line )
-
-;;By default do not show related emails
-(setq mu4e-headers-include-related nil)
-
-
-))
-
-
-
-#+END_SRC
