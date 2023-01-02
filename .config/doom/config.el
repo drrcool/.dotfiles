@@ -1,8 +1,8 @@
-  (setq mac-command-modifier       'meta
-        mac-option-modifier        'meta
-        mac-control-modifier       'control
-        mac-right-option-modifier     'meta
-        mac-right-control-modifier  'control)
+(setq mac-command-modifier       'meta
+      mac-option-modifier        'meta
+      mac-control-modifier       'control
+      mac-right-option-modifier     'meta
+      mac-right-control-modifier  'control)
 
 (setq user-full-name "Richard Cool"
       user-mail-address "richardjcool@gmail.com")
@@ -10,7 +10,7 @@
 (setq-default delete-by-moving-to-trash t
               trash-directory "~/.local/share/Trash/files/")
 
-(setq doom-font (font-spec :family "Anonymice Nerd Font Mono" :size 20)
+(setq doom-font (font-spec :family "Spleen 32x64" :size 20)
       doom-big-font (font-spec :family "Anonymice Nerd Font Mono" :size 30)
       doom-variable-pitch-font (font-spec :family "Iosevka" :size 20)
       doom-unicode-font (font-spec :family "Spleen 32x64" :size 20)
@@ -105,21 +105,21 @@
 
 (setq org-hugo-base-dir "~/org/markdown")
 
-  (use-package! beacon
-    :config
-    (beacon-mode +1))
+(use-package! beacon
+  :config
+  (beacon-mode +1))
 
-  ;; Turn on line highlithting for current line
-  (hl-line-mode 1)
-  ;; Add some margins
-  (set-fringe-mode 10)
+;; Turn on line highlithting for current line
+(hl-line-mode 1)
+;; Add some margins
+(set-fringe-mode 10)
 
-    (winner-mode +1)
-  (setq display-buffer-base-action
-    '((display-buffer-reuse-window
-       display-buffer-reuse-mode-window
-       display-buffer-same-window
-       display-buffer-in-previous-window)))
+(winner-mode +1)
+(setq display-buffer-base-action
+  '((display-buffer-reuse-window
+     display-buffer-reuse-mode-window
+     display-buffer-same-window
+     display-buffer-in-previous-window)))
 
 (after! doom-modeline
     (setq
@@ -127,35 +127,35 @@
      doom-modeline-minor-modes nil
           doom-modeline-height 25))
 
-  (use-package! mixed-pitch
-    :defer t
-    :config
-    (setq mixed-pitch-set-height nil)
-    (dolist (face '(org-date org-priority org-tag org-special-keyword))
-      (add-to-list 'mixed-pitch-fixed-pitch-faces face))
-   )
+(use-package! mixed-pitch
+  :defer t
+  :config
+  (setq mixed-pitch-set-height nil)
+  (dolist (face '(org-date org-priority org-tag org-special-keyword))
+    (add-to-list 'mixed-pitch-fixed-pitch-faces face))
+ )
 
-  (use-package! quickrun
-    :defer t
-    :general
-    (general-def
-     :states 'normal
-     :prefix "SPC"
-     :keymaps 'quickrun--mode-map
-     "cq" '(nil :which-key "quickrun")
-     "cqq" '(quit-window :which-key "Quit")
-     "cqr" '(quickrun :which-key "Run")
-     "cqR" '(quickrun-region :which-key "Run Region")
-     "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
-     "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
-     "cqs" '(quickrun-select :which-key "Select backend")"cq" '(nil :which-key "quickrun")
-     "cqq" '(quit-window :which-key "Quit")
-     "cqr" '(quickrun :which-key "Run")
-     "cqR" '(quickrun-region :which-key "Run Region")
-     "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
-     "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
-     "cqs" '(quickrun-select :which-key "Select backend")
- ))
+(use-package! quickrun
+   :defer t
+   :general
+   (general-def
+    :states 'normal
+    :prefix "SPC"
+    :keymaps 'quickrun--mode-map
+    "cq" '(nil :which-key "quickrun")
+    "cqq" '(quit-window :which-key "Quit")
+    "cqr" '(quickrun :which-key "Run")
+    "cqR" '(quickrun-region :which-key "Run Region")
+    "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
+    "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
+    "cqs" '(quickrun-select :which-key "Select backend")"cq" '(nil :which-key "quickrun")
+    "cqq" '(quit-window :which-key "Quit")
+    "cqr" '(quickrun :which-key "Run")
+    "cqR" '(quickrun-region :which-key "Run Region")
+    "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
+    "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
+    "cqs" '(quickrun-select :which-key "Select backend")
+))
 
 (after! tree-sitter
 (add-to-list 'tree-sitter-major-mode-language-alist '(tsx-mode . tsx))
@@ -319,11 +319,6 @@
 :nm "f" #'rc/origami-mode
 )
 
-(map!
- :leader
- :desc "Windows"
- :nm "w" #'rc/window-mode)
-
 (hercules-def
  :toggle-funs #'rc/magit-map
  :keymap 'magit-mode-map
@@ -336,7 +331,7 @@
 (map!
  :leader
  :desc "Buffers"
- :nm "b" #'rc/buffer-mod)
+ :nm "b" #'rc/buffer-mode)
 
 (general-def
   :prefix-map 'my-dired-map
@@ -363,16 +358,16 @@
   "O" #'dired-display-file
   "o" #'dired-find-file-other-window
   "Q" #'dired-do-find-regexp-and-replace
-  "R" #'dired-do-rename
-  "r" #'dired-do-rsynch
-  "S" #'dired-do-symlink
-  "s" #'dired-sort-toggle-or-edit
-  "t" #'dired-toggle-marks
-  "U" #'dired-unmark-all-marks
-  "u" #'dired-unmark
-  "v" #'dired-view-file      ;; q to exit, s to search, = gets line #
-  "w" #'dired-kill-subdir
-  "Y" #'dired-do-relsymlink
+  ;; "R" #'dired-do-rename
+  ;; "r" #'dired-do-rsynch
+  ;; "S" #'dired-do-symlink
+  ;; "s" #'dired-sort-toggle-or-edit
+  ;; "t" #'dired-toggle-marks
+  ;; "U" #'dired-unmark-all-marks
+  ;; "u" #'dired-unmark
+  ;; "v" #'dired-view-file      ;; q to exit, s to search, = gets line #
+  ;; "w" #'dired-kill-subdir
+  ;; "Y" #'dired-do-relsymlink
   "z" #'diredp-compress-this-file
   "Z" #'dired-do-compress
   )
@@ -395,143 +390,3 @@
 (:desc "Dired"
  :nm "d" #'my-dired-mode)
                 )
-
-(after! mu4e
-
-(delete 'mu4e evil-collection-mode-list)
-(delete 'mu4e-conversation evil-collection-mode-list)
-
-(use-package! mu4e
-
-  :config
-  (setq mu4e-mu-binary (executable-find "mu"))
-  (setq mu4e-maildir "~/.maildir")
-  (setq mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
-  (setq mu4e-update-interval 300)
-  (setq mu4e-attachment-dir "~/Desktop")
-  (setq mu4e-change-filenames-with-moving t)
-  (setq mu4e-user-mail-address-list '("richardjcool@gmail.com"
-                                      "rcool@netflix.com"))
-  (setq mu4e-maildir-shortcuts
-        '(("/gmail-personal/INBOX" :key ?p)
-          ("/gmail-personal/[Gmail]/Sent Mail" :key ?P)
-          ("/gmail-work/INBOX"  :key ?w)
-          ("/gmail-work/[Gmail]/Sent Mail" :key ?W)
-          ))
-
-  (add-to-list 'mu4e-bookmark
-               (make-mu4e-bookmark
-                :name "Inbox - Personal Gmail"
-                :query "maildir:/gmail-personal/INBOX"
-                :key ?p))
-  (add-to-list 'mu4e-bookmark
-               (make-mu4e-bookmark
-                :name "Inbox - Work Gmail"
-                :query "maildir:/gmail-work/INBOX"
-                :key ?w))
-
-  (setq mu4e-contexts
-        `(,(make-mu4e-context
-            :name "gmail"
-            :enter-func
-            (lambda () (mu4e-message "Enter richardjcool@gmail.com context"))
-            :leave-func
-            (lambda () (mu4e-message "Leave richardjcool@gmail.com context"))
-            :match-func
-            (lambda (msg)
-              (when msg
-                mu4e-message-contact-field-matches msg
-                :to "richardjcool@gmail.com")))
-          :vars '(( user-mail-address . "richardjcool@gmail.com" )
-                  (user-full-name "Richard Cool")
-                  (mu4e-drafts-folder . "/gmail-personal/Drafts")
-                  (mu4e-refile-folder . "/gmail-personal/Archive")
-                  (mu4e-sent-folder . "/gmail-personal/Sent")
-                  (mu4e-trash-folder . "/gmail-personal/Trash")))
-        ,(make-mu4e-context
-            :name "gmail-work"
-            :enter-func
-            (lambda () (mu4e-message "Enter rcool@netflix.com"))
-            :leave-func
-            (lambda () (mu4e-message "Leave rcool@netflix.com"))
-            :match-func
-            (lambda (msg)
-              (when msg
-                mu4e-message-contact-field-matches msg
-                :to "rcool@netflix.com")))
-          :vars '(( user-mail-address . "rcool@netflix.com" )
-                  (user-full-name "Richard Cool")
-                  (mu4e-drafts-folder . "/gmail-work/Drafts")
-                  (mu4e-refile-folder . "/gmail-work/Archive")
-                  (mu4e-sent-folder . "/gmail-work/Sent")
-                  (mu4e-trash-folder . "/gmail-work/Trash")))
-
-(setq epa-pinentry-mode 'loopback)
-(auth-source-forget-all-cached)
-
-;; Don't keep message compose buffers around)
-(setq message-kill-buffer-on-exit t)
-
-;;send function
-(setq send-mail-function 'sendmail-send-it
-      message-send-mail-function 'sendmail-send-it)
-
-;;send program;
-;; this is external
-(setq sendmail-program (executable-find "msmtp"))
-
-;; Select the right sender email from context
-(setq message-sendmail-evelope-from 'header)
-
-;; choose from account before sending
-;; this is a custom function
-(defun rcool/set-msmtp-account ()
-  (if (message-mail-p)
-      (save-exursion
-       (let*
-           ((from (save-restriction
-                    (message-narrow-to-headers)
-                    (message-fetch-field "from")))
-            (account
-             (cond
-              ((string-match "richardjcool@gmail.com" from) "gmail")
-              ((string-match "rcool@netflix.com from" from) "gmail-work"))))
-         (setq message-sendmail-extra-arguments (list '"-a" account))))))
-(add-hook 'message-send-mail-hook 'rcool/set-msmtp-account)
-
-;; mu4e cc & bcc
-(add-hook 'mu4e-compose-mode-hook
-          (defun rcool/add-cc-and-bcc ()
-            "My function to automatically add cc and bcc headers. this is in the mu3e compose mode."
-            (save-excursion (message-add-header "Cc:\n"))
-            (save-excursion (message-add-header "Bcc:\n"))))
-
-;; mu4e address completion
-(add-hook 'mu4e-compose-mode-hook' 'company-mode)
-
-;; store link to message if in header view
-(setq org-mu4e-link-query-in-headers-mode nil )
-
-;; dont have to confirm to quit
-(setq mu4e-confirm-quit nil)
-
-;; number of visible headers in h split view
-(setq mu4e-headers-visible-lines 20 )
-
-;; don't show threading by default
-(setq mu4e-headers-show-threads nil)
-
-            ;; hide annoying mu4e recieving messages
-(setq mu4e-hide-index-messages t )
-
-                ;;customize the replay quote string
-(setq message-citation-line-format "%N @ %Y-%m-%d %H:%M :\n")
-
-                ;; Mx find-function RET message-citation-line-format for docs:
-(setq message-citation-line-function 'message-insert-formatted-citation-line )
-
-;;By default do not show related emails
-(setq mu4e-headers-include-related nil)
-
-
-))

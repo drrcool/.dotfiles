@@ -560,15 +560,6 @@ A better verson of variable pitch.
 
 * Hercules
 #+begin_src emacs-lisp :tangle yes
-(hercules-def
- :toggle-funs #'rc/window-mode
- :keymap 'evil-window-map
- :transient t)
-
-(map!
- :leader
- :desc "Windows"
- :nm "w" #'rc/window-mode)
 
 (hercules-def
  :toggle-funs #'rc/magit-map
