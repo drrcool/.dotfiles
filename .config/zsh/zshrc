@@ -118,3 +118,5 @@ source $HOME/.config/zsh/zshrc.core.zsh
 # fnm
 export PATH="/home/rcool/.local/share/fnm:$PATH"
 eval "`fnm env`"
+
+export PATH=$PATH:/home/rcool/.spicetify

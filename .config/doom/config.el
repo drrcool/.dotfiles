@@ -4,6 +4,8 @@
       mac-right-option-modifier     'meta
       mac-right-control-modifier  'control)
 
+(set-frame-parameter nil 'alpha-background 50)
+
 (use-package! company
   :bind
   (:map company-active-map
@@ -20,9 +22,9 @@
 
 (setq-default window-combination-resize t)
 
-(defadvice! prompt-for-buffer (&rest _)
-  :after '(evil-window-split evil-window-vsplit)
-  (counsel-ibuffer))
+;; (defadvice! prompt-for-buffer (&rest _)
+;;   :after '(evil-window-split evil-window-vsplit)
+;;   (counsel-ibuffer))
 
 (after! undo-fu
   (setq undo-limit 10000000 ;; 1MB
@@ -40,11 +42,11 @@
                (recentf-save-list)
                (savehist-save))))
 
-(setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 20)
+(setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 18)
       doom-big-font (font-spec :family "Iosevka Aile" :size 30)
-      doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 20)
-      doom-unicode-font (font-spec :family "Spleen 32x64" :size 20)
-      doom-serif-font (font-spec :family "Iosevka Aile" :size 20)
+      doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 18)
+      doom-unicode-font (font-spec :family "Spleen 32x64" :size 18)
+      doom-serif-font (font-spec :family "Iosevka Aile" :size 18)
 
       )
 
@@ -357,11 +359,6 @@
  :keymap 'doom-leader-buffer-map
 :transient t)
 
-(map!
- :leader
- :desc "Buffers"
- :nm "b" #'rc/buffer-mode)
-
 (general-def
   :prefix-map 'my-dired-map
 
@@ -406,16 +403,4 @@
  :keymap 'my-dired-map
  :transient t)
 
-(map!
- :leader
- :desc "Hercules"
- :"H" 'nil)
-
-(map!
- :leader
- :prefix "H"
- (:desc "Magit"
- :nm "m" #'rc/magit-map)
-(:desc "Dired"
- :nm "d" #'my-dired-mode)
                 )

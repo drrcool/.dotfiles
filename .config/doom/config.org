@@ -12,6 +12,13 @@
 #+RESULTS:
 : control
 
+** Window transparency
+#+begin_src emacs-lisp :tangle yes
+
+(set-frame-parameter nil 'alpha-background 50)
+#+end_src
+
+#+RESULTS:
 
 ** Tab completion
 #+begin_src emacs-lisp :tangle yes
@@ -23,6 +30,9 @@
   :custom
   (company-minimum-prefix-length 1)
   (company-idl-delay 0.0))
+
+
+
 #+end_src
 
 #+RESULTS:
@@ -55,9 +65,9 @@
 
 *** Show the list of buffers when splitting
 #+begin_src emacs-lisp :tangle yes
-(defadvice! prompt-for-buffer (&rest _)
-  :after '(evil-window-split evil-window-vsplit)
-  (counsel-ibuffer))
+;; (defadvice! prompt-for-buffer (&rest _)
+;;   :after '(evil-window-split evil-window-vsplit)
+;;   (counsel-ibuffer))
 #+end_src
 
 ** Better undo
@@ -84,11 +94,11 @@ Files edited when using =emacsclient= are not stored by =recentf=.  So emacs for
 #+end_src
 ** Font
 #+begin_src emacs-lisp :tangle yes
-(setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 20)
+(setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 18)
       doom-big-font (font-spec :family "Iosevka Aile" :size 30)
-      doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 20)
-      doom-unicode-font (font-spec :family "Spleen 32x64" :size 20)
-      doom-serif-font (font-spec :family "Iosevka Aile" :size 20)
+      doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 18)
+      doom-unicode-font (font-spec :family "Spleen 32x64" :size 18)
+      doom-serif-font (font-spec :family "Iosevka Aile" :size 18)
 
       )
 
@@ -650,11 +660,6 @@ A better verson of variable pitch.
  :keymap 'doom-leader-buffer-map
 :transient t)
 
-(map!
- :leader
- :desc "Buffers"
- :nm "b" #'rc/buffer-mode)
-
 #+end_src
 
 #+RESULTS:
@@ -708,17 +713,5 @@ A better verson of variable pitch.
  :keymap 'my-dired-map
  :transient t)
 
-(map!
- :leader
- :desc "Hercules"
- :"H" 'nil)
-
-(map!
- :leader
- :prefix "H"
- (:desc "Magit"
- :nm "m" #'rc/magit-map)
-(:desc "Dired"
- :nm "d" #'my-dired-mode)
                 )
 #+end_src

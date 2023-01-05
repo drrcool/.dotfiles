@@ -3,14 +3,13 @@ env:
   TERM: xterm-256color
 shell:
   program: /bin/zsh
-  alt_send_esc: true
   args:
     - --login
 window:
   dimensions:
     columns: 70
     lines: 20
-  opacity: 0.9
+  opacity: 0.8
   padding:
     x: 2
     y: 2
@@ -23,13 +22,13 @@ scrolling:
   multipler: 3
 font:
   normal:
-    family: PragmataProMonoLiga Nerd Font
+    family: Spleen 32x64 Nerd Font
     style: Regular
   bold:
-    family: PragmataProMonoLiga Nerd Font
+    family: Spleen 32x64 Nerd Font
     style: Bold
   italic:
-    family: PragmataProMonoLiga Nerd Font
+    family: Spleen 32x64 Nerd Font
     style: Italic
   size: 15.0
   AppleFontSmoothing: true
@@ -73,6 +72,31 @@ key_bindings:
   - { key: Equals, mods: Shift|Command, action: IncreaseFontSize }
   - { key: Minus, mods: Command, action: DecreaseFontSize }
   - { key: Key0, mods: Command, action: ResetFontSize }
+colors:
+  # Default colors
+  primary:
+    background: '0x000000'
+    foreground: '0x919191'
 
-import:
-  - ~/.alacritty-colorscheme/themes/challenger_deep.yaml
+  # Normal colors
+  normal:
+    black:   '0x303030'
+    red:     '0xa43261'
+    green:   '0x006ca5'
+    yellow:  '0x007086'
+    blue:    '0x6751a6'
+    magenta: '0x913e88'
+    cyan:    '0x0061b1'
+    white:   '0xc6c6c6'
+
+  # Bright colors
+  bright:
+    black:   '0x5e5e5e'
+    red:     '0xff9fc9'
+    green:   '0x3bd6ff'
+    yellow:  '0x00ddf4'
+    blue:    '0xd5b8ff'
+    magenta: '0xffa7f6'
+    cyan:    '0x93c9ff'
+    white:   '0xffffff'
+
