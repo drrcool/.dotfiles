@@ -169,7 +169,17 @@ Files edited when using =emacsclient= are not stored by =recentf=.  So emacs for
 :config
 (map! :leader
       :prefix "t"
-      :desc "Toggle modus theme" "m" #'modus-themes-toggle))
+      :desc "Toggle modus theme" "m" #'modus-themes-toggle)
+
+
+
+
+
+
+(load-theme 'modus-vivendi t)
+
+                )
+
 #+end_src
 
 #+RESULTS:
@@ -406,7 +416,8 @@ A better verson of variable pitch.
      "cqR" '(quickrun-region :which-key "Run Region")
      "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
      "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
-     "cqs" '(quickrun-select :which-key "Select backend")"cq" '(nil :which-key "quickrun")
+     "cqs" '(quickrun-select :which-key "Select backend")
+     "cq"  '(nil :which-key "quickrun")
      "cqq" '(quit-window :which-key "Quit")
      "cqr" '(quickrun :which-key "Run")
      "cqR" '(quickrun-region :which-key "Run Region")

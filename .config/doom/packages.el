@@ -87,3 +87,4 @@
 (package! undo-fu)
 (package! quickrun)
 (package! hercules)
+(package! origami)

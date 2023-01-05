@@ -8,21 +8,21 @@ shell:
 window:
   dimensions:
     columns: 70
-    lines: 20
-  opacity: 0.8
+    lines: 30
+  opacity: 0.9
   padding:
     x: 2
     y: 2
   dynamic_padding: false
   startup_mode: Windowed
   dynamic_title: true
+  decorations: buttonless
 scrolling:
   auto-scroll: true
   history: 10000
   multipler: 3
 font:
   normal:
-<<<<<<< HEAD
     family: Spleen 32x64 Nerd Font
     style: Regular
   bold:
@@ -30,15 +30,6 @@ font:
     style: Bold
   italic:
     family: Spleen 32x64 Nerd Font
-=======
-    family: Iosevka Term
-    style: Regular
-  bold:
-    family: Iosevka Term
-    style: Bold
-  italic:
-    family: Iosevka Term
->>>>>>> 7013d9240fbb94128e8da546d7a8686ce52c7238
     style: Italic
   size: 18.0
   AppleFontSmoothing: true
@@ -110,8 +101,3 @@ colors:
     cyan:    '0x93c9ff'
     white:   '0xffffff'
 
-<<<<<<< HEAD
-=======
-import:
-  - ./farside.alacritty
->>>>>>> 7013d9240fbb94128e8da546d7a8686ce52c7238

@@ -7,7 +7,7 @@
   "workbench.editor.showTabs": true,
   "editor.minimap.enabled": false,
   "editor.codeLens": true,
-
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
   // Formatters
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
@@ -20,7 +20,7 @@
   },
   // Themes + Icons
   "workbench.iconTheme": "icons",
-  "workbench.colorTheme": "One Dark Vibrant",
+  "workbench.colorTheme": "modus-vivendi",
   "workbench.colorCustomizations": {
     "editorCursor.foreground": "#ffff00",
     "[One Dark Vibrant]": {
@@ -50,9 +50,9 @@
       "activityBar.background": "#2E2E2E",
       "tab.inactiveBackground": "#2E2E2E"
     },
-    "statusBar.background": "#005f5f",
-    "statusBar.noFolderBackground": "#005f5f",
-    "statusBar.debuggingBackground": "#005f5f"
+    "statusBar.background": "#5f0000",
+    "statusBar.noFolderBackground": "#5f0000",
+    "statusBar.debuggingBackground": "#5f0000"
   },
 
   // Gitlens
@@ -792,12 +792,12 @@
   "scm.inputFontFamily": "agave",
   //FONTS
   "editor.fontSize": 16,
-  "editor.fontFamily": "PragmataProMonoLiga Nerd Font",
+  "editor.fontFamily": "Spleen 32x64",
   "editor.fontLigatures": true,
   "editor.fontWeight": "400",
   "editor.lineHeight": 0,
   "editor.letterSpacing": 0,
-  "window.zoomLevel": 2,
+  "window.zoomLevel": 1,
   "vitest.commandLine": "newt exec yarn test:unit",
   "vitest.enable": true,
   "debug.console.acceptSuggestionOnEnter": "on",

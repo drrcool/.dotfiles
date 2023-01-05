@@ -1,9 +1,8 @@
 local wezterm = require("wezterm")
-
 return {
 	font = wezterm.font("Spleen 32x64"),
 	font_size = 20,
-	color_scheme = "Challenger Deep",
+	color_scheme = "FarSide (terminal.sexy)",
 	window_background_opacity = 0.98,
 	bold_brightens_ansi_colors = true,
 	automatically_reload_config = true,
