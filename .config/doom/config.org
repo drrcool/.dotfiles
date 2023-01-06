@@ -758,5 +758,4 @@ A better verson of variable pitch.
  :keymap 'my-dired-map
  :transient t)
 
-                )
 #+end_src

@@ -88,4 +88,5 @@
 (package! quickrun)
 (package! hercules)
 (package! origami)
-(package! org-appear-mode)
+(package! org-appear)
+(package! olivetti)

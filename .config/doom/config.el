@@ -6,25 +6,81 @@
 
 (set-frame-parameter nil 'alpha-background 50)
 
-;; (use-package! cIvy Posframe
-;; (setq ivy-posframe-display-functions-alist
-;;       '((swiper                         . ivy-posframe-display-at-point)
-;;      (complete-symbol            . ivy-posframe-display-at-point)
-;;         (counsel-M-x                . ivy-display-function-fallback)
-;;         (counsel-esh-history        . ivy-posframe-display-at-window-center)
-;;         (counsel-describe-function  . ivy-display-function-fallback)
-;;         (counsel-describe-variable  . ivy-display-function-fallback)
-;;         (counsel-find-file          . ivy-display-function-fallback)
-;;         (counsel-recentf            . ivy-display-function-fallback)
-;;         (counsel-register           . ivy-posframe-display-at-frame-bottom-window-center)
-;;         (dmenu                      . ivy-posframe-display-at-frame-top-center)
-;;         (nil                        . ivy-posframe-display))
-;;       ivy-posframe-height-alist
-;;       '((swiper . 20)
-;;         (dmenu . 20)
-;;         (t . 10)))
-;; (setq ivy-posframe-border-width 0)
-;; (ivy-posframe-mode 1)
+(use-package! company
+  :bind
+  (:map company-active-map
+        ("<tab>" . company-complete-selection))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idl-delay 0.0))
+
+(setq user-full-name "Richard Cool"
+      user-mail-address "richardjcool@gmail.com")
+
+(setq-default delete-by-moving-to-trash t
+              trash-directory "~/.local/share/Trash/files/")
+
+(setq-default window-combination-resize t)
+
+;; (defadvice! prompt-for-buffer (&rest _)
+;;   :after '(evil-window-split evil-window-vsplit)
+;;   (counsel-ibuffer))
+
+(after! undo-fu
+  (setq undo-limit 10000000 ;; 1MB
+        undo-strong-limit 100000000 ;;100MB
+        undo-outer-limit 1000000000) ;; 1GB
+(setq undo-fu-allow-undo-in-region t
+      undo-fu-ignore-keyboard-quit t))
+;;Evil undo
+(after! evil
+  (setq evil-want-fine-undo t))
+
+(when (daemonp)
+  (add-hook! '(delete-frame-functions delete-terminal-functions)
+             (let ((inhibit-message t))
+               (recentf-save-list)
+               (savehist-save))))
+
+(setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 18)
+      doom-big-font (font-spec :family "Iosevka Aile" :size 30)
+      doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 18)
+      doom-unicode-font (font-spec :family "Spleen 32x64" :size 18)
+      doom-serif-font (font-spec :family "Iosevka Aile" :size 18)
+
+      )
+
+
+(custom-set-faces!
+  '(font-lock-comment-face :slant italic)
+  '(font-lock-keyword-face :slant italic))
+
+;; accept completion from copilot and fallback to company
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (("C-TAB" . 'copilot-accept-completion-by-word)
+         ("C-<tab>" . 'copilot-accept-completion-by-word)
+         :map copilot-completion-map
+         ("<tab>" . 'copilot-accept-completion)
+         ("TAB" . 'copilot-accept-completion)))
+
+(define-globalized-minor-mode global-rainbow-mode rainbow-mode
+  (lambda ()
+    (when (not (memq major-mode
+                (list 'org-agenda-mode)))
+     (rainbow-mode 1))))
+(global-rainbow-mode 1 )
+
+(global-display-line-numbers-mode 1)
+(setq display-line-numbers-type 'relative)
+
+(setq tramp-default-method "ssh")
+
+(use-package! org-auto-mode
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
 
 (after! org
 
@@ -381,5 +437,3 @@
  :toggle-funs #'my-dired-mode
  :keymap 'my-dired-map
  :transient t)
-
-                )
