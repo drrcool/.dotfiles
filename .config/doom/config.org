@@ -288,7 +288,7 @@ Files edited when using =emacsclient= are not stored by =recentf=.  So emacs for
   (setq org-todo-keyword-faces '(("TODO" . (:foreground "#7bc275" :weight normal))
                                  ("WAIT" . (:foreground "orange" :weight normal))
                                  ("HOLD" . (:inherit warning :weight normal))))
-
+  (setq org-tag-keywords '((sequence "home (h)" "work (w)" "qoedash(q)" "sessionwiz(s)" "deviceReachDash(d)" "adhoc(a)")))
 
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -316,6 +316,39 @@ Files edited when using =emacsclient= are not stored by =recentf=.  So emacs for
           ("p" "process email" entry (file +org-capture-todo-file)
            "* TODO %? %:fromname: %a")
           )))
+(setq org-startup-indented t
+      org-pretty-entities t
+      org-hide-emphasis-markers t
+      org-startup-with-inline-images t
+      org-image-actual-width '(300))
+
+(use-package! org-appear
+  :hook (org-mode . org-appear-mode))
+
+(use-package! org-superstar
+  :config
+  (setq org-superstar-special-todo-items t)
+  (add-hook 'org-mode-hook (lambda() (org-superstar-mode +1))))
+(setq-default line-spacing 6)
+(use-package! olivetti
+  :init
+  (setq olivetti-body-width 0.67)
+  :config
+  (defun distraction-free ()
+    "Distraction free writing environment"
+    (interactive)
+    (if (equal olivetti-mode nil)
+        (progn
+          (window-configuration-to-register 1)
+          (delete-other-windows)
+          (text-scale-increase 2)
+          (olivetti-mode t))
+      (progn
+        (jump-to-register 1)
+        (olivetti-mode 0)
+        (text-scale-decrease 2))))
+  :bind
+  (("<f9>" . distraction-free)))
 
 (map!
  :leader
@@ -392,11 +425,12 @@ A better verson of variable pitch.
 #+begin_src emacs-lisp :tangle yes
   (use-package! mixed-pitch
     :defer t
+    :hook (text-mode . mixed-pitch-mode)
     :config
-    (setq mixed-pitch-set-height nil)
-    (dolist (face '(org-date org-priority org-tag org-special-keyword))
-      (add-to-list 'mixed-pitch-fixed-pitch-faces face))
-   )
+    (set-face-attribute 'default nil :font "Spleen 32x64" :height 130)
+    (set-face-attribute 'fixed-pitch nil :font "Iosekva Term")
+    (set-face-attribute 'variable-pitch nil :font "Iosevka Aile"))
+   (add-hook 'mixed-pitch-mode-hook #'solaire-mode-reset)
 #+end_src
 
 #+RESULTS:
