@@ -16,20 +16,18 @@ window:
   dynamic_padding: false
   startup_mode: Windowed
   dynamic_title: true
+  decorations: buttonless
 scrolling:
   auto-scroll: true
   history: 10000
   multipler: 3
 font:
   normal:
-    family: Spleen 32x64 Nerd Font
-    style: Regular
+    family: Spleen32x64 Nerd Font
   bold:
-    family: Spleen 32x64 Nerd Font
-    style: Bold
+    family: Spleen32x64 Nerd Font
   italic:
-    family: Spleen 32x64 Nerd Font
-    style: Italic
+    family: Spleen32x64 Nerd Font
   size: 18.0
   AppleFontSmoothing: true
   offset:
@@ -75,28 +73,27 @@ key_bindings:
 colors:
   # Default colors
   primary:
-    background: '0x000000'
-    foreground: '0x919191'
+    background: "0x000000"
+    foreground: "0x919191"
 
   # Normal colors
   normal:
-    black:   '0x303030'
-    red:     '0xa43261'
-    green:   '0x006ca5'
-    yellow:  '0x007086'
-    blue:    '0x6751a6'
-    magenta: '0x913e88'
-    cyan:    '0x0061b1'
-    white:   '0xc6c6c6'
+    black: "0x303030"
+    red: "0xa43261"
+    green: "0x006ca5"
+    yellow: "0x007086"
+    blue: "0x6751a6"
+    magenta: "0x913e88"
+    cyan: "0x0061b1"
+    white: "0xc6c6c6"
 
   # Bright colors
   bright:
-    black:   '0x5e5e5e'
-    red:     '0xff9fc9'
-    green:   '0x3bd6ff'
-    yellow:  '0x00ddf4'
-    blue:    '0xd5b8ff'
-    magenta: '0xffa7f6'
-    cyan:    '0x93c9ff'
-    white:   '0xffffff'
-
+    black: "0x5e5e5e"
+    red: "0xff9fc9"
+    green: "0x3bd6ff"
+    yellow: "0x00ddf4"
+    blue: "0xd5b8ff"
+    magenta: "0xffa7f6"
+    cyan: "0x93c9ff"
+    white: "0xffffff"

@@ -42,7 +42,7 @@
        ;;nav-flash         ; blink cursor line after big motions
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
-       (popup +defaults)   ; tame sudden yet inevitable temporary windows
+       ;(popup +defaults)   ; tame sudden yet inevitable temporary windows
        ;;tabs              ; a tab bar for Emacs
        ( treemacs +lsp)          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
@@ -149,8 +149,8 @@
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       ( org +hugo +journal +present +pretty +noter +pandoc)               ; organize your plain life in plain text
-       ;;php               ; perl's insecure younger brother
+       ( org +brain +contacts +passwrods
+             +hugo +journal +present +pretty +noter +pandoc)               ; organize your plain life in plain text
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        ( python +lsp +pyenv +pyright +tree-sitter)            ; the 'cutest' gui framework ever
@@ -186,7 +186,7 @@
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :config
-       literate
+       ;; wliterate
        (default +bindings +smartparens))
 
 

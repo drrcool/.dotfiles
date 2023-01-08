@@ -119,3 +119,4 @@
 (package! moe-theme)
 (package! evil-god-state)
 (package! rainbow-mode)
+(package! evil-dvorak)
