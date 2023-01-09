@@ -21,11 +21,12 @@
        ;;layout            ; auie,ctsrnm is the superior home row
 
        :completion
-       ;;( company  )           ; the ultimate code completion backend
+
+       ( company  )           ; the ultimate code completion backend
        ;;(helm +fuzzy +icons)              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
-       ;;(ivy +childframe +prescient +fonts +icons +fuzzy)               ; a search engine for love and life
-       (vertico +icons +childframe)           ; the search engine of the future
+       (ivy +childframe +prescient +fonts +icons +fuzzy)               ; a search engine for love and life
+       ;;(vertico +icons +childframe)           ; the search engine of the future
 
        :ui
        ;;deft              ; notational velocity for Emacs
@@ -42,7 +43,7 @@
        ;;nav-flash         ; blink cursor line after big motions
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
-       ;(popup +defaults)   ; tame sudden yet inevitable temporary windows
+       (popup +all +defaults)   ; tame sudden yet inevitable temporary windows
        ;;tabs              ; a tab bar for Emacs
        ( treemacs +lsp)          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
