@@ -103,3 +103,7 @@
 (package! org-ol-tree :recipe (:host github :repo "Townk/org-ol-tree"))
 (package! org-modern)
 (package! doct)
+(package! mini-frame)
+(package! windresize)
+(package! cyberpunk-theme)
+(package! kaolin-themes)

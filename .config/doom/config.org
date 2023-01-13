@@ -1,80 +1,62 @@
-#+Title: Emacs Config
-#+Property: header-args: :tangle ~/.doom.d/config.el :results none
+#+title:Drrcool's Emacs Config
+#+PROPERTY: header-args: :tangle ~/.doom.d/config.el :results none
 #+auto_tangle: t
-
-* Dvoraks
-#+begin_src emacs-lisp :tangle yes
-(use-package! evil-dvorak
-  :diminish evil-dvorak-mode)
-  ;; :Config (global-evil-dvorak-mode 1
+* Ensure lexical bindings are on
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t; -*-
 #+end_src
-#+RESULTS:
+* Mac bindings
+#+begin_src emacs-lisp
+  (setq
 
-* Mac bindins
-#+begin_src emacs-lisp :tangle yes
-  (setq mac-command-modifier       'meta
-        mac-option-modifier 'super
-        mac-control-modifier       'control
-        mac-right-control-modifier  'control)
-#+end_src
+        mac-right-command-modifier 'control
+        mac-option-modifier 'meta
+        mac-control-modifier       'meta
+)
+#+End_src
 
 #+RESULTS:
-: control
+: meta
 
-* Tab completion
-#+begin_src emacs-lisp :tangle yes
+* (INACTIVE) Tab completion
+#+begin_src emacs-lisp
 
-(use-package! company
-  :bind
-  (:map company-active-map
-        ("<tab>" . company-complete-selection))
-  :custom
-  (company-minimum-prefix-length 1)
-  (company-idl-delay 0.0))
-
-
+;; (use-package! company
+;;   :bind
+;;   (:map company-active-map
+;;         ("<tab>" . company-complete-selection))
+;;   :custom
+;;   (company-minimum-prefix-length 1)
+;;   (company-idl-delay 0.0))
 
 #+end_src
-
-#+RESULTS:
 
 * My Info:
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq user-full-name "Richard Cool"
       user-mail-address "richardjcool@gmail.com")
 #+end_src
 
-#+RESULTS:
-: richardjcool@gmail.com
-
-
 * Move to trash to delete
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq-default delete-by-moving-to-trash t
               trash-directory "~/.local/share/Trash/files/")
 #+end_src
-
-#+RESULTS:
-: ~/.local/share/Trash/files/
-
 * Window
 ** Take new window space from all other windows (not just current)
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq-default window-combination-resize t)
 #+end_src
 
-#+RESULTS:
-: t
-
-** Show the list of buffers when splitting
-#+begin_src emacs-lisp :tangle yes
+** (INACTIVE) Show the list of buffers when splitting
+#+begin_src emacs-lisp
 ;; (defadvice! prompt-for-buffer (&rest _)
 ;;   :after '(evil-window-split evil-window-vsplit)
 ;;   (counsel-ibuffer))
 #+end_src
 
 * Better undo
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! undo-fu
   (setq undo-limit 10000000 ;; 1MB
         undo-strong-limit 100000000 ;;100MB
@@ -91,7 +73,7 @@
 
 * Recent files
 Files edited when using =emacsclient= are not stored by =recentf=.  So emacs forgets about your most recently opened files. A quick fix is to hook into the /recentf-save-list/ command to the /delete-frame-functions/ and /delete-terminal-functions/ which get execute each time a frame/terminal is deleted.
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (when (daemonp)
   (add-hook! '(delete-frame-functions delete-terminal-functions)
              (let ((inhibit-message t))
@@ -101,29 +83,18 @@ Files edited when using =emacsclient= are not stored by =recentf=.  So emacs for
 
 #+RESULTS:
 
-* Font
-#+begin_src emacs-lisp :tangle yes
-(setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 18)
-      doom-big-font (font-spec :family "Iosevka Aile" :size 30)
-      doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 18)
-      doom-unicode-font (font-spec :family "Spleen 32x64" :size 18)
-      doom-serif-font (font-spec :family "Iosevka Aile" :size 18)
-
-      )
-
-
+#+begin_src emacs-lisp
 (custom-set-faces!
-  '(font-lock-comment-face :slant italic)
-  '(font-lock-keyword-face :slant italic))
+  '(cont-lock-comment-face :slant italic)
+  '(font-lock-keyword-face :slant italic))
 
 #+end_src
 
 #+RESULTS:
 | doom--customize-themes-h-40 | doom--customize-themes-h-50 | doom--customize-themes-h-51 | doom--customize-themes-h-52 | doom--customize-themes-h-53 | doom--customize-themes-h-81 |
 
-
 * Theme
-#+begin_src emacs-lisp :tangle yes :results none
+#+begin_src emacs-lisp
 (use-package! modus-themes
   :init
   (setq modus-themes-hl-line '(intense)
@@ -229,9 +200,8 @@ Files edited when using =emacsclient= are not stored by =recentf=.  So emacs for
 (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
 #+end_src
 
-
 * Copilot
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 ;; accept completion from copilot and fallback to company
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
@@ -240,13 +210,13 @@ Files edited when using =emacsclient= are not stored by =recentf=.  So emacs for
          :map copilot-completion-map
          ("<tab>" . 'copilot-accept-completion)
          ("TAB" . 'copilot-accept-completion)))
-         #+END_SRC
+    (map! :desc "Insert copilot suggestion" :i "C-t" #'copilot-accept-completion)
+          #+END_SRC
 
          #+RESULTS:
 
-
 * Turn on rainbow mode
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (define-globalized-minor-mode global-rainbow-mode rainbow-mode
   (lambda ()
     (when (not (memq major-mode
@@ -259,16 +229,22 @@ Files edited when using =emacsclient= are not stored by =recentf=.  So emacs for
 : t
 
 * line numbers
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (global-display-line-numbers-mode 1)
 (setq display-line-numbers-type 'relative)
-#+end_src
 
+;; Disable for some modes
+(dolist (mode '(term-mode-hook
+                shell-mode-hook
+                treemacs-mode-hook
+                vterm-mode-hook
+                eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+#+end_src
 #+RESULTS:
-: relative
 
 * tramp
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq tramp-default-method "ssh")
 
 #+end_src
@@ -277,7 +253,7 @@ Files edited when using =emacsclient= are not stored by =recentf=.  So emacs for
 : ssh
 
 * auto-tangle
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
  (use-package! org-auto-mode
    :defer t
    :hook (org-mode . org-auto-tangle-mode)
@@ -285,12 +261,10 @@ Files edited when using =emacsclient= are not stored by =recentf=.  So emacs for
    (setq org-auto-tangle-default t))
 #+end_src
 
-#+RESULTS:
-| er/add-org-mode-expansions | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-modern-mode | org-appear-mode | +lookup--init-org-mode-handlers-h | (closure (t) (&rest _) (add-hook 'before-save-hook 'org-encrypt-entries nil t)) | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-fold-show-all append local] 5] | org-auto-tangle-mode | doom-disable-show-paren-mode-h | doom-disable-show-trailing-whitespace-h | +org-enable-auto-reformat-tables-h | +org-enable-auto-update-cookies-h | +org-make-last-point-visible-h | org-fancy-priorities-mode | org-superstar-mode | evil-org-mode | toc-org-enable | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | writegood-mode | embrace-org-mode-hook | org-eldoc-load |
 
 
 * Org
-   #+begin_src emacs-lisp :tangle yes
+   #+begin_src emacs-lisp
 
   (after! evil-org
     (remove-hook 'org-tab-first-hook #'+org-cycle-only-current-subtree-h))
@@ -300,10 +274,9 @@ Files edited when using =emacsclient= are not stored by =recentf=.  So emacs for
    I will do these in blocks, so we can check that each block runs. then surround the blocks
 with the after org and closen paran
 ** ORG basics
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq org-directory "~/Dropbox/orgmode/"
       org-log-done 'time
-      org-src-window-setup 'reorganize-frame
       org-list-allow-alphabetical t
       org-export-in-background nil
       org-export-async-debug t
@@ -330,7 +303,7 @@ with the after org and closen paran
 : t
 
 ** evil mode
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (map! :map evil-org-mode-map
       :after evil-org
       :n "g <up>" #'org-backward-heading-same-level
@@ -340,7 +313,7 @@ with the after org and closen paran
 #+End_Src
 #+Results:
 ** TODOS
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq org-todo-keywords
       '((sequence "IDEA(i)" "TODO(t)" "NEXT(n)" "PROJ(p)" "STRT(s)" "WAIT(w)" "HOLD(h)" "|" "DONE(d)" "KILL(k)")
         (sequence "[ ](T)" "[-](S)" "|" "[X](D)")
@@ -354,62 +327,34 @@ with the after org and closen paran
                                ("HOLD" . (:foreground "orange" :weight bold))))
 #+end_src
 
-#+RESULTS:
-| IDEA | :foreground | goldenrod  | :weight | bold |
-| NEXT | :foreground | IndianRed1 | :weight | bold |
-| STRT | :foreground | OrangeRed  | :weight | bold |
-| WAIT | :foreground | coral      | :weight | bold |
-| KILL | :foreground | DarkGreen  | :weight | bold |
-| PROJ | :foregorund | LimeGreen  | :weight | bold |
-| HOLD | :foreground | orange     | :weight | bold |
-
-** Tags
-#+begin_src emacs-lisp :tangle yes
+**  sbTags
+#+begin_src emacs-lisp
 
 (setq org-tag-persistent-alist
       '((:startgroup . nil)
         ("home" . ?h)
-        ("research" . ?r)
         ("work" . ?w)
         (:endgroup . nil)
         (:startgroup . nil)
         ("qoedash" . ?1)
         ("sessionwiz" . ?2)
         ("deviceReach" . ?3)
+        ("adhoc" . ?4)
         (:startgroup . nil)
-        ("tool" . ?o)
-        ("dev" . ?d)
-        ("report" . ?p)
-        (:endgroup   . nil)
-        (:startgroup . nil)
-        ("easy"      . ?e)
-        ("medium"    . ?m)
-        ("hard"      . ?a)
-        (:endgroup   . nil)
-        ("urgent"    . ?u)
-        ("key"       . ?k)
-        ("bonus"     . ?b)
-        ("ignore"    . ?i)
-        ("noexport"  . ?x)))
+        ("high effort" . ?H)
+        ("medium effort" . ?M)
+        ("low effort" . ?L)
+        (:endgroup . nil)))
 (setq org-tag-faces
       '(("home"     . (:foreground "goldenrod"  :weight bold))
-        ("research" . (:foreground "goldenrod"  :weight bold))
         ("work"     . (:foreground "goldenrod"  :weight bold))
-        ("tool"     . (:foreground "IndianRed1" :weight bold))
-        ("dev"      . (:foreground "IndianRed1" :weight bold))
-        ("report"   . (:foreground "IndianRed1" :weight bold))
-        ("urgent"   . (:foreground "red"        :weight bold))
-        ("qoedash"  . (:background "cyan"))
-        ("sessionwiz" . (:background "yellow"))
-        ("deviceReach" . (:background "blue"))
-
-        ("key"      . (:foreground "red"        :weight bold))
-        ("easy"     . (:foreground "green4"     :weight bold))
-        ("medium"   . (:foreground "orange"     :weight bold))
-        ("hard"     . (:foreground "red"        :weight bold))
-        ("bonus"    . (:foreground "goldenrod"  :weight bold))
-        ("ignore"   . (:foreground "Gray"       :weight bold))
-        ("noexport" . (:foreground "LimeGreen"  :weight bold))))
+        ("qoedash"  . (:background "forest green"))
+        ("sessionwiz" . (:background "maroon"))
+        ("deviceReach" . (:background "purple"))
+        ("adhoc" . (:background "blue"))
+        ("high effort" . (:background "red"))
+        ("medium effort" . (:background "yellow"))
+        ("low effort" . (:background "green"))))
 #+End_src
 
 #+RESULTS:
@@ -432,7 +377,7 @@ with the after org and closen paran
 | noexport    | :foreground | LimeGreen  | :weight | bold |
 
 ** Agenda
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq org-agenda-files
       (list (expand-file-name "inbox.org" org-directory)
             (expand-file-name "agenda.org" org-directory)
@@ -454,7 +399,7 @@ with the after org and closen paran
 : <-- now ─────────────────────────────────────────────────
 
 ** Capture
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq +org-capture-emails-file (expand-file-name "inbox.org" org-directory)
       +org-capture-todo-file (expand-file-name "inbox.org" org-directory)
       +org-capture-projects-file (expand-file-name "projects.org" org-directory))
@@ -463,7 +408,7 @@ with the after org and closen paran
 #+RESULTS:
 : /Users/rcool2/Dropbox/orgmode/projects.org
 *** Configure capture templates
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (use-package doct
   :commands (doct))
 
@@ -622,7 +567,7 @@ with the after org and closen paran
 #+RESULTS:
 
 *** Improve capture dailog
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (defun org-capture-select-template-prettier (&optional keys)
   "Select a capture template, in a prettier way than default
 Lisp programs can force the template by setting KEYS to a string."
@@ -736,7 +681,7 @@ is selected, only the bare key is returned."
 #+RESULTS:
 
 *** Resize the orp-capture bin
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setf (alist-get 'height +org-capture-frame-parameters) 15)
 ;; (alist-get 'name +org-capture-frame-parameters) "❖ Capture") ;; ATM hardcoded in other places, so changing breaks stuff
 (setq +org-capture-fn
@@ -751,7 +696,7 @@ is selected, only the bare key is returned."
 | lambda | nil | (interactive) | (set-window-parameter nil 'mode-line-format 'none) | (org-capture) |
 
 ** Some babel
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
   (org-babel-do-load-languages
    'org-babel-load-languages
    '(
@@ -773,7 +718,7 @@ is selected, only the bare key is returned."
 : org-babel-execute:typescript
 
 ** Org nofitier
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (use-package! org-wild-notifier
   :hook (org-load . org-wild-notifier-mode)
   :config
@@ -784,7 +729,7 @@ is selected, only the bare key is returned."
 | org-wild-notifier-mode | +org-init-org-directory-h | +org-init-appearance-h | +org-init-agenda-h | +org-init-attachments-h | +org-init-babel-h | +org-init-babel-lazy-loader-h | +org-init-capture-defaults-h | +org-init-capture-frame-h | +org-init-custom-links-h | +org-init-export-h | +org-init-habit-h | +org-init-hacks-h | +org-init-keybinds-h | +org-init-popup-rules-h | +org-init-smartparens-h |
 
 ** Org Menu
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (use-package! org-menu
   :commands (org-menu)
   :init
@@ -797,7 +742,7 @@ is selected, only the bare key is returned."
 
 ** Visuals
 *** Bigger Headings and titles
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (custom-set-faces!
   '(org-document-title :height 1.2))
 
@@ -816,7 +761,7 @@ is selected, only the bare key is returned."
 | doom--customize-themes-h-40 | doom--customize-themes-h-50 | doom--customize-themes-h-51 | doom--customize-themes-h-52 | doom--customize-themes-h-53 | doom--customize-themes-h-81 | doom--customize-themes-h-82 | doom--customize-themes-h-83 | doom--customize-themes-h-84 |
 
 *** Deadlines in error face if passed
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq org-agenda-deadline-faces
       '((1.001 . error)
         (1.000 . org-warning)
@@ -828,14 +773,14 @@ is selected, only the bare key is returned."
 #+RESULTS:
 : ((1.001 . error) (1.0 . org-warning) (0.5 . org-upcoming-deadline) (0.0 . org-upcoming-distant-deadline))
 *** Font Styling
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq org-fontify-quote-and-verse-blocks t)
 #+end_src
 
 #+RESULTS:
 : t
 *** Org Appear
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (use-package! org-appear
   :hook (org-mode . org-appear-mode)
   :config
@@ -852,7 +797,7 @@ is selected, only the bare key is returned."
 #+RESULTS:
 | er/add-org-mode-expansions | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-modern-mode | org-appear-mode | +lookup--init-org-mode-handlers-h | (closure (t) (&rest _) (add-hook 'before-save-hook 'org-encrypt-entries nil t)) | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-fold-show-all append local] 5] | org-auto-tangle-mode | doom-disable-show-paren-mode-h | doom-disable-show-trailing-whitespace-h | +org-enable-auto-reformat-tables-h | +org-enable-auto-update-cookies-h | +org-make-last-point-visible-h | org-fancy-priorities-mode | org-superstar-mode | evil-org-mode | toc-org-enable | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | writegood-mode | embrace-org-mode-hook | org-eldoc-load |
 *** Inline Blocks
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq org-inline-src-prettify-results '("⟨" . "⟩")
       doom-themes-org-fontify-special-tags nil)
 
@@ -860,7 +805,7 @@ is selected, only the bare key is returned."
 
 #+RESULTS:
 *** Org Modern
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (use-package! org-modern
   :hook (org-mode . org-modern-mode)
   :config
@@ -940,7 +885,7 @@ is selected, only the bare key is returned."
 #+RESULTS:
 
 *** Org-Ol-Tree
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (use-package! org-ol-tree
   :commands org-ol-tree
   :config
@@ -959,7 +904,7 @@ is selected, only the bare key is returned."
 #+RESULTS:
 
 *** List bullet points
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq org-list-demote-modify-bullet
       '(("+"  . "-")
         ("-"  . "+")
@@ -990,7 +935,7 @@ is selected, only the bare key is returned."
 
 
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 
 
 
@@ -1036,7 +981,7 @@ is selected, only the bare key is returned."
 : org-edit-src-abort
 
 * Set HUGO base directory
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 
 (setq org-hugo-base-dir "~/org/markdown")
 
@@ -1046,7 +991,7 @@ is selected, only the bare key is returned."
 : ~/org/markdown
 
 ** Turn on beacon
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
   (use-package! beacon
     :config
     (beacon-mode +1))
@@ -1056,7 +1001,7 @@ is selected, only the bare key is returned."
 : t
 
 ** Line Highlighting and Fringe
-#+BEGIN_SRC emacs-lisp  :tangle yes
+#+BEGIN_SRC emacs-lisp
   ;; Turn on line highlithting for current line
   (hl-line-mode 1)
   ;; Add some margins
@@ -1064,23 +1009,9 @@ is selected, only the bare key is returned."
 #+END_SRC
 
 #+RESULTS:
-: ((buffer-predicate . doom-buffer-frame-predicate) (right-divider-width . 1) (bottom-divider-width . 1) (menu-bar-lines . 1) (vertical-scroll-bars) (tool-bar-lines . 0) (left-fringe . 10) (right-fringe . 10))
-
-** Manage how new windows are placed
-#+begin_src emacs-lisp :tangle yes
-    (winner-mode +1)
-  (setq display-buffer-base-action
-    '((display-buffer-reuse-window
-       display-buffer-reuse-mode-window
-       display-buffer-same-window
-       display-buffer-in-previous-window)))
-#+end_src
-
-#+RESULTS:
-| display-buffer-reuse-window | display-buffer-reuse-mode-window | display-buffer-same-window | display-buffer-in-previous-window |
 
 * Customize mode line
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! doom-modeline
     (setq
      doom-modeline-hud t
@@ -1091,16 +1022,17 @@ is selected, only the bare key is returned."
 #+RESULTS:
 : 25
 
-** Mixed Pitch
+* Mixed Pitch
 A better verson of variable pitch.
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
   (use-package! mixed-pitch
     :defer t
     :hook (text-mode . mixed-pitch-mode)
     :config
-    (set-face-attribute 'default nil :font "PragmataPro Mono Liga" :height 220)
-    (set-face-attribute 'fixed-pitch nil :font "OperatorMonoLig Nerd Font")
+    (set-face-attribute 'default nil :font "Spleen32x64 Nerd Font"
+                        :height 200)
+    (set-face-attribute 'fixed-pitch nil :font "Iosevka Term")
     (set-face-attribute 'variable-pitch nil :font "Iosevka Aile"))
    (add-hook 'mixed-pitch-mode-hook #'solaire-mode-reset)
 #+end_src
@@ -1108,8 +1040,8 @@ A better verson of variable pitch.
 #+RESULTS:
 | solaire-mode-reset-buffer | solaire-mode-reset |
 
-** Quickrun
-#+begin_src emacs-lisp :tangle yes
+* Quickrun
+#+begin_src emacs-lisp
   (use-package! quickrun
     :defer t
     :general
@@ -1136,8 +1068,8 @@ A better verson of variable pitch.
 
 #+RESULTS:
 
-** Auto-revert changed files
-#+begin_src emacs-lisp  :tangle yesl
+* Auto-revert changed files
+#+begin_src emacs-lisp
   (setq global-auto-revert-non-file-buffers t)
 (global-auto-revert-mode 1)
 #+end_src
@@ -1147,7 +1079,7 @@ A better verson of variable pitch.
 
 
 * Treesitter
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! tree-sitter
 (add-to-list 'tree-sitter-major-mode-language-alist '(tsx-mode . tsx))
 )
@@ -1156,7 +1088,7 @@ A better verson of variable pitch.
 #+RESULTS:
 
 * LSP-UI
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (use-package! lsp-ui
   :after lsp
   :hook ((lsp-mode . lsp-ui-mode)
@@ -1170,7 +1102,7 @@ A better verson of variable pitch.
 #+RESULTS:
 
 *TSX Mode
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (use-package! tsi
   :hook ((web-mode-hook . tsi-typescript-mode)
          (typescript-mode-hook . tsi-typescript-mode)
@@ -1209,23 +1141,19 @@ A better verson of variable pitch.
 | lsp-deferred |
 
 * Format on Save
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (use-package! apheleia
   :config
   (apheleia-global-mode +1))
 
-#+end_src
+ #+end_src
 
 #+RESULTS:
 : t
 * Keybinds with Hercules
 #+end_src
-
-#+RESULTS:
-: rc/add-keymap-to-hercules
-
 ** LSP
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (general-def
   :prefix-map 'rc/lsp-map
 "d"   #'lsp-find-declaration
@@ -1257,7 +1185,7 @@ A better verson of variable pitch.
 : lsp-map-mode
 
 ** Flycheck
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (general-def
 :prefix-map 'rc/flycheck-map
    "f" #'flycheck-error-list-set-filter
@@ -1279,7 +1207,7 @@ A better verson of variable pitch.
 : rc/flycheck-mode
 
 ** Avy
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! avy
   (setq avy-keys '(?n ?'))
 (general-def
@@ -1313,16 +1241,15 @@ A better verson of variable pitch.
 : rc/avi-mode
 
 
-
 * Sticky headers
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (use-package! org-sticky-header
   :config
   ( org-sticky-header-mode +1))
 #+end_src
 
 * add some items to the mode line
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! doom-modeline
   (display-time-mode 1)
 
@@ -1334,7 +1261,7 @@ A better verson of variable pitch.
 
 * Battery
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! doom-modeline
   (let ((battery-str (battery)))
     (unless (or (equal "Battery Status Not Available" battery-str)
@@ -1345,9 +1272,9 @@ A better verson of variable pitch.
 #+end_src
 
 * Mode line custom
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! doom-modeline
-  (setq doom-modeline-bar-width 4
+  (setq
         doom-modeline-major-mode-icon t
         doom-modeline-major-mode-color-icon t
         doom-modeline-buffer-file-name-style 'truncate-upto-project))
@@ -1358,19 +1285,22 @@ A better verson of variable pitch.
 #+end_src
 
 #+RESULTS:
+| doom--setq-evil-normal-state-cursor-for-+doom-dashboard-mode-h | (lambda (&rest _) (hl-line-mode -1)) |
 
 * Which-key
 Make =which-key= popup faster
-#+begin_src emacs-lisp :tangle yes :result none
+#+begin_src emacs-lisp  :result none
 (setq which-key-idle-delay 0.1
       which-key-secondary-delay 0.05)
+;; use a minibuffer
+(setq which-key-popup-type 'minibuffer)
 #+end_src
 
 #+RESULTS:
-: 0.05
+: minibuffer
 
 This block has repeated been stolen from tecoaur's config.  It removes the evil- prefix from whichkey with a symbole
-#+begin_src emacs-lisp :tangle yes :results none
+#+begin_src emacs-lisp
 (setq which-key-allow-multiple-replacements t)
 
 (after! which-key
@@ -1380,51 +1310,27 @@ This block has repeated been stolen from tecoaur's config.  It removes the evil-
 #+end_src
 
 
-
-* window title
-Just the buffer name and then maybe project
-#+begin_src emacs-lisp :tangle yes
-(setq frame-title-format
-      '(""
-        (:eval
-         (if (buffer-file-name "")
-             (replace-regexp-in-string ".*/[0-9]*-?" "☰ "
-                                       (subst-char-in-string ?_ ?\s buffer-file-name))
-           "%b"))
-        (:eval
-         (when-let* ((project-name (projectile-project-name))
-                     (project-name (if (string= "-" project-name)
-                                       (ignore-errors (file-name-base (string-trim-right (vc-root-dir))))
-                                     project-name)))
-           (format (if (buffer-modified-p) " ○ %s" " ● %s") project-name)))))
+* Set Transparency
+#+begin_src emacs-lisp
+(set-frame-parameter (selected-frame) 'alpha '(95 100))
+(add-to-list 'default-frame-alist '(alpha 95 100))
 #+end_src
 
 #+RESULTS:
-| j | (:eval (if (buffer-file-name ) (replace-regexp-in-string .*/[0-9]*-? ☰  (subst-char-in-string 95 32 buffer-file-name)) %b)) | (:eval (when-let* ((project-name (projectile-project-name)) (project-name (if (string= - project-name) (ignore-errors (file-name-base (string-trim-right (vc-root-dir)))) project-name))) (format (if (buffer-modified-p)  ○ %s  ● %s) project-name))) |
-
-* Set Tranparency
-#+begin_src emacs-lisp :tangle yes
-(set-frame-parameter (selected-frame) 'alpha '(85 100))
-(add-to-list 'default-frame-alist '(alpha 90 100))
-#+end_src
-
-#+RESULTS:
-: ((menu-bar-lines . 1) (buffer-predicate . doom-buffer-frame-predicate) (right-divider-width . 1) (bottom-divider-width . 1) (alpha 90 100) (vertical-scroll-bars) (tool-bar-lines . 0) (left-fringe . 10) (right-fringe . 10))
+: ((alpha 95 100) (menu-bar-lines . 1) (buffer-predicate . doom-buffer-frame-predicate) (right-divider-width . 1) (bottom-divider-width . 1) (alpha 90 100) (vertical-scroll-bars) (tool-bar-lines . 0) (left-fringe . 10) (right-fringe . 10))
 * Focus
-   #+begin_src emacs-lisp :tangle yes
+   #+begin_src emacs-lisp
 (use-package! focus
   :commands focus-mode)
    #+end_src
 
-
 * File Templates
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (set-file-template! "\\.org$" :trigger "__" :mode 'org-mode)
 #+End_Src
 
-
 * Evil
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! evil
   (evil-select-search-module 'evile-search-module 'isearch)
 (setq evil-search-modful 'isearch)
@@ -1434,14 +1340,14 @@ Just the buffer name and then maybe project
   #+RESULTS:
 
   * Aggressive Indent
-    #+begin_src emacs-lisp :tangle yes
+    #+begin_src emacs-lisp
 (use-package! aggressive-indent
   :commands (aggressive-indent-mode))
 
 (setq yas-triggers-in-field t)
     #+end_src
 * Treemacs
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! treemacs
 (setq doom-themes-treemacs-enable-variable-pitch nil
       doom-themes-treemacs-theme "doom-colors")
@@ -1454,7 +1360,7 @@ Just the buffer name and then maybe project
 #+end_src
 
 * Eros-eval
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (setq eros-eval-result-prefix "⟹ ")
 #+end_src
 
@@ -1462,7 +1368,7 @@ Just the buffer name and then maybe project
 : ⟹
 
 * LSP UI
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! lsp-mode
   (setq lsp-lens-enable t
         lsp-sematic-tokens-enable t
@@ -1480,7 +1386,7 @@ Just the buffer name and then maybe project
 Better colors for manuals
 :w\
 
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
  (use-package! info-colors
   :commands (info-colors-fontify-node))
 
@@ -1491,99 +1397,273 @@ Better colors for manuals
 
 * Magit
 ** granular diff-highlights for all hunks
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (after! magit
  (setq magit-diff-refine-hunk t))
 #+end_src
 
 * Conventional Commits
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (use-package! conventional-commit
   :hook
   (git-commit-mode . conventional-commit-setup))
 #+end_src
-* Silence compilters
-#+begin_src emacs-lisp :tangle yes
-;; Silence compilter wranings
-(setq native-comp-async-report-warnings-errors nil)
-(add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache/" user-emacs-directory
-                                                         ))
+* (inactive) Company
+# #+begin_src emacs-lisp
+# (setq company-global-modes
+#       '(not erc-mode
+#             circe-mode
+#             message-mode
+#             help-mode
+#             gud-mode
+#             vterm-mode
+#             org-mode))
+
+# (after! company-box
+#   (defun +company-box--reload-icons-h ()
+#     (setq company-box-icons-all-the-icons
+#           (let ((all-the-icons-scale-factor 0.8))
+#             `((Unknown       . ,(all-the-icons-faicon   "code"                 :face 'all-the-icons-purple))
+#               (Text          . ,(all-the-icons-material "text_fields"          :face 'all-the-icons-green))
+#               (Method        . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-red))
+#               (Function      . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-blue))
+#               (Constructor   . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-blue-alt))
+#               (Field         . ,(all-the-icons-faicon   "tag"                  :face 'all-the-icons-red))
+#               (Variable      . ,(all-the-icons-material "adjust"               :face 'all-the-icons-blue))
+#               (Class         . ,(all-the-icons-material "class"                :face 'all-the-icons-red))
+#               (Interface     . ,(all-the-icons-material "tune"                 :face 'all-the-icons-red))
+#               (Module        . ,(all-the-icons-faicon   "cubes"                :face 'all-the-icons-red))
+#               (Property      . ,(all-the-icons-faicon   "wrench"               :face 'all-the-icons-red))
+#               (Unit          . ,(all-the-icons-material "straighten"           :face 'all-the-icons-red))
+#               (Value         . ,(all-the-icons-material "filter_1"             :face 'all-the-icons-red))
+#               (Enum          . ,(all-the-icons-material "plus_one"             :face 'all-the-icons-red))
+#               (Keyword       . ,(all-the-icons-material "filter_center_focus"  :face 'all-the-icons-red-alt))
+#               (Snippet       . ,(all-the-icons-faicon   "expand"               :face 'all-the-icons-red))
+#               (Color         . ,(all-the-icons-material "colorize"             :face 'all-the-icons-red))
+#               (File          . ,(all-the-icons-material "insert_drive_file"    :face 'all-the-icons-red))
+#               (Reference     . ,(all-the-icons-material "collections_bookmark" :face 'all-the-icons-red))
+#               (Folder        . ,(all-the-icons-material "folder"               :face 'all-the-icons-red-alt))
+#               (EnumMember    . ,(all-the-icons-material "people"               :face 'all-the-icons-red))
+#               (Constant      . ,(all-the-icons-material "pause_circle_filled"  :face 'all-the-icons-red))
+#               (Struct        . ,(all-the-icons-material "list"                 :face 'all-the-icons-red))
+#               (Event         . ,(all-the-icons-material "event"                :face 'all-the-icons-red))
+#               (Operator      . ,(all-the-icons-material "control_point"        :face 'all-the-icons-red))
+#               (TypeParameter . ,(all-the-icons-material "class"                :face 'all-the-icons-red))
+#               (Template      . ,(all-the-icons-material "settings_ethernet"    :face 'all-the-icons-green))
+#               (ElispFunction . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-blue))
+#               (ElispVariable . ,(all-the-icons-material "adjust"               :face 'all-the-icons-blue))
+#               (ElispFeature  . ,(all-the-icons-material "stars"                :face 'all-the-icons-orange))
+#               (ElispFace     . ,(all-the-icons-material "format_paint"         :face 'all-the-icons-pink))))))
+
+#   (when (daemonp)
+#     ;; Replace Doom defined icons with mine
+#     (when (memq #'+company-box--load-all-the-icons server-after-make-frame-hook)
+#       (remove-hook 'server-after-make-frame-hook #'+company-box--load-all-the-icons))
+#     (add-hook 'server-after-make-frame-hook #'+company-box--reload-icons-h))
+
+#   ;; Reload icons even if not in Daemon mode
+#   (+company-box--reload-icons-h))
+# #+end_src
+# * Ivy postframe
+# #+begin_src emacs-lisp
+# (setq ivy-posframe-display-functions-alist
+#       '((swiper                    . ivy-posframe-display-at-point)
+#         (complete-symbol           . ivy-posframe-display-at-point)
+#         (counsel-M-x               . ivy-posframe-display-at-point)
+#         (counsel-esh-history       . ivy-posframe-display-at-window-center)
+#         (counsel-describe-function . ivy-display-function-fallback)
+#         (counsel-describe-variable . ivy-display-function-fallback)
+#         (counsel-find-file         . ivy-posframe-display-at-point)
+#         (counsel-recentf           . ivy-posframe-display-at-point)
+#         (counsel-register          . ivy-posframe-display-at-point)
+#    (nil                        . ivy-posframe-display))
+#       ivy-posframe-height-alist
+#       '((swiper . 20)
+#         (dmenu . 20)
+#         (t . 10)))
+# (ivy-posframe-mode 1) ; 1 enables posframe-mode, 0 disables it.
+# #+end_src
 #+end_src
-* Company
-#+begin_src emacs-lisp :tangle yes
-(setq company-global-modes
-      '(not erc-mode
-            circe-mode
-            message-mode
-            help-mode
-            gud-mode
-            vterm-mode
-            org-mode))
 
-(after! company-box
-  (defun +company-box--reload-icons-h ()
-    (setq company-box-icons-all-the-icons
-          (let ((all-the-icons-scale-factor 0.8))
-            `((Unknown       . ,(all-the-icons-faicon   "code"                 :face 'all-the-icons-purple))
-              (Text          . ,(all-the-icons-material "text_fields"          :face 'all-the-icons-green))
-              (Method        . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-red))
-              (Function      . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-blue))
-              (Constructor   . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-blue-alt))
-              (Field         . ,(all-the-icons-faicon   "tag"                  :face 'all-the-icons-red))
-              (Variable      . ,(all-the-icons-material "adjust"               :face 'all-the-icons-blue))
-              (Class         . ,(all-the-icons-material "class"                :face 'all-the-icons-red))
-              (Interface     . ,(all-the-icons-material "tune"                 :face 'all-the-icons-red))
-              (Module        . ,(all-the-icons-faicon   "cubes"                :face 'all-the-icons-red))
-              (Property      . ,(all-the-icons-faicon   "wrench"               :face 'all-the-icons-red))
-              (Unit          . ,(all-the-icons-material "straighten"           :face 'all-the-icons-red))
-              (Value         . ,(all-the-icons-material "filter_1"             :face 'all-the-icons-red))
-              (Enum          . ,(all-the-icons-material "plus_one"             :face 'all-the-icons-red))
-              (Keyword       . ,(all-the-icons-material "filter_center_focus"  :face 'all-the-icons-red-alt))
-              (Snippet       . ,(all-the-icons-faicon   "expand"               :face 'all-the-icons-red))
-              (Color         . ,(all-the-icons-material "colorize"             :face 'all-the-icons-red))
-              (File          . ,(all-the-icons-material "insert_drive_file"    :face 'all-the-icons-red))
-              (Reference     . ,(all-the-icons-material "collections_bookmark" :face 'all-the-icons-red))
-              (Folder        . ,(all-the-icons-material "folder"               :face 'all-the-icons-red-alt))
-              (EnumMember    . ,(all-the-icons-material "people"               :face 'all-the-icons-red))
-              (Constant      . ,(all-the-icons-material "pause_circle_filled"  :face 'all-the-icons-red))
-              (Struct        . ,(all-the-icons-material "list"                 :face 'all-the-icons-red))
-              (Event         . ,(all-the-icons-material "event"                :face 'all-the-icons-red))
-              (Operator      . ,(all-the-icons-material "control_point"        :face 'all-the-icons-red))
-              (TypeParameter . ,(all-the-icons-material "class"                :face 'all-the-icons-red))
-              (Template      . ,(all-the-icons-material "settings_ethernet"    :face 'all-the-icons-green))
-              (ElispFunction . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-blue))
-              (ElispVariable . ,(all-the-icons-material "adjust"               :face 'all-the-icons-blue))
-              (ElispFeature  . ,(all-the-icons-material "stars"                :face 'all-the-icons-orange))
-              (ElispFace     . ,(all-the-icons-material "format_paint"         :face 'all-the-icons-pink))))))
+#+RESULTS:
 
-  (when (daemonp)
-    ;; Replace Doom defined icons with mine
-    (when (memq #'+company-box--load-all-the-icons server-after-make-frame-hook)
-      (remove-hook 'server-after-make-frame-hook #'+company-box--load-all-the-icons))
-    (add-hook 'server-after-make-frame-hook #'+company-box--reload-icons-h))
+#+RESULTS:
 
-  ;; Reload icons even if not in Daemon mode
-  (+company-box--reload-icons-h))
+
+* More on windows
+** Some recommended settings
+#+begin_src emacs-lisp
+
+;; Macro which creates advice template
+(defmacro rc/with-advice (adlist &rest body)
+
+  "Execute BODY with advice in ADLIST.
+
+Each element of ADLIST should be a list of the form
+(SYMBOL WHERE FUNCTION [PROPS])
+suitable for passing to advice-add. The BODY is wrapped in an
+unwind-protect form so the advice will be removed even in the event of an error
+or  nonlocal exit."
+
+  (declare (debug ((&rest (&rest form)) body))
+           (indent 1))
+  `(progn
+     ,@(mapcar (lambda (adform)
+                 (cons 'advice-add adform))
+                 adlist)
+     (unwind-protect (progn ,@body)
+       ,@(mapcar (lambda (adform)
+                   `(advice-remove
+                         ,(car adform)
+                         ,(nth 2 adform)))
+                 adlist))))
+
 #+end_src
-* Ivy postframe
-#+begin_src emacs-lisp :tangle yes
-(setq ivy-posframe-display-functions-alist
-      '((swiper                     . ivy-posframe-display-at-point)
-        (complete-symbol            . ivy-posframe-display-at-point)
-        (counsel-M-x                . ivy-display-function-fallback)
-        (counsel-esh-history        . ivy-posframe-display-at-window-center)
-        (counsel-describe-function  . ivy-display-function-fallback)
-        (counsel-describe-variable  . ivy-display-function-fallback)
-        (counsel-find-file          . ivy-display-function-fallback)
-        (counsel-recentf            . ivy-display-function-fallback)
-        (counsel-register           . ivy-posframe-display-at-frame-bottom-window-center)
-        (dmenu                      . ivy-posframe-display-at-frame-top-center)
-        (nil                        . ivy-posframe-display))
-      ivy-posframe-height-alist
-      '((swiper . 20)
-        (dmenu . 20)
-        (t . 10)))
-(ivy-posframe-mode 1) ; 1 enables posframe-mode, 0 disables it.
+
+#+RESULTS:
+: rc/with-advice
+
+#+End_SRC
+
+#+RESULTS:
+: rc/with-advice
+
+** Replace =org-switch-to-buffer-other-window= with what i want it to use
+#+begin_src emacs-lisp
+;; (defun rc/org-todo-same-window (orig-fn)
+;;   "Advice to fix window placement in org-fast-todo-selection"
+;;   (let ((override
+;;          '("\\*Org todo\\*|\\*Org Note\\*"
+;;         (display-buffer-in-child-frame)
+;;         (inhibit-same-window . t))))
+;;     (add-to-list 'display-buffer-alist override)
+;;     (rc/with-advice
+;;         ((#'org-switch-to-buffer-other-window :override #'switch-to-buffer-other-window))
+;;       (unwind-protect (funcall orig-fn)
+;;         (setq display-buffer-alist (delete override display-buffer-alist))))))
+;; (advice-add #'org-fast-todo-selection :around #'rc/org-todo-same-window)
+#+end_src
+#+begin_src emacs-lisp
+(after! org
+(setq org-complete-tags-always-offer-all-agenda-tags t)
+)
+(advice-add #'fit-window-to-buffer :before (lambda (&rest _) (redisplay t)))
+                #+End_src
+#+RESULTS:
+* Window behavior helpers
+** return a lambda that matches against a list of major modes
+#+begin_src emacs-lisp
+(defun make-display-buffer-matcher-function (major-modes)
+  (lambda (buffer-name action)
+    (with-current-buffer buffer-name (apply #'derived-mode-p major-modes))))
+#+End_srC
+** Return non-nil if a buffer belongs to a project
+#+begin_src emacs-lisp
+(defun mp-buffer-has-project-p (buffer action)
+  (with-current-buffer buffer (project-current nil)))
+#+end_src
+* Setup some window behavior.
+** Reusing Windows
+Here, we collect several buffers names and ask that they share the /respective/ buffers windows.
+#+begin_src emacs-lisp
+(add-to-list 'display-buffer-alist
+             `(,(rx (| "xref*"
+                       "*grep*"
+                       "*Occur*"))
+               display-buffer-reuse-window
+               (inhibit-same-window . nill)))
+#+end_src
+
+** Mode grouped windows
+    Magit has a large number of buffer names and major mdoes.  This forces magit to use any magit-mode buffer already present. If there isn't one, it will create a window on the left most side with a 15% width
+    #+begin_src emacs-lisp
+(setq magit-display-buffer-function #'display-buffer)
+
+(add-to-list 'display-buffer-alist
+             `(,(make-display-buffer-matcher-function '(magit-mode))
+               (display-buffer-reuse-mode-window
+                display-buffer-in-direction)
+               (mode magit-mode)
+               (window . root)
+               (window-width . 0.15)
+               (direction . left)))
+    #+end_src
+** IDE-style windows:
+*** Shells
+Force shells to be at the bottom with a window height of no more than 30% of the frame size.
+#+begin_src emacs-lisp :results none
+
+(setq window-sides-slots '(0 0 1 1))
+(add-to-list 'display-buffer-alist
+             '("\\*e?shell\\*" display-buffer-in-direction
+               (direction . bottom)
+               (window . root)
+               (window-height . 0.3)))
+#+end_src
+
+*** Side windows:
+    You will want to set a max number of side windows to allow.  This lets you show a handful of ephemeral things, but keeps the windows flowing.
+    The =no-delete-other-windows= settings keeps this window from being deleted if you delete all other windows .  You can always toggle the side window with =window-toggle-wide-windows=
+    #+begin_src emacs-lisp :results none
+(add-to-list 'display-buffer-alist
+             `(,(rx (| "*compilation*" "*grep*" "*vterm*"))
+               display-buffer-in-side-window
+               (side . right)
+               (slot . 0)
+               (window-parameters . ((no-delete-other-windows . t)))
+               (window-width . 0.2)))
+
+    #+end_src
+
+***
+
+
+
+* Keybinds
+    The evil-window-map is overloaded
+    #+begin_src emacs-lisp
+(after! evil
+(hercules-def
+ :show-funs #'windresize
+ :hide-funs '(windresize-exit windresize-cancel-and-quit)
+ :keymap 'windresize-map)
+(map!
+:map doom-leader-toggle-map
+:leader
+:prefix "t"
+:nm #'window-toggle-side-window :which-key "Sidebar"
+)
+
+                (map!
+ :map my-evil-window-map
+ :leader
+ :prefix ("w" . "window")
+
+ :nm "v" #'+evil/window-vsplit-and-follow
+ :nm "s" #'+evil/window-split-and-follow
+ :nm "h" #'evil-window-left
+ :nm "l" #'evil-window-right
+ :nm "j" #'evil-window-down
+ :nm "k" #'evil-window-up
+ :nm "x" #'evil-window-exchange
+ :nm "u" #'winner-undo
+ :nm "d" #'ace-delete-window
+ :nm "S" #'ace-swap-window
+ :nm "m" #'maximize-window
+ :nm "w" #'windresize)
+)
+#+end_src
+
+
+#+RESULTS:
+* Kaolin Themes
+#+begin_src emacs-lisp
+(use-package! kaolin-themes
+
+:config
+(load-theme  'kaolin-dark t)
+(kaolin-treemacs-theme)
+)
 #+end_src
 
 #+RESULTS:

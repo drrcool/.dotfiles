@@ -1,1 +1,0 @@
-/Users/rcool2/.dotfiles/.config/doom/catppuccin/catppuccin-mocha-theme.el

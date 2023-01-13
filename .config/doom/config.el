@@ -1,19 +1,19 @@
-(use-package! evil-dvorak
-  :diminish evil-dvorak-mode)
-  ;; :Config (global-evil-dvorak-mode 1
+;; -*- lexical-binding: t; -*-
 
-  (setq mac-command-modifier       'meta
-        mac-option-modifier 'super
-        mac-control-modifier       'control
-        mac-right-control-modifier  'control)
+(setq
 
-(use-package! company
-  :bind
-  (:map company-active-map
-        ("<tab>" . company-complete-selection))
-  :custom
-  (company-minimum-prefix-length 1)
-  (company-idl-delay 0.0))
+        mac-right-command-modifier 'control
+        mac-option-modifier 'meta
+        mac-control-modifier       'meta
+)
+
+;; (use-package! company
+;;   :bind
+;;   (:map company-active-map
+;;         ("<tab>" . company-complete-selection))
+;;   :custom
+;;   (company-minimum-prefix-length 1)
+;;   (company-idl-delay 0.0))
 
 (setq user-full-name "Richard Cool"
       user-mail-address "richardjcool@gmail.com")
@@ -43,18 +43,9 @@
                (recentf-save-list)
                (savehist-save))))
 
-(setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 18)
-      doom-big-font (font-spec :family "Iosevka Aile" :size 30)
-      doom-variable-pitch-font (font-spec :family "Iosevka Aile" :size 18)
-      doom-unicode-font (font-spec :family "Spleen 32x64" :size 18)
-      doom-serif-font (font-spec :family "Iosevka Aile" :size 18)
-
-      )
-
-
 (custom-set-faces!
-  '(font-lock-comment-face :slant italic)
-  '(font-lock-keyword-face :slant italic))
+  '(cont-lock-comment-face :slant italic)
+  '(font-lock-keyword-face :slant italic))
 
 (use-package! modus-themes
   :init
@@ -168,6 +159,7 @@
          :map copilot-completion-map
          ("<tab>" . 'copilot-accept-completion)
          ("TAB" . 'copilot-accept-completion)))
+    (map! :desc "Insert copilot suggestion" :i "C-t" #'copilot-accept-completion)
 
 (define-globalized-minor-mode global-rainbow-mode rainbow-mode
   (lambda ()
@@ -179,21 +171,28 @@
 (global-display-line-numbers-mode 1)
 (setq display-line-numbers-type 'relative)
 
+;; Disable for some modes
+(dolist (mode '(term-mode-hook
+                shell-mode-hook
+                treemacs-mode-hook
+                vterm-mode-hook
+                eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
 (setq tramp-default-method "ssh")
 
- (use-package! org-auto-mode
-   :defer t
-   :hook (org-mode . org-auto-tangle-mode)
-   :config
-   (setq org-auto-tangle-default t))
+(use-package! org-auto-mode
+  :defer t
+  :hook (org-mode . org-auto-tangle-mode)
+  :config
+  (setq org-auto-tangle-default t))
 
-  (after! evil-org
+(after! evil-org
     (remove-hook 'org-tab-first-hook #'+org-cycle-only-current-subtree-h))
 (after! org
 
 (setq org-directory "~/Dropbox/orgmode/"
       org-log-done 'time
-      org-src-window-setup 'reorganize-frame
       org-list-allow-alphabetical t
       org-export-in-background nil
       org-export-async-debug t
@@ -236,47 +235,28 @@
 (setq org-tag-persistent-alist
       '((:startgroup . nil)
         ("home" . ?h)
-        ("research" . ?r)
         ("work" . ?w)
         (:endgroup . nil)
         (:startgroup . nil)
         ("qoedash" . ?1)
         ("sessionwiz" . ?2)
         ("deviceReach" . ?3)
+        ("adhoc" . ?4)
         (:startgroup . nil)
-        ("tool" . ?o)
-        ("dev" . ?d)
-        ("report" . ?p)
-        (:endgroup   . nil)
-        (:startgroup . nil)
-        ("easy"      . ?e)
-        ("medium"    . ?m)
-        ("hard"      . ?a)
-        (:endgroup   . nil)
-        ("urgent"    . ?u)
-        ("key"       . ?k)
-        ("bonus"     . ?b)
-        ("ignore"    . ?i)
-        ("noexport"  . ?x)))
+        ("high effort" . ?H)
+        ("medium effort" . ?M)
+        ("low effort" . ?L)
+        (:endgroup . nil)))
 (setq org-tag-faces
       '(("home"     . (:foreground "goldenrod"  :weight bold))
-        ("research" . (:foreground "goldenrod"  :weight bold))
         ("work"     . (:foreground "goldenrod"  :weight bold))
-        ("tool"     . (:foreground "IndianRed1" :weight bold))
-        ("dev"      . (:foreground "IndianRed1" :weight bold))
-        ("report"   . (:foreground "IndianRed1" :weight bold))
-        ("urgent"   . (:foreground "red"        :weight bold))
-        ("qoedash"  . (:background "cyan"))
-        ("sessionwiz" . (:background "yellow"))
-        ("deviceReach" . (:background "blue"))
-
-        ("key"      . (:foreground "red"        :weight bold))
-        ("easy"     . (:foreground "green4"     :weight bold))
-        ("medium"   . (:foreground "orange"     :weight bold))
-        ("hard"     . (:foreground "red"        :weight bold))
-        ("bonus"    . (:foreground "goldenrod"  :weight bold))
-        ("ignore"   . (:foreground "Gray"       :weight bold))
-        ("noexport" . (:foreground "LimeGreen"  :weight bold))))
+        ("qoedash"  . (:background "forest green"))
+        ("sessionwiz" . (:background "maroon"))
+        ("deviceReach" . (:background "purple"))
+        ("adhoc" . (:background "blue"))
+        ("high effort" . (:background "red"))
+        ("medium effort" . (:background "yellow"))
+        ("low effort" . (:background "green"))))
 
 (setq org-agenda-files
       (list (expand-file-name "inbox.org" org-directory)
@@ -567,21 +547,21 @@ is selected, only the bare key is returned."
         (set-window-parameter nil 'mode-line-format 'none)
         (org-capture)))
 
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '(
-     (python . t)
-     (shell . t)
-     (js . t)
-     (lua . t)
-     (sql . t)
-     ))
-  (setq python-shell-completion-native-enable nil)
-  (setq org-src-window-setup 'current-window)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '(
+   (python . t)
+   (shell . t)
+   (js . t)
+   (lua . t)
+   (sql . t)
+   ))
+(setq python-shell-completion-native-enable nil)
+(setq org-src-window-setup 'current-window)
 
-   (defun org-babel-execute:typescript (body params)
-    (let ((org-babel-js-cmd "npx ts-node < "))
-      (org-babel-execute:js body params)))
+ (defun org-babel-execute:typescript (body params)
+  (let ((org-babel-js-cmd "npx ts-node < "))
+    (org-babel-execute:js body params)))
 
 (use-package! org-wild-notifier
   :hook (org-load . org-wild-notifier-mode)
@@ -777,21 +757,14 @@ is selected, only the bare key is returned."
 
 (setq org-hugo-base-dir "~/org/markdown")
 
-  (use-package! beacon
-    :config
-    (beacon-mode +1))
+(use-package! beacon
+  :config
+  (beacon-mode +1))
 
-  ;; Turn on line highlithting for current line
-  (hl-line-mode 1)
-  ;; Add some margins
-  (set-fringe-mode 10)
-
-    (winner-mode +1)
-  (setq display-buffer-base-action
-    '((display-buffer-reuse-window
-       display-buffer-reuse-mode-window
-       display-buffer-same-window
-       display-buffer-in-previous-window)))
+;; Turn on line highlithting for current line
+(hl-line-mode 1)
+;; Add some margins
+(set-fringe-mode 10)
 
 (after! doom-modeline
     (setq
@@ -799,37 +772,41 @@ is selected, only the bare key is returned."
      doom-modeline-minor-modes nil
           doom-modeline-height 25))
 
-  (use-package! mixed-pitch
-    :defer t
-    :hook (text-mode . mixed-pitch-mode)
-    :config
-    (set-face-attribute 'default nil :font "PragmataPro Mono Liga" :height 220)
-    (set-face-attribute 'fixed-pitch nil :font "OperatorMonoLig Nerd Font")
-    (set-face-attribute 'variable-pitch nil :font "Iosevka Aile"))
-   (add-hook 'mixed-pitch-mode-hook #'solaire-mode-reset)
+(use-package! mixed-pitch
+  :defer t
+  :hook (text-mode . mixed-pitch-mode)
+  :config
+  (set-face-attribute 'default nil :font "Spleen32x64 Nerd Font"
+                      :height 200)
+  (set-face-attribute 'fixed-pitch nil :font "Iosevka Term")
+  (set-face-attribute 'variable-pitch nil :font "Iosevka Aile"))
+ (add-hook 'mixed-pitch-mode-hook #'solaire-mode-reset)
 
-  (use-package! quickrun
-    :defer t
-    :general
-    (general-def
-     :states 'normal
-     :prefix "SPC"
-     :keymaps 'quickrun--mode-map
-     "cq" '(nil :which-key "quickrun")
-     "cqq" '(quit-window :which-key "Quit")
-     "cqr" '(quickrun :which-key "Run")
-     "cqR" '(quickrun-region :which-key "Run Region")
-     "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
-     "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
-     "cqs" '(quickrun-select :which-key "Select backend")
-     "cq"  '(nil :which-key "quickrun")
-     "cqq" '(quit-window :which-key "Quit")
-     "cqr" '(quickrun :which-key "Run")
-     "cqR" '(quickrun-region :which-key "Run Region")
-     "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
-     "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
-     "cqs" '(quickrun-select :which-key "Select backend")
- ))
+(use-package! quickrun
+   :defer t
+   :general
+   (general-def
+    :states 'normal
+    :prefix "SPC"
+    :keymaps 'quickrun--mode-map
+    "cq" '(nil :which-key "quickrun")
+    "cqq" '(quit-window :which-key "Quit")
+    "cqr" '(quickrun :which-key "Run")
+    "cqR" '(quickrun-region :which-key "Run Region")
+    "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
+    "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
+    "cqs" '(quickrun-select :which-key "Select backend")
+    "cq"  '(nil :which-key "quickrun")
+    "cqq" '(quit-window :which-key "Quit")
+    "cqr" '(quickrun :which-key "Run")
+    "cqR" '(quickrun-region :which-key "Run Region")
+    "cqa" '(quickrun-with-arg :which-key "Run with [A]rgs")
+    "cqm" '(quickrun-autorun-mode :which-key "Toggle autorun mode")
+    "cqs" '(quickrun-select :which-key "Select backend")
+))
+
+(setq global-auto-revert-non-file-buffers t)
+(global-auto-revert-mode 1)
 
 (after! tree-sitter
 (add-to-list 'tree-sitter-major-mode-language-alist '(tsx-mode . tsx))
@@ -971,7 +948,7 @@ is selected, only the bare key is returned."
       (display-battery-mode 1))))
 
 (after! doom-modeline
-  (setq doom-modeline-bar-width 4
+  (setq
         doom-modeline-major-mode-icon t
         doom-modeline-major-mode-color-icon t
         doom-modeline-buffer-file-name-style 'truncate-upto-project))
@@ -982,6 +959,8 @@ is selected, only the bare key is returned."
 
 (setq which-key-idle-delay 0.1
       which-key-secondary-delay 0.05)
+;; use a minibuffer
+(setq which-key-popup-type 'minibuffer)
 
 (setq which-key-allow-multiple-replacements t)
 
@@ -990,22 +969,8 @@ is selected, only the bare key is returned."
             '((""       . "\\`+?evil[-:]?\\(?:a-\\)?\\(.*\\)") . (nil . "🅔·\\1"))
             '(("\\`g s" . "\\`evilem--?motion-\\(.*\\)")       . (nil . "Ⓔ·\\1"))))
 
-(setq frame-title-format
-      '(""
-        (:eval
-         (if (buffer-file-name "")
-             (replace-regexp-in-string ".*/[0-9]*-?" "☰ "
-                                       (subst-char-in-string ?_ ?\s buffer-file-name))
-           "%b"))
-        (:eval
-         (when-let* ((project-name (projectile-project-name))
-                     (project-name (if (string= "-" project-name)
-                                       (ignore-errors (file-name-base (string-trim-right (vc-root-dir))))
-                                     project-name)))
-           (format (if (buffer-modified-p) " ○ %s" " ● %s") project-name)))))
-
-(set-frame-parameter (selected-frame) 'alpha '(85 100))
-(add-to-list 'default-frame-alist '(alpha 90 100))
+(set-frame-parameter (selected-frame) 'alpha '(95 100))
+(add-to-list 'default-frame-alist '(alpha 95 100))
 
 (use-package! focus
   :commands focus-mode)
@@ -1044,7 +1009,7 @@ is selected, only the bare key is returned."
         lsp-ui-sideline-show-diagnostics nil
         lsp-ui-sideline-show-code-actions nil))
 
- (use-package! info-colors
+(use-package! info-colors
   :commands (info-colors-fontify-node))
 
 (add-hook 'Info-selection-hook 'info-colors-fontify-node)
@@ -1056,79 +1021,122 @@ is selected, only the bare key is returned."
   :hook
   (git-commit-mode . conventional-commit-setup))
 
-;; Silence compilter wranings
-(setq native-comp-async-report-warnings-errors nil)
-(add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache/" user-emacs-directory
-                                                         ))
+;; Macro which creates advice template
+(defmacro rc/with-advice (adlist &rest body)
 
-(setq company-global-modes
-      '(not erc-mode
-            circe-mode
-            message-mode
-            help-mode
-            gud-mode
-            vterm-mode
-            org-mode))
+  "Execute BODY with advice in ADLIST.
 
-(after! company-box
-  (defun +company-box--reload-icons-h ()
-    (setq company-box-icons-all-the-icons
-          (let ((all-the-icons-scale-factor 0.8))
-            `((Unknown       . ,(all-the-icons-faicon   "code"                 :face 'all-the-icons-purple))
-              (Text          . ,(all-the-icons-material "text_fields"          :face 'all-the-icons-green))
-              (Method        . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-red))
-              (Function      . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-blue))
-              (Constructor   . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-blue-alt))
-              (Field         . ,(all-the-icons-faicon   "tag"                  :face 'all-the-icons-red))
-              (Variable      . ,(all-the-icons-material "adjust"               :face 'all-the-icons-blue))
-              (Class         . ,(all-the-icons-material "class"                :face 'all-the-icons-red))
-              (Interface     . ,(all-the-icons-material "tune"                 :face 'all-the-icons-red))
-              (Module        . ,(all-the-icons-faicon   "cubes"                :face 'all-the-icons-red))
-              (Property      . ,(all-the-icons-faicon   "wrench"               :face 'all-the-icons-red))
-              (Unit          . ,(all-the-icons-material "straighten"           :face 'all-the-icons-red))
-              (Value         . ,(all-the-icons-material "filter_1"             :face 'all-the-icons-red))
-              (Enum          . ,(all-the-icons-material "plus_one"             :face 'all-the-icons-red))
-              (Keyword       . ,(all-the-icons-material "filter_center_focus"  :face 'all-the-icons-red-alt))
-              (Snippet       . ,(all-the-icons-faicon   "expand"               :face 'all-the-icons-red))
-              (Color         . ,(all-the-icons-material "colorize"             :face 'all-the-icons-red))
-              (File          . ,(all-the-icons-material "insert_drive_file"    :face 'all-the-icons-red))
-              (Reference     . ,(all-the-icons-material "collections_bookmark" :face 'all-the-icons-red))
-              (Folder        . ,(all-the-icons-material "folder"               :face 'all-the-icons-red-alt))
-              (EnumMember    . ,(all-the-icons-material "people"               :face 'all-the-icons-red))
-              (Constant      . ,(all-the-icons-material "pause_circle_filled"  :face 'all-the-icons-red))
-              (Struct        . ,(all-the-icons-material "list"                 :face 'all-the-icons-red))
-              (Event         . ,(all-the-icons-material "event"                :face 'all-the-icons-red))
-              (Operator      . ,(all-the-icons-material "control_point"        :face 'all-the-icons-red))
-              (TypeParameter . ,(all-the-icons-material "class"                :face 'all-the-icons-red))
-              (Template      . ,(all-the-icons-material "settings_ethernet"    :face 'all-the-icons-green))
-              (ElispFunction . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-blue))
-              (ElispVariable . ,(all-the-icons-material "adjust"               :face 'all-the-icons-blue))
-              (ElispFeature  . ,(all-the-icons-material "stars"                :face 'all-the-icons-orange))
-              (ElispFace     . ,(all-the-icons-material "format_paint"         :face 'all-the-icons-pink))))))
+Each element of ADLIST should be a list of the form
+(SYMBOL WHERE FUNCTION [PROPS])
+suitable for passing to advice-add. The BODY is wrapped in an
+unwind-protect form so the advice will be removed even in the event of an error
+or  nonlocal exit."
 
-  (when (daemonp)
-    ;; Replace Doom defined icons with mine
-    (when (memq #'+company-box--load-all-the-icons server-after-make-frame-hook)
-      (remove-hook 'server-after-make-frame-hook #'+company-box--load-all-the-icons))
-    (add-hook 'server-after-make-frame-hook #'+company-box--reload-icons-h))
+  (declare (debug ((&rest (&rest form)) body))
+           (indent 1))
+  `(progn
+     ,@(mapcar (lambda (adform)
+                 (cons 'advice-add adform))
+                 adlist)
+     (unwind-protect (progn ,@body)
+       ,@(mapcar (lambda (adform)
+                   `(advice-remove
+                         ,(car adform)
+                         ,(nth 2 adform)))
+                 adlist))))
 
-  ;; Reload icons even if not in Daemon mode
-  (+company-box--reload-icons-h))
+;; (defun rc/org-todo-same-window (orig-fn)
+;;   "Advice to fix window placement in org-fast-todo-selection"
+;;   (let ((override
+;;          '("\\*Org todo\\*|\\*Org Note\\*"
+;;         (display-buffer-in-child-frame)
+;;         (inhibit-same-window . t))))
+;;     (add-to-list 'display-buffer-alist override)
+;;     (rc/with-advice
+;;         ((#'org-switch-to-buffer-other-window :override #'switch-to-buffer-other-window))
+;;       (unwind-protect (funcall orig-fn)
+;;         (setq display-buffer-alist (delete override display-buffer-alist))))))
+;; (advice-add #'org-fast-todo-selection :around #'rc/org-todo-same-window)
 
-(setq ivy-posframe-display-functions-alist
-      '((swiper                     . ivy-posframe-display-at-point)
-        (complete-symbol            . ivy-posframe-display-at-point)
-        (counsel-M-x                . ivy-display-function-fallback)
-        (counsel-esh-history        . ivy-posframe-display-at-window-center)
-        (counsel-describe-function  . ivy-display-function-fallback)
-        (counsel-describe-variable  . ivy-display-function-fallback)
-        (counsel-find-file          . ivy-display-function-fallback)
-        (counsel-recentf            . ivy-display-function-fallback)
-        (counsel-register           . ivy-posframe-display-at-frame-bottom-window-center)
-        (dmenu                      . ivy-posframe-display-at-frame-top-center)
-        (nil                        . ivy-posframe-display))
-      ivy-posframe-height-alist
-      '((swiper . 20)
-        (dmenu . 20)
-        (t . 10)))
-(ivy-posframe-mode 1) ; 1 enables posframe-mode, 0 disables it.
+(after! org
+(setq org-complete-tags-always-offer-all-agenda-tags t)
+)
+(advice-add #'fit-window-to-buffer :before (lambda (&rest _) (redisplay t)))
+
+(defun make-display-buffer-matcher-function (major-modes)
+  (lambda (buffer-name action)
+    (with-current-buffer buffer-name (apply #'derived-mode-p major-modes))))
+
+(defun mp-buffer-has-project-p (buffer action)
+  (with-current-buffer buffer (project-current nil)))
+
+(add-to-list 'display-buffer-alist
+             `(,(rx (| "xref*"
+                       "*grep*"
+                       "*Occur*"))
+               display-buffer-reuse-window
+               (inhibit-same-window . nill)))
+
+(setq magit-display-buffer-function #'display-buffer)
+
+(add-to-list 'display-buffer-alist
+             `(,(make-display-buffer-matcher-function '(magit-mode))
+               (display-buffer-reuse-mode-window
+                display-buffer-in-direction)
+               (mode magit-mode)
+               (window . root)
+               (window-width . 0.15)
+               (direction . left)))
+
+(setq window-sides-slots '(0 0 1 1))
+(add-to-list 'display-buffer-alist
+             '("\\*e?shell\\*" display-buffer-in-direction
+               (direction . bottom)
+               (window . root)
+               (window-height . 0.3)))
+
+(add-to-list 'display-buffer-alist
+             `(,(rx (| "*compilation*" "*grep*" "*vterm*"))
+               display-buffer-in-side-window
+               (side . right)
+               (slot . 0)
+               (window-parameters . ((no-delete-other-windows . t)))
+               (window-width . 0.2)))
+
+(after! evil
+(hercules-def
+ :show-funs #'windresize
+ :hide-funs '(windresize-exit windresize-cancel-and-quit)
+ :keymap 'windresize-map)
+(map!
+:map doom-leader-toggle-map
+:leader
+:prefix "t"
+:nm #'window-toggle-side-window :which-key "Sidebar"
+)
+
+                (map!
+ :map my-evil-window-map
+ :leader
+ :prefix ("w" . "window")
+
+ :nm "v" #'+evil/window-vsplit-and-follow
+ :nm "s" #'+evil/window-split-and-follow
+ :nm "h" #'evil-window-left
+ :nm "l" #'evil-window-right
+ :nm "j" #'evil-window-down
+ :nm "k" #'evil-window-up
+ :nm "x" #'evil-window-exchange
+ :nm "u" #'winner-undo
+ :nm "d" #'ace-delete-window
+ :nm "S" #'ace-swap-window
+ :nm "m" #'maximize-window
+ :nm "w" #'windresize)
+)
+
+(use-package! kaolin-themes
+
+:config
+(load-theme  'kaolin-dark t)
+(kaolin-treemacs-theme)
+)
