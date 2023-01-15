@@ -957,10 +957,19 @@ is selected, only the bare key is returned."
 (add-hook! '+doom-dashboard-mode-hook (hl-line-mode -1))
 (setq-hook! '+doom-dashboard-mode-hook evil-normal-state-cursor (list nil))
 
+(use-package! which-key
+:config
+(which-key-setup-side-window-right)
 (setq which-key-idle-delay 0.1
       which-key-secondary-delay 0.05)
 ;; use a minibuffer
 (setq which-key-popup-type 'minibuffer)
+(setq which-key-side-window-location '(left bottom))
+(setq which-key-side-window-max-width 0.25)
+(setq which-key-side-window-max-height 0.15)
+(setq which-key-frame-max-width 60)
+(setq which-key-frame-max-height 20)
+)
 
 (setq which-key-allow-multiple-replacements t)
 
@@ -1112,7 +1121,7 @@ or  nonlocal exit."
 :map doom-leader-toggle-map
 :leader
 :prefix "t"
-:nm #'window-toggle-side-window :which-key "Sidebar"
+:nm "S" #'window-toggle-side-windows :desc "Sidebar"
 )
 
                 (map!

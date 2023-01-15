@@ -1,0 +1,107 @@
+#+title: New Emacs Config
+#+STARTUP: show2levels
+#+PROPERTY: header-args:emacs-lisp :results none
+
+This is a second attempt at emacs config that's modular and a bit easier to handle. The files here will be tangled separately into areas we may want to disable on some devices. This also allows us to disable sections of the config that we may be experimenting with without hurting the rest of my workflow.
+
+Planned sections:
+
+* Early Init
+Early init takes some housekeeping tasks and runs them at startup.  Much of this is taken second hand from doom emacs.
+#+begin_src emacs-lisp :tangle ~/early-init.el
+;;; early-init.el --- Early init file -*- lexical-binding: t; no-byte-compile: t -*-
+;; Defer garbage collection further back in the startup processs
+(setq gc-cons-threshold most-positive-fixnum gc-cons-percentage 0.6)
+
+;; Keep emacs from running package initilization
+(setq pacakge-enable-at-startup nil)
+;; Do not load from package cache
+(setq package-quickstart nil)
+
+;; Get rid of unstyled emacs
+(push '(menu-bar-lines  . 0) default-frame-alist)
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
+
+;; Resizing the frame is taxing. Keep it small and ignore fonts for a bit
+(setq frame-inhibit-implied-resize t)
+
+;; Remove gui elements
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(setq inhibit-splash-screen t)
+(setq use-file-dialog nil)
+
+;; prevent undwanted runtime buils
+(setq comp-deferred-compilation nil)
+#+end_src
+
+** init.el startup optimization
+Again this is mostly stolen from doom
+#+begin_src emacs-lisp :tangle ~/init.el
+;; init.el -- personal configuration file -*- lexical-binding: t; no-byte-compile: t; -*-
+
+;; `file-name-handler-alist` is consulted on every require, load, and various function. You get a minor speed up by nooping this
+(unless (daemonp)
+  (defvar doom--initial-file-name-handler-alist file-name-handler-alist)
+  (setq file-name-handler-alist nil)
+  ;; Restore file-name-handler-alist later because it is needed for handling encrypted or comprssed files
+  (defun doom-reset-file-handler-alist-h ()
+    ;; re-add rather than setq because file-name-handler-alist change should be preserved.
+    (dolist (handler file-name-handler-alist)
+      (add-to-list 'doom--initialfile-name-handler-alist handler))
+    (setq file-name-handler-alist doom--initial-file-name-handler-alist))
+  (add-hook 'emacs-startup-hook #'doom-reset-file-handler-alist-h)
+  (add-hook 'after-init-hook '(lambda ()
+                                ;; restore
+                                (setq gc-cons-threshold 16777216
+                                      gc-cons-percentage 0.1)))
+  )
+(setq user-emacs-directory (file-truename (file-name-directory load-file-name)))
+#+end_src
+** init.el load modules
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/init.el
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+
+(let ((file-name-handler-alist nil)
+      (gc-cons-threshold  100000000))
+
+  (require 'init-core)
+
+
+)
+;; init.el ends here
+
+#+end_src
+
+* Package manger
+** using straight
+Conventions:
+- prefer :init to :custom
+- prefer multiple setq to one
+- default to :defer t use :demand loading
+- when packges do not require installation (like =eglot= or =dired=) we need to ~:straight (:type built-in)~
+- If you specify :commands, they will be autoloaded and the package will be loaded when the commands are first executed
+  + If you use :general and bind commands to keys it will automatically load the package on first invocation
+
+#+begin_src emacs-lisp
+
+
+
+
+
+
+
+
+#+end_src
+
+
+* Provide Modules
+** init-core
+:PROPERTIES:
+:header-args: :emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
+#+begin_src emacs-lisp
+(provide 'init-core)
+;;; init-core.el ends here
+#+end_src
