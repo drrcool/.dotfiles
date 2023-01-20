@@ -8,7 +8,7 @@ Planned sections:
 
 * Early Init
 Early init takes some housekeeping tasks and runs them at startup.  Much of this is taken second hand from doom emacs.
-#+begin_src emacs-lisp :tangle ~/early-init.el
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/early-init.el
 ;;; early-init.el --- Early init file -*- lexical-binding: t; no-byte-compile: t -*-
 ;; Defer garbage collection further back in the startup processs
 (setq gc-cons-threshold most-positive-fixnum gc-cons-percentage 0.6)

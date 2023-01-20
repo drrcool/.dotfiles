@@ -1,19 +1,21 @@
 ;; -*- lexical-binding: t; -*-
 
 (setq
-
+        mac-command-modifier 'super
         mac-right-command-modifier 'control
         mac-option-modifier 'meta
+        mac-right-option-modifier 'meta
         mac-control-modifier       'meta
+        mac-right-control-modifier 'control
 )
 
-;; (use-package! company
-;;   :bind
-;;   (:map company-active-map
-;;         ("<tab>" . company-complete-selection))
-;;   :custom
-;;   (company-minimum-prefix-length 1)
-;;   (company-idl-delay 0.0))
+(use-package! company
+  :bind
+  (:map company-active-map
+        ("<tab>" . company-complete-selection))
+  :custom
+  (company-minimum-prefix-length 1)
+  (company-idl-delay 0.0))
 
 (setq user-full-name "Richard Cool"
       user-mail-address "richardjcool@gmail.com")
@@ -44,8 +46,8 @@
                (savehist-save))))
 
 (custom-set-faces!
-  '(cont-lock-comment-face :slant italic)
-  '(font-lock-keyword-face :slant italic))
+  '(font-lock-comment-face :slant italic)
+  '(font-lock-keyword-face :slant italic))
 
 (use-package! modus-themes
   :init
@@ -87,46 +89,46 @@
         modus-themes-mail-citations 'intense
         modus-themes-lang-checkers '(background))
 
-  (defun +modus-themes-tweak-packages ()
-    (modus-themes-with-colors
-      (set-face-attribute 'cursor nil :background (modus-themes-color 'blue))
-      (set-face-attribute 'font-lock-type-face nil :foreground (modus-themes-color 'magenta-alt))
-      (custom-set-faces
-       ;; Tweak `evil-mc-mode'
-       `(evil-mc-cursor-default-face ((,class :background ,magenta-intense-bg)))
-       ;; Tweak `git-gutter-mode'
-       `(git-gutter-fr:added ((,class :foreground ,green-fringe-bg)))
-       `(git-gutter-fr:deleted ((,class :foreground ,red-fringe-bg)))
-       `(git-gutter-fr:modified ((,class :foreground ,yellow-fringe-bg)))
-       ;; Tweak `doom-modeline'
-       `(doom-modeline-evil-normal-state ((,class :foreground ,green-alt-other)))
-       `(doom-modeline-evil-insert-state ((,class :foreground ,red-alt-other)))
-       `(doom-modeline-evil-visual-state ((,class :foreground ,magenta-alt)))
-       `(doom-modeline-evil-operator-state ((,class :foreground ,blue-alt)))
-       `(doom-modeline-evil-motion-state ((,class :foreground ,blue-alt-other)))
-       `(doom-modeline-evil-replace-state ((,class :foreground ,yellow-alt)))
-       ;; Tweak `diff-hl-mode'
-       `(diff-hl-insert ((,class :foreground ,green-fringe-bg)))
-       `(diff-hl-delete ((,class :foreground ,red-fringe-bg)))
-       `(diff-hl-change ((,class :foreground ,yellow-fringe-bg)))
-       ;; Tweak `solaire-mode'
-       `(solaire-default-face ((,class :inherit default :background ,bg-alt :foreground ,fg-dim)))
-       `(solaire-line-number-face ((,class :inherit solaire-default-face :foreground ,fg-unfocused)))
-       `(solaire-hl-line-face ((,class :background ,bg-active)))
-       `(solaire-org-hide-face ((,class :background ,bg-alt :foreground ,bg-alt)))
-       ;; Tweak `display-fill-column-indicator-mode'
-       `(fill-column-indicator ((,class :height 0.3 :background ,bg-inactive :foreground ,bg-inactive)))
-       ;; Tweak `mmm-mode'
-       `(mmm-cleanup-submode-face ((,class :background ,yellow-refine-bg)))
-       `(mmm-code-submode-face ((,class :background ,bg-active)))
-       `(mmm-comment-submode-face ((,class :background ,blue-refine-bg)))
-       `(mmm-declaration-submode-face ((,class :background ,cyan-refine-bg)))
-       `(mmm-default-submode-face ((,class :background ,bg-alt)))
-       `(mmm-init-submode-face ((,class :background ,magenta-refine-bg)))
-       `(mmm-output-submode-face ((,class :background ,red-refine-bg)))
-       `(mmm-special-submode-face ((,class :background ,green-refine-bg))))))
+  ;; (defun +modus-themes-tweak-packages ()
+  ;;   (modus-themes-with-colors
+  ;;     (set-face-attribute 'cursor nil :background (modus-themes-color 'blue))
+  ;;     (set-face-attribute 'font-lock-type-face nil :foreground (modus-themes-color 'magenta-alt))
+  ;;     (custom-set-faces
+  ;;      ;; Tweak `evil-mc-mode'
+  ;;      `(evil-mc-cursor-default-face ((,class :background ,magenta-intense-bg)))
+  ;;      ;; Tweak `git-gutter-mode'
+  ;;      `(git-gutter-fr:added ((,class :foreground ,green-fringe-bg)))
+  ;;      `(git-gutter-fr:deleted ((,class :foreground ,red-fringe-bg)))
+  ;;      `(git-gutter-fr:modified ((,class :foreground ,yellow-fringe-bg)))
+  ;;      ;; Tweak `doom-modeline'
+  ;;      `(doom-modeline-evil-normal-state ((,class :foreground ,green-alt-other)))
+  ;;      `(doom-modeline-evil-insert-state ((,class :foreground ,red-alt-other)))
+  ;;      `(doom-modeline-evil-visual-state ((,class :foreground ,magenta-alt)))
+  ;;      `(doom-modeline-evil-operator-state ((,class :foreground ,blue-alt)))
+  ;;      `(doom-modeline-evil-motion-state ((,class :foreground ,blue-alt-other)))
+  ;;      `(doom-modeline-evil-replace-state ((,class :foreground ,yellow-alt)))
+  ;;      ;; Tweak `diff-hl-mode'
+  ;;      `(diff-hl-insert ((,class :foreground ,green-fringe-bg)))
+  ;;      `(diff-hl-delete ((,class :foreground ,red-fringe-bg)))
+  ;;      `(diff-hl-change ((,class :foreground ,yellow-fringe-bg)))
+  ;;      ;; Tweak `solaire-mode'
+  ;;      `(solaire-default-face ((,class :inherit default :background ,bg-alt :foreground ,fg-dim)))
+  ;;      `(solaire-line-number-face ((,class :inherit solaire-default-face :foreground ,fg-unfocused)))
+  ;;      `(solaire-hl-line-face ((,class :background ,bg-active)))
+  ;;      `(solaire-org-hide-face ((,class :background ,bg-alt :foreground ,bg-alt)))
+  ;;      ;; Tweak `display-fill-column-indicator-mode'
+  ;;      `(fill-column-indicator ((,class :height 0.3 :background ,bg-inactive :foreground ,bg-inactive)))
+  ;;      ;; Tweak `mmm-mode'
+  ;;      `(mmm-cleanup-submode-face ((,class :background ,yellow-refine-bg)))
+  ;;      `(mmm-code-submode-face ((,class :background ,bg-active)))
+  ;;      `(mmm-comment-submode-face ((,class :background ,blue-refine-bg)))
+  ;;      `(mmm-declaration-submode-face ((,class :background ,cyan-refine-bg)))
+  ;;      `(mmm-default-submode-face ((,class :background ,bg-alt)))
+  ;;      `(mmm-init-submode-face ((,class :background ,magenta-refine-bg)))
+  ;;      `(mmm-output-submode-face ((,class :background ,red-refine-bg)))
+  ;;      `(mmm-special-submode-face ((,class :background ,green-refine-bg))))))
 
-  (add-hook 'modus-themes-after-load-theme-hook #'+modus-themes-tweak-packages)
+  ;; (add-hook 'modus-themes-after-load-theme-hook #'+modus-themes-tweak-packages)
 
   :config
   (map! :leader
@@ -188,15 +190,15 @@
   (setq org-auto-tangle-default t))
 
 (after! evil-org
-    (remove-hook 'org-tab-first-hook #'+org-cycle-only-current-subtree-h))
-(after! org
+  (remove-hook 'org-tab-first-hook #'+org-cycle-only-current-subtree-h))
 
+(after! org
 (setq org-directory "~/Dropbox/orgmode/"
       org-log-done 'time
       org-list-allow-alphabetical t
       org-export-in-background nil
       org-export-async-debug t
-      org-tags-column 0
+      org-tags-column 1
       org-catch-invisible-edits 'smart
       org-export-with-sub-superscripts '{}
       org-pretty-entities-include-sub-superscripts nil
@@ -205,11 +207,9 @@
       org-startup-indented t
       org-pretty-entities t
       org-startup-with-inline-images t
-
       org-src-fontify-natively t
       org-src-tab-acts-natively t
       org-src-window-setup 'current-window
-
       org-image-actual-width '(300)
       org-insert-heading-respect-content t)
 
@@ -220,44 +220,60 @@
       :n "g <left>" #'org-up-element
       :n "g <right>" #'org-down-element)
 
-(setq org-todo-keywords
-      '((sequence "IDEA(i)" "TODO(t)" "NEXT(n)" "PROJ(p)" "STRT(s)" "WAIT(w)" "HOLD(h)" "|" "DONE(d)" "KILL(k)")
-        (sequence "[ ](T)" "[-](S)" "|" "[X](D)")
-        (sequence "|" "OKAY(o)" "YES(y)" "NO(n)")))
-(setq org-todo-keyword-faces '(("IDEA" . (:foreground "goldenrod" :weight bold))
-                               ("NEXT" . (:foreground "IndianRed1" :weight bold))
-                               ("STRT" . (:foreground "OrangeRed" :weight bold))
-                               ("WAIT" . (:foreground "coral" :weight bold))
-                               ("KILL" . (:foreground "DarkGreen" :weight bold))
-                               ("PROJ" . (:foregorund "LimeGreen" :weight bold))
-                               ("HOLD" . (:foreground "orange" :weight bold))))
-
 (setq org-tag-persistent-alist
-      '((:startgroup . nil)
-        ("home" . ?h)
-        ("work" . ?w)
-        (:endgroup . nil)
-        (:startgroup . nil)
-        ("qoedash" . ?1)
-        ("sessionwiz" . ?2)
-        ("deviceReach" . ?3)
-        ("adhoc" . ?4)
-        (:startgroup . nil)
-        ("high effort" . ?H)
-        ("medium effort" . ?M)
-        ("low effort" . ?L)
-        (:endgroup . nil)))
+      '(
+        ("qoedash" . ?q)
+        ("sessionwiz" . ?s)
+        ("deviceReach" . ?d)
+        ("adhoc" . ?a)
+        ("chores" . ?c)
+        ("urgent" . ?u)
+        ("side-project". ?p)
+        ("self-care". ?r)
+        ("home". ?h)
+        ("work". ?w)
+        ("presentation". ?P)
+        )
+      )
 (setq org-tag-faces
-      '(("home"     . (:foreground "goldenrod"  :weight bold))
-        ("work"     . (:foreground "goldenrod"  :weight bold))
-        ("qoedash"  . (:background "forest green"))
-        ("sessionwiz" . (:background "maroon"))
-        ("deviceReach" . (:background "purple"))
-        ("adhoc" . (:background "blue"))
-        ("high effort" . (:background "red"))
-        ("medium effort" . (:background "yellow"))
-        ("low effort" . (:background "green"))))
+      '(("home"     . ( :foreground "white"))
+        ("urgent" . (:weight bold))
+        ("qoedash"  . (:background "#a43261"))
+        ("sessionwiz" . (:background "#006ca5"))
+        ("deviceReach" . (:background "#007086"))
+        ("chores" . (:background "#6751a6"))
+        ("adhoc" . (:background "#913e88"))
+        ("side-project" . (:background "#0061b1"))
+        ("self-care" . (:background "#ff9fc9"))
+        ("work" . (:background "#3bd6ff"))
+        ("presentation" . (:background "#d5b8ff"))
+)
+      )
 
+;; Setup a custom Agenda view
+(setq org-agenda-custom-commands
+  '(
+    ("q" "QoeDash" tags-todo "qoedash")
+    ("s" "Sessionwiz" tags-todo "sessionwiz")
+    ("h" "Chores" tags-todo "chore")
+    ("d" "DeviceReachDash" tags-todo "chore")
+    ("A" "adhoc" tags-todo "adhoc")
+  ("c" "Custom Agenda"
+
+
+  '((agenda "Schedule"
+    ((org-agenda-span 'day)
+    (org-deadline-warning-days 365)))
+  (todo "TODO"
+    ((org-agenda-overriding-header "Unscheduled Tasks")
+      (org-agenda-files '("~/org/inbox.org" "~/org/work_notes/daily_notes.org"))
+        (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline))
+ ))
+  (todo "TODO"
+    ((org-agenda-overriding-header "Unscheduled Project Tasks")
+(org-agenda-files '("~/org/projects.org"))
+        (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled 'deadline))
+    ))))))
 (setq org-agenda-files
       (list (expand-file-name "inbox.org" org-directory)
             (expand-file-name "agenda.org" org-directory)
@@ -725,7 +741,8 @@ is selected, only the bare key is returned."
   :config
   (setq org-superstar-special-todo-items t)
   (add-hook 'org-mode-hook (lambda() (org-superstar-mode +1))))
-(setq-default line-spacing 6)
+(setq-default line-spacing 0)
+
 (use-package! olivetti
   :init
   (setq olivetti-body-width 0.67)
@@ -768,19 +785,34 @@ is selected, only the bare key is returned."
 
 (after! doom-modeline
     (setq
-     doom-modeline-hud t
+     doom-modeline-hud nil
      doom-modeline-minor-modes nil
-          doom-modeline-height 25))
+          doom-modeline-height 15))
 
 (use-package! mixed-pitch
   :defer t
   :hook (text-mode . mixed-pitch-mode)
-  :config
-  (set-face-attribute 'default nil :font "Spleen32x64 Nerd Font"
-                      :height 200)
-  (set-face-attribute 'fixed-pitch nil :font "Iosevka Term")
-  (set-face-attribute 'variable-pitch nil :font "Iosevka Aile"))
- (add-hook 'mixed-pitch-mode-hook #'solaire-mode-reset)
+:config
+(set-face-attribute 'default nil :font "Spleen32x64 Nerd Font" :height 222)
+(set-face-attribute 'fixed-pitch nil :font "Spleen 32x64" :height 120)
+(set-face-attribute 'variable-pitch nil :font "OperatorMono Nerd Font" :height 120))
+(add-hook 'mixed-pitch-mode-hook #'solaire-mode-reset)
+
+(plist-put! +ligatures-extra-symbols
+        :and nil
+            :or nil
+            :for nil
+            :not nil
+            :true nil
+            :false nil
+            :int nil
+            :float nil
+            :str nil
+            :bool nil
+            :list nil
+
+
+            )
 
 (use-package! quickrun
    :defer t
@@ -835,24 +867,24 @@ is selected, only the bare key is returned."
 
 )
 
-(use-package! tsx-mode
+;; (use-package! tsx-mode
 
-  :hook (tsx-mode . lsp-deferred)
-  :config
-  (add-to-list 'auto-mode-alist '("\\.[jt]sx?\\'" . tsx-mode))
+;;   :hook (tsx-mode . lsp-deferred)
+;;   :config
+;;   (add-to-list 'auto-mode-alist '("\\.[jt]sx?\\'" . tsx-mode))
 
-(map!
- :leader
- :prefix "m"
- :map 'general-override-mode-map
- (:desc "Toggle All Nodes"
-  :nmv #'tsx-mode-fold-toggle-all-nodes)
- (:desc "Toggle Coverage"
-        :nmv #'tsx-mode-coverage-toggle)
- (:desc "Toggle Node"
-        :nvm #'tsx-mode-fold-toggle-node)
-)
-)
+;; (map!
+;;  :leader
+;;  :prefix "m"
+;;  :map 'general-override-mode-map
+;;  (:desc "Toggle All Nodes"
+;;   :nmv #'tsx-mode-fold-toggle-all-nodes)
+;;  (:desc "Toggle Coverage"
+;;         :nmv #'tsx-mode-coverage-toggle)
+;;  (:desc "Toggle Node"
+;;         :nvm #'tsx-mode-fold-toggle-node)
+;; )
+;; )
 
 (use-package! apheleia
   :config
@@ -957,18 +989,17 @@ is selected, only the bare key is returned."
 (add-hook! '+doom-dashboard-mode-hook (hl-line-mode -1))
 (setq-hook! '+doom-dashboard-mode-hook evil-normal-state-cursor (list nil))
 
-(use-package! which-key
-:config
-(which-key-setup-side-window-right)
+(after! which-key
 (setq which-key-idle-delay 0.1
       which-key-secondary-delay 0.05)
 ;; use a minibuffer
-(setq which-key-popup-type 'minibuffer)
-(setq which-key-side-window-location '(left bottom))
-(setq which-key-side-window-max-width 0.25)
+(which-key-setup-side-window-bottom)
+(setq which-key-side-window-max-width 0.33)
 (setq which-key-side-window-max-height 0.15)
-(setq which-key-frame-max-width 60)
-(setq which-key-frame-max-height 20)
+(map!
+  :nmv "C-<next>"  #'which-key-show-next-page-cycle :desc "Which-Key Next Page"
+  :nvm "C-<prior>" #'which-key-show-previous-page-cycle :desc "Which-key Prior Page"
+  )
 )
 
 (setq which-key-allow-multiple-replacements t)
@@ -1030,6 +1061,78 @@ is selected, only the bare key is returned."
   :hook
   (git-commit-mode . conventional-commit-setup))
 
+(setq company-global-modes
+      '(not erc-mode
+            circe-mode
+            message-mode
+            help-mode
+            gud-mode
+            vterm-mode
+            org-mode))
+
+(after! company-box
+  (defun +company-box--reload-icons-h ()
+    (setq company-box-icons-all-the-icons
+          (let ((all-the-icons-scale-factor 0.8))
+            `((Unknown       . ,(all-the-icons-faicon   "code"                 :face 'all-the-icons-purple))
+              (Text          . ,(all-the-icons-material "text_fields"          :face 'all-the-icons-green))
+              (Method        . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-red))
+              (Function      . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-blue))
+              (Constructor   . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-blue-alt))
+              (Field         . ,(all-the-icons-faicon   "tag"                  :face 'all-the-icons-red))
+              (Variable      . ,(all-the-icons-material "adjust"               :face 'all-the-icons-blue))
+              (Class         . ,(all-the-icons-material "class"                :face 'all-the-icons-red))
+              (Interface     . ,(all-the-icons-material "tune"                 :face 'all-the-icons-red))
+              (Module        . ,(all-the-icons-faicon   "cubes"                :face 'all-the-icons-red))
+              (Property      . ,(all-the-icons-faicon   "wrench"               :face 'all-the-icons-red))
+              (Unit          . ,(all-the-icons-material "straighten"           :face 'all-the-icons-red))
+              (Value         . ,(all-the-icons-material "filter_1"             :face 'all-the-icons-red))
+              (Enum          . ,(all-the-icons-material "plus_one"             :face 'all-the-icons-red))
+              (Keyword       . ,(all-the-icons-material "filter_center_focus"  :face 'all-the-icons-red-alt))
+              (Snippet       . ,(all-the-icons-faicon   "expand"               :face 'all-the-icons-red))
+              (Color         . ,(all-the-icons-material "colorize"             :face 'all-the-icons-red))
+              (File          . ,(all-the-icons-material "insert_drive_file"    :face 'all-the-icons-red))
+              (Reference     . ,(all-the-icons-material "collections_bookmark" :face 'all-the-icons-red))
+              (Folder        . ,(all-the-icons-material "folder"               :face 'all-the-icons-red-alt))
+              (EnumMember    . ,(all-the-icons-material "people"               :face 'all-the-icons-red))
+              (Constant      . ,(all-the-icons-material "pause_circle_filled"  :face 'all-the-icons-red))
+
+              (Struct        . ,(all-the-icons-material "list"                 :face 'all-the-icons-red))
+              (Event         . ,(all-the-icons-material "event"                :face 'all-the-icons-red))
+              (Operator      . ,(all-the-icons-material "control_point"        :face 'all-the-icons-red))
+              (TypeParameter . ,(all-the-icons-material "class"                :face 'all-the-icons-red))
+              (Template      . ,(all-the-icons-material "settings_ethernet"    :face 'all-the-icons-green))
+              (ElispFunction . ,(all-the-icons-faicon   "cube"                 :face 'all-the-icons-blue))
+              (ElispVariable . ,(all-the-icons-material "adjust"               :face 'all-the-icons-blue))
+              (ElispFeature  . ,(all-the-icons-material "stars"                :face 'all-the-icons-orange))
+              (ElispFace     . ,(all-the-icons-material "format_paint"         :face 'all-the-icons-pink))))))
+
+  (when (daemonp)
+    ;; Replace Doom defined icons with mine
+    (when (memq #'+company-box--load-all-the-icons server-after-make-frame-hook)
+      (remove-hook 'server-after-make-frame-hook #'+company-box--load-all-the-icons))
+    (add-hook 'server-after-make-frame-hook #'+company-box--reload-icons-h))
+
+  ;; Reload icons even if not in Daemon mode
+  (+company-box--reload-icons-h))
+
+(setq ivy-posframe-display-functions-alist
+      '((swiper                    . ivy-posframe-display-at-point)
+        (complete-symbol           . ivy-posframe-display-at-point)
+        (counsel-M-x               . ivy-posframe-display-at-point)
+        (counsel-esh-history       . ivy-posframe-display-at-window-center)
+        (counsel-describe-function . ivy-display-function-fallback)
+        (counsel-describe-variable . ivy-display-function-fallback)
+        (counsel-find-file         . ivy-posframe-display-at-point)
+        (counsel-recentf           . ivy-posframe-display-at-point)
+        (counsel-register          . ivy-posframe-display-at-point)
+   (nil                        . ivy-posframe-display))
+      ivy-posframe-height-alist
+      '((swiper . 20)
+        (dmenu . 20)
+        (t . 10)))
+(ivy-posframe-mode 1) ; 1 enables posframe-mode, 0 disables it.
+
 ;; Macro which creates advice template
 (defmacro rc/with-advice (adlist &rest body)
 
@@ -1053,24 +1156,6 @@ or  nonlocal exit."
                          ,(car adform)
                          ,(nth 2 adform)))
                  adlist))))
-
-;; (defun rc/org-todo-same-window (orig-fn)
-;;   "Advice to fix window placement in org-fast-todo-selection"
-;;   (let ((override
-;;          '("\\*Org todo\\*|\\*Org Note\\*"
-;;         (display-buffer-in-child-frame)
-;;         (inhibit-same-window . t))))
-;;     (add-to-list 'display-buffer-alist override)
-;;     (rc/with-advice
-;;         ((#'org-switch-to-buffer-other-window :override #'switch-to-buffer-other-window))
-;;       (unwind-protect (funcall orig-fn)
-;;         (setq display-buffer-alist (delete override display-buffer-alist))))))
-;; (advice-add #'org-fast-todo-selection :around #'rc/org-todo-same-window)
-
-(after! org
-(setq org-complete-tags-always-offer-all-agenda-tags t)
-)
-(advice-add #'fit-window-to-buffer :before (lambda (&rest _) (redisplay t)))
 
 (defun make-display-buffer-matcher-function (major-modes)
   (lambda (buffer-name action)
@@ -1105,7 +1190,7 @@ or  nonlocal exit."
                (window-height . 0.3)))
 
 (add-to-list 'display-buffer-alist
-             `(,(rx (| "*compilation*" "*grep*" "*vterm*"))
+             `(,(rx (| "*compilation*" "*grep*" "\\*vterm\\*"))
                display-buffer-in-side-window
                (side . right)
                (slot . 0)
@@ -1138,6 +1223,7 @@ or  nonlocal exit."
  :nm "x" #'evil-window-exchange
  :nm "u" #'winner-undo
  :nm "d" #'ace-delete-window
+ :nm "a" #'ace-window
  :nm "S" #'ace-swap-window
  :nm "m" #'maximize-window
  :nm "w" #'windresize)
