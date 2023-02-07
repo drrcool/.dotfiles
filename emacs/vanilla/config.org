@@ -251,6 +251,19 @@ Conventions:
   :config
   (gcmh-mode 1))
 #+end_src
+** Helpful
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
+(straight-use-package 'helpful)
+(use-package helpful
+  :after evil
+  :init
+  (setq evil-lookup-func #'helpful-at-point)
+  :bind
+  ([remap describe-function] . helpful-callable)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-variable] . helpful-variable)
+  ([remap describe-key] . helpful-key))
+#+end_src
 ** Eldoc
 #+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
 (straight-use-package 'eldoc)
@@ -268,8 +281,48 @@ Conventions:
 			   (exec-path-from-shell-initialize))))
 #+end_src
 ** no littering
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
+(straight-use-package 'no-littering)
+(use-package no-littering
+  :demand
+  :config
+  (with-eval-after-load 'recentf
+    (add-to-list 'recentf-exclude no-littering-etc-directory)
+    (add-to-list 'recentf-exclude no-littering-var-directory))
+  )
+
+#+end_src
+
 ** server mode
+#+begin_src emacs-lisp ::tangle ~/.vanilla_emacs.d/lisp/init-core.el
+(use-package emacs
+  :init
+  (unless (and (fboundp 'server-running-p) (server-running-p))
+    (server-start)))
+#+end_src
 ** auto-pair parents
+#+begin_src elisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
+(use-package emacs
+  :hook
+   (org-mode . (lambda () (lc/add-local-electric-pairs '(;(?= . ?=)
+																												 (?~ . ?~)))))
+   :init
+   (electric-pair-mode +1)
+   (setq electric-pair-preserve-balance nil)
+   ;; don't skip newline when auto-pairing parens
+   (setq electric-pair-skip-whitespace-chars '(9 32))
+   ;; Mode-specific elecric pairs
+   (defconst rc/default-electric-pairs electric-pair-pairs)
+   (defun rc/add-local-electric-pairs (pairs)
+     "Example usage:
+     (add-hook 'jupyter-org-interactction-mode '(lamda () (set-local-electric-pairs '())))
+"
+     (setq-local electric-pair-pairs (append rc/default-electric-pairs pairs))
+     (setq-local electric-pair-text-pairs electric-pair-pairs))
+
+   ;; Disable auto-pairing for < >
+   ;;
+#+end_src
 ** rename file
 ** xref
 ** don't close window with escape
