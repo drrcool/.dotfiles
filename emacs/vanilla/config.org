@@ -233,7 +233,7 @@ Conventions:
   )
 
   (when (rc/is-macos)
-    (setq mac-command-modifier 'super)
+   (setq mac-command-modifier 'super)
     (setq mac-option-modifier 'meta)
     (setq right-command-modifier 'control)
     (setq mac-right-option-modifier 'meta)
