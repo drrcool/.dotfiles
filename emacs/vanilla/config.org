@@ -85,19 +85,19 @@ Conventions:
 - If you specify :commands, they will be autoloaded and the package will be loaded when the commands are first executed
   + If you use :general and bind commands to keys it will automatically load the package on first invocation
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/init.el
 (setq straight-use-package-by-default t)
 (setq straight-vc-git-default-clone-depth 1)
 (setq straight-recipes-gnu-elpa-use-mirror t)
 (setq straight-check-for-modifications nil)
 
 (setq use-package-always-defer t)
-(defvar boostrap-version)
+(defvar bootstrap-version)
 (let* ((straight-repo-dir
         (expand-file-name "straight/repos" user-emacs-directory))
        (bootstrap-file
         (concat straight-repo-dir "/straight.el/bootstrap.el"))
-       (boostrap-version 5))
+       (bootstrap-version 5))
   (unless (file-exists-p bootstrap-file)
     (shell-command
      (concat
@@ -105,21 +105,67 @@ Conventions:
       "git -C " straight-repo-dir " clone "
       "https://github.com/raxod502/straight.el.git && "
       "git -C " straight-repo-dir " checkout 2d407bc")))
-  (load boostrap-file nil 'nomessage))
+  (load bootstrap-file nil 'nomessage))
 (straight-use-package 'use-package)
 (setq comp-deferred-compilation-black-list nil)
 #+end_src
 ** Enable use-package statisics
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/init.el
 (setq use-package-compute-statistics t)
 #+end_src
 
+* Emacs
+** Sane Defaults
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
+(use-package emacs
+  :init
+  (setq inhibit-startup-screen t
+        initial-scratch-message nil
+        sentence-end-double-space nil
+        ring-bell-function 'ignore
+        frame-resize-pixelwise t)
+
+  (setq user-full-name "Richard Cool"
+        user-mail-address "rcool@netflix.com")
+
+  (setq read-process-output-max (* 1024 1024))
+
+  ;; Always allow y for yes
+  (defalias 'yes-or-no-p  'y-or-n-p)
+
+  ;; Default to utf-8
+  (set-charset-priority 'unicode)
+  (setq locale-coding-system 'utf-8
+        coding-system-for-read 'utf-8
+        coding-system-for-write 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-selection-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+  (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
+
+  ;; write over selection on input
+  (delete-selection-mode t)
+
+  ;; Enable recent files
+  (recentf-mode t)
+  (setq recentf-exclude `(,(expand-file-name "straight/build/" user-emacs-directory)
+                          ,(expand-file-name "eln-cache/" user-emacs-directory)
+                          ,(expand-file-name "etc/" user-emacs-directory)
+                          ,(expand-file-name "var/" user-emacs-directory)))
+
+  ;; Dont use escape modifier
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+  ;;Dont persist a custom file
+  (setq custom-file (make-temp-file ""))
+  (setq custom-safe-themes t)
+  (setq enable-local-variables :all:)
+#+end_src
 
 * Provide Modules
 ** init-core
-:PROPERTIES:
-:header-args: :emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp  :tangle ~/.vanilla_emacs.d/lisp/init-core.el
 (provide 'init-core)
 ;;; init-core.el ends here
 #+end_src
