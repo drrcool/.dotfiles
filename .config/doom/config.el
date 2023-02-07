@@ -789,13 +789,8 @@ is selected, only the bare key is returned."
      doom-modeline-minor-modes nil
           doom-modeline-height 15))
 
-(use-package! mixed-pitch
-  :defer t
-  :hook (text-mode . mixed-pitch-mode)
-:config
-(set-face-attribute 'default nil :font "OperatorMono Nerd Font" :height 222)
-(set-face-attribute 'variable-pitch nil :font "Avenir"  :height 120))
-(add-hook 'mixed-pitch-mode-hook #'solaire-mode-reset)
+(setq doom-font (font-spec :family "Spleen32x64 Nerd Font" :size 20 :weight 'light))
+(setq doom-variable-pitch-font (font-spec :family "Spleen32x64 Nerd Font" :size 16))
 
 (plist-put! +ligatures-extra-symbols
         :and nil
