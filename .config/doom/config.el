@@ -793,9 +793,8 @@ is selected, only the bare key is returned."
   :defer t
   :hook (text-mode . mixed-pitch-mode)
 :config
-(set-face-attribute 'default nil :font "Spleen32x64 Nerd Font" :height 222)
-(set-face-attribute 'fixed-pitch nil :font "Spleen 32x64" :height 120)
-(set-face-attribute 'variable-pitch nil :font "OperatorMono Nerd Font" :height 120))
+(set-face-attribute 'default nil :font "OperatorMono Nerd Font" :height 222)
+(set-face-attribute 'variable-pitch nil :font "Avenir"  :height 120))
 (add-hook 'mixed-pitch-mode-hook #'solaire-mode-reset)
 
 (plist-put! +ligatures-extra-symbols
@@ -1235,3 +1234,14 @@ or  nonlocal exit."
 (load-theme  'kaolin-dark t)
 (kaolin-treemacs-theme)
 )
+
+;;; Code:
+(defun make-orgcapture-frame ()
+  "Create a new frame and run org-capture."
+  (interactive)
+  (make-frame '((name . "remember") (width . 80) (height . 16)
+                (top . 400) (left . 300)
+                (font . "-apple-Monaco-medium-normal-normal-*-13-*-*-*-m-0-iso10646-1")
+                ))
+  (select-frame-by-name "remember")
+  (org-capture))

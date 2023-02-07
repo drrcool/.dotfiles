@@ -85,7 +85,7 @@ Conventions:
 - If you specify :commands, they will be autoloaded and the package will be loaded when the commands are first executed
   + If you use :general and bind commands to keys it will automatically load the package on first invocation
 
-#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/init.el
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
 (setq straight-use-package-by-default t)
 (setq straight-vc-git-default-clone-depth 1)
 (setq straight-recipes-gnu-elpa-use-mirror t)
@@ -110,7 +110,7 @@ Conventions:
 (setq comp-deferred-compilation-black-list nil)
 #+end_src
 ** Enable use-package statisics
-#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/init.el
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
 (setq use-package-compute-statistics t)
 #+end_src
 
@@ -160,8 +160,119 @@ Conventions:
   ;;Dont persist a custom file
   (setq custom-file (make-temp-file ""))
   (setq custom-safe-themes t)
-  (setq enable-local-variables :all:)
+  (setq enable-local-variables :all)
+
+  ;; stop emcs from littering the file system with backup files
+  (setq make-backup-files nil
+        auto-save-default nil
+        create-lockfiles nil)
+
+  ;; Follow Simlinks
+  (setq vc-follow-symlinks t)
+
+  ;; Don't show extra window chrome
+  (when (window-system)
+    (tool-bar-mode -1)
+    (toggle-scroll-bar -1))
+
+  ;;enable winnder mode globally
+  (winner-mode t)
+  (show-paren-mode t)
+
+  ;; Less noise
+  (setq byte-compile-warnings '(not free-vars unresolved noruntime lexival make-local))
+  (setq native-comp-async-report-warnings-errors nil)
+  (setq load-prefer-newer t)
+
+  ;; Clean up the mode line
+  (display-time-mode -1)
+  (setq column-number-mode t)
+
+  ;; Indent defaults that are more sane
+  (setq-default indent-tabs-mode t)
+  (setq-default tab-width 2)
+
+  ;; Enable indentation and completion using tab
+  (setq tab-always-indent 'complete)
+  )
 #+end_src
+** Fonts
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
+(use-package emacs
+  :init
+  (defcustom rc/default-font-family "Spleen32x64 Nerd Font"
+    "default font family"
+    :type 'string
+    :group 'rc)
+  (defcustom rc/variable-pitch-font-family "Spleen32x64 Nerd Font"
+    "default variable pitch font family"
+    :type 'string
+    :group 'rc)
+
+  (defun rc/set-font-size ()
+    (interactive)
+    (set-face-attribute 'default nil :family rc/default-font-family :height 175)
+    (set-face-attribute 'fixed-pitch nil :family rc/default-font-family)
+    (set-face-attribute 'variable-pitch nil :family rc/variable-pitch-font-family)
+    (set-face-attribute 'mode-line nil :family rc/default-font-family :height 175)
+    (set-face-attribute 'mode-line-inactive nil :family rc/default-font-family :height 175)
+    )
+
+  (global-set-key (kbd "C-=") 'text-scale-increase)
+  (global-set-key (kbd "C--") 'text-scale-decrease)
+)
+#+end_src
+** Set Keybindings for Mac:
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
+(use-package emacs
+
+  :init
+  (defun rc/is-macos ()
+    (and (eq system-type 'darwin)
+	 (= 0 (length (shell-command-to-string "uname -a | grep iPad"))))
+  )
+
+  (when (rc/is-macos)
+    (setq mac-command-modifier 'super)
+    (setq mac-option-modifier 'meta)
+    (setq right-command-modifier 'control)
+    (setq mac-right-option-modifier 'meta)
+    (setq mac-control-modifier 'meta)
+    (setq mac-right-control-modifier 'control)
+    )
+  )
+
+#+end_src
+** Garbage Collection Magic
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
+(straight-use-package 'gcmh)
+(use-package gcmh
+  :demand
+  :config
+  (gcmh-mode 1))
+#+end_src
+** Eldoc
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
+(straight-use-package 'eldoc)
+(use-package eldoc
+  :hook (emacs-lisp-mode cider-mode))
+#+end_src
+
+** exec path from shell
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
+(straight-use-package 'exec-path-from-shell)
+(use-package exec-path-from-shell
+  :if (rc/is-macos)
+  :hook (emacs-startup . (lambda ()
+			   (setq exec-path-from-shell-arguments '("-1"))
+			   (exec-path-from-shell-initialize))))
+#+end_src
+** no littering
+** server mode
+** auto-pair parents
+** rename file
+** xref
+** don't close window with escape
 
 * Provide Modules
 ** init-core

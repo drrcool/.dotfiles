@@ -23,11 +23,11 @@ scrolling:
   multipler: 3
 font:
   normal:
-    family: Spleen32x64 Nerd Font
+    family: PragmataProMonoLiga Nerd Font
   bold:
-    family: Spleen32x64 Nerd Font
+    family: PragmataProMonoLiga Nerd Font
   italic:
-    family: Spleen32x64 Nerd Font
+    family: PragmataProMonoLiga Nerd Font
   size: 18.0
   AppleFontSmoothing: true
   offset:
