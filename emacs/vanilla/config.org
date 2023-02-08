@@ -68,7 +68,7 @@ Again this is mostly stolen from doom
       (gc-cons-threshold  100000000))
 
   (require 'init-core)
-
+  (require 'init-keybindings)
 
 )
 ;; init.el ends here
@@ -303,33 +303,119 @@ Conventions:
 ** auto-pair parents
 #+begin_src elisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
 (use-package emacs
-  :hook
-   (org-mode . (lambda () (lc/add-local-electric-pairs '(;(?= . ?=)
-																												 (?~ . ?~)))))
    :init
    (electric-pair-mode +1)
    (setq electric-pair-preserve-balance nil)
    ;; don't skip newline when auto-pairing parens
    (setq electric-pair-skip-whitespace-chars '(9 32))
-   ;; Mode-specific elecric pairs
-   (defconst rc/default-electric-pairs electric-pair-pairs)
-   (defun rc/add-local-electric-pairs (pairs)
-     "Example usage:
-     (add-hook 'jupyter-org-interactction-mode '(lamda () (set-local-electric-pairs '())))
-"
-     (setq-local electric-pair-pairs (append rc/default-electric-pairs pairs))
-     (setq-local electric-pair-text-pairs electric-pair-pairs))
 
-   ;; Disable auto-pairing for < >
-   ;;
+ )
+
 #+end_src
-** rename file
+
+#+RESULTS:
+: emacs
+
 ** xref
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
+(straight-use-package 'xref)
+(use-package xref
+  :straight (:type built-in)
+  :init
+  (setq xref-prompt-for-identifier nil)
+  )
+
+#+end_src
+
 ** don't close window with escape
+
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
+(use-package emacs
+  :init
+  (defadvice keyboard-escape-quit
+      (around keyboard-escape-dont-close-windows activate)
+    (let ((buffer-quit-function (lambda () ())))
+      ad-do-it))
+  )
+#+end_src
+* Keybindings
+** General
+We need to load general to handle keybindings for packages
+
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
+(straight-use-package 'general)
+(use-package general
+  :demand t
+  :config
+  (general-evil-setup)
+
+  (general-create-definer rc/leader-keys
+    :states '(normal visual insert emacs)
+    :keymaps 'override
+    :prefix "SPC"
+    :global-prefix "C-SPC")
+
+  (general-create-definer rc/local-leader-keys
+    :states '(normal visual)
+    :keymaps 'override
+    :prefix ","
+    :global-prefix "SPC m")
+
+  (general-nmap
+    :states 'normal
+    "gD" '(xref-find-references :wk "references")
+    )
+
+  (rc/leader_keys
+   "SPC" '(execute-extended-command :which-key "execute command")
+   "`" '((lambda () (interactive) (switch-to-buffer (other-buffer (current-buffer) 1))) :which-key "prev buffer")
+   "<escape>" 'keyboard-escape-quit
+   ";" '(eval-expression :which-key "eval expression")
+
+   "b" '(:ignore t :which-key "buffer")
+   "br" 'revert-buffer
+   "bd" 'kill-current-buffer
+
+   "c" '(:ignore t :which-key "code")
+
+   "f" (:ignore t :which-key "file")
+   "fD" '((lambda () (interactive) (delete-file (buffer0-file-name))) :wk "delete")
+   "ff" 'find-file
+   "fs" 'save-buffer
+
+   "g" '(:ignore t :which-key "git")
+
+   "h" '(:ignore t :which-key "describe")
+   "he" 'view-echo-area-messages
+   "hf" 'describe-function
+   "hF" 'describe-face
+   "hl" 'view-lossage
+   "hL" 'find-library
+   "hm" 'descibe-mode
+   "hk" 'describe-key
+   "hK" 'describe-keymap
+
+   "o" '(:ignore t :which-key "org")
+
+   "p" '(:ignore t :which-key "project")
+
+   "s" (:ignore t :which-key "search")
+
+   "t" '(:ignore t :which-key "toggle")
+   "t d" '(toggle-debug-on-error :wkl "debug on error")
+   "t l" '(toggle-line-numbers-mode :wk "line numbers")
+   "t w" '((lambda () (interactive) (toggle-truncate-lines)) :wk "work wrap")
+
+#+end_src
 
 * Provide Modules
 ** init-core
 #+begin_src emacs-lisp  :tangle ~/.vanilla_emacs.d/lisp/init-core.el
 (provide 'init-core)
 ;;; init-core.el ends here
+#+end_src
+** init-keybindings
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
+(provide 'init-keybindings)
+;; init-keybindings ends here
 #+end_src

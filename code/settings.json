@@ -50,9 +50,9 @@
       "activityBar.background": "#2E2E2E",
       "tab.inactiveBackground": "#2E2E2E"
     },
-    "statusBar.background": "#005f5f",
-    "statusBar.noFolderBackground": "#005f5f",
-    "statusBar.debuggingBackground": "#005f5f"
+    "statusBar.background": "#5f0000",
+    "statusBar.noFolderBackground": "#5f0000",
+    "statusBar.debuggingBackground": "#5f0000"
   },
 
   // Gitlens
@@ -791,13 +791,12 @@
   "debug.console.fontFamily": "agave",
   "scm.inputFontFamily": "agave",
   //FONTS
-  "editor.fontSize": 16,
+  "editor.fontSize": 14,
   "editor.fontFamily": "Spleen 32x64",
   "editor.fontLigatures": true,
   "editor.fontWeight": "400",
   "editor.lineHeight": 0,
   "editor.letterSpacing": 0,
-  "window.zoomLevel": 2,
   "vitest.commandLine": "newt exec yarn test:unit",
   "vitest.enable": true,
   "debug.console.acceptSuggestionOnEnter": "on",
@@ -808,5 +807,7 @@
   "projectManager.git.baseFolders": [
     "/Users/rcool2/",
     "/Users/rcool2/allprojects"
-  ]
+  ],
+  "git.autofetch": true,
+  "window.zoomLevel": 2
 }
