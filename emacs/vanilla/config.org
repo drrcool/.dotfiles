@@ -406,6 +406,27 @@ We need to load general to handle keybindings for packages
    "t l" '(toggle-line-numbers-mode :wk "line numbers")
    "t w" '((lambda () (interactive) (toggle-truncate-lines)) :wk "work wrap")
 
+   "u" '(universal-argument :wk "universal")
+
+   "w" '(:ignore t :wk "window")
+   "wl" 'winmove-right
+   "wh" 'winmove-left
+   "wk" 'winmove-up
+   "wj" 'winmove-down
+   "wr" 'winner-redo
+   "wd" 'delete-window
+   "w=" 'balance-windows-area
+   "w0" 'kill-buffer-and-window
+   "wu" 'winner-undo
+   "wm" '(delete-other-windows :wk "maximize")
+   )
+
+  (rc/local-leader-keys
+   :states 'normal
+   "d" '(:ignore t :wk "debug")
+   "e" '(:ignore t :wk "eval")
+   "t" '(:ignore t :wk "test")))
+
 #+end_src
 
 * Provide Modules
