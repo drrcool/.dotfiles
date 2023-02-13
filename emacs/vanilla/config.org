@@ -69,6 +69,7 @@ Again this is mostly stolen from doom
 
   (require 'init-core)
   (require 'init-keybindings)
+  (require 'init-org)
 
 )
 ;; init.el ends here
@@ -405,10 +406,247 @@ We need to load general to handle keybindings for packages
    "t d" '(toggle-debug-on-error :wkl "debug on error")
    "t l" '(toggle-line-numbers-mode :wk "line numbers")
    "t w" '((lambda () (interactive) (toggle-truncate-lines)) :wk "work wrap")
+    "u" '(universal-argument :wk "universal")
+
+    "w" '(:ignore t :which-key "window")
+    "wl"  'windmove-right
+    "wh"  'windmove-left
+    "wk"  'windmove-up
+    "wj"  'windmove-down
+    "wr" 'winner-redo
+    "wd"  'delete-window
+    "w=" 'balance-windows-area
+    "wD" 'kill-buffer-and-window
+    "wu" 'winner-undo
+    "wr" 'winner-redo
+    "wm"  '(delete-other-windows :wk "maximize")
+
+    )
+
+  (rc/local-leader-keys
+    :states 'normal
+    "d" '(:ignore t :which-key "debug")
+    "e" '(:ignore t :which-key "eval")
+    "t" '(:ignore t :which-key "test")))
+#+end_src
+** COMMENT Evil
+Search Tricks:
+ - =*= / =#= to go to next/prev of symbol under point
+ - =/= starts a Search =n= / =N= to go to next/prev
+ - =gn= is a noun for the next match
+
+Interesting vim nouns:
+- =_= first char of line
+- =g_= last character of line
+
+Marks:
+- =ma= mark the position in the buffer and save it to register =a=
+- ='a= go to mark =a=
+- =mA= mark position and filename
+- =]'= go to next mark
+- =''= go back to previous
+- =g;= go to previous change location
+- =gi= go back to insert mode where you left off
+
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
+(straight-use-package 'evil)
+(use-package evil
+:demand
+:general
+(rc/leader-keys
+ "wv" 'evil-window-vsplit
+ "ws" 'evil-window-split
+  )
+:init
+(setq evil-want-integration t)
+(setq evil-want-keybinding nil)
+(setq evil-want-C-u-scroll t)
+(setq evil-want-C-i-jump t)
+(setq evil-want-Y-yank-to-eol t)
+(setq evil-undo-system 'undo-fu)
+(setq evil-search-module 'evil-search)
+(setq evil-split-window-below t)
+(setq evil-vsplit-window-right t)
+(setq evil-auto-indent nil)
+:config
+(evil-mode 1)
+(define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+(define-key evil-motion-state-map "_" 'evil-end-of-line)
+(define-key evil-motion-state-map "0" 'evil-beginning-of-line)
+(evil-set-initial-state 'messages-buffer-mode 'normal)
+(evil-set-initial-state 'dashboard-mode 'normal)
+(defun rc/evil-dont-move-cursor (orig-fn &rest args)
+  (save-excursion (apply orig-fn args)))
+(advice-add 'evil-indent :around #'rc/evil-dont-move-cursor)
+)
+#+End_src
+
+** Evil-collection
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
+(straight-use-package 'evil-collection)
+(use-package evil-collection
+  :after evil
+  :demand
+  :init
+  (setq evil-collection-magit-use-z-for-folds nil)
+  :config
+  (evil-collection-init))
+#+end_src
+
+** Evil Goggles
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
+(straight-use-package 'evil-goggles)
+(use-package evil-goggles
+:after evil
+:demand
+:init
+(setq evil-goggles-duration 0.1)
+:config
+(push '(evil-operator-eval
+        :face evil-goggles-yank-face
+        :switch evil-goggles-enable-yank
+        :advice evil-goggles--generic-async-advice)
+      evil-goggles--commands)
+(evil-goggles-mode)
+(evil-goggles-use-diff-faces)
+)
 
 #+end_src
 
+** Evil Snipe
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
+(straight-use-package 'evil-snipe)
+(use-package evil-snipe
+  :after evil
+  :demand
+  :config
+  (evil-snipe-mode +1)
+  (evil-snipe-override-mode +1))
+#+end_src
+
+** Evil comments
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
+(straight-use-package 'evil-nerd-commenter)
+(use-package evil-nerd-commenter
+  :general
+  (general-nvmap
+   "gc" 'evilnc-comment-operator
+   "gC" 'evilnc-copy-and-comment-operator))
+#+end_src
+
+** Evil Surround
+- use =S)= to surround something without spaces =(sexp)=
+- use =S(= to surround something with spaces =( sexp )=
+#+begin_src emacs-lisp
+(straight-use-package 'evil-surround)
+(use-package evil-surround
+  :general
+  (:states 'operator
+           "s" 'evil-surround-edit
+           "S" 'evil-Surround-edit)
+  (:states 'visual
+           "S" 'evil-surround-region
+           "gS" 'evil-Surround-region))
+#+end_src
+
+** Evil Indent Plus
+To select a function in =python=, stand on a line in the body, select with =vik=
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
+(straight-use-package 'evil-indent-plus)
+(use-package evil-indent-plus
+  :after evil
+  :demand
+  :config
+  (define-key evil-inner-text-objects-map "i" 'evil-indent-plus-i-indent)
+  (define-key evil-outer-text-objects-map "i" 'evil-indent-plus-a-indent)
+  (define-key evil-inner-text-objects-map "k" 'evil-indent-plus-i-indent-up)
+  (define-key evil-outer-text-objects-map "k" 'evil-indent-plus-a-indent-up)
+  (define-key evil-inner-text-objects-map "j" 'evil-indent-plus-i-indent-up-down)
+  (define-key evil-outer-text-objects-map "j" 'evil-indent-plus-i-indent-up-down)
+  )
+#+end_src
+
+** Evil clever parens
+
+Mark the outer form with =v a f=
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
+(straight-use-package 'evil-cleverparens)
+(use-package evil-cleverparens
+  :after evil
+  :hook (emacs-lisp-mode . rc/init-cleverparens)
+  :init
+  (defun rc/init-cleverparens ()
+    (require 'evil-cleverparens-util)
+    (evil-define-text-object evil-cp-a-defun (count &optional beg end type)
+      "An other text object for a top level sexp (defun)."
+      (if (evil-cp--inside-form-p)
+          (let ((bounds (evil-cp--top-level-bounds)))
+            (evil-range (car bounds) (cdr bounds) 'inclusive :expanded t))
+        (error "Not inside a sexp.")))
+
+    (evil-define-text-object evil-cp-inner-defun (count &optional beg end type)
+      "An inner text object for a top elvel sexp (defun)."
+      (if (evil-cp--inside-form-p)
+          (let ((bounds (evil-cp--top-level-bounds)))
+            (evil-range (1+ (car bounds)) (1- (cdr bounds)) 'inclusive :expanded t))
+        (error "Not inside a sexp.")))
+
+    (define-key evil-outer-text-objects-map "f" #'evil-cp-a-defun)
+    (define-key evil-inner-text-objects-map "f" #'evil-cp-inner-defun)
+    )
+  )
+#+end_src
+
+** Evil iedit state
+Keybindings:
+=TAB=: toggle occurance
+=n/N=: next/prev occurance
+=F=: restrict scope to function
+=J/K=: expand scope of match up or down
+=V=: toggle visibility of matches
+
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
+(straight-use-package 'evil-iedit-state)
+(use-package evil-iedit-state
+  :straight (evil-iedddit-state :type git :host github :repo "kassick/evil-iedit-state" :branch "master")
+  :general
+  (rc/leader-keys
+   "s e" '(evil-iedit-state/iedit-mode :wk "iedit")
+   "s q" '(evil-iedit-state/quit-iedit-mode :wk "iedit quit")))
+#+end_src
+
+** Which key
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
+(straight-use-package 'which-key)
+(use-package which-key
+  :demand
+  :general
+  (rc/leader-keys
+   "?" 'which-key-show-top-level
+   )
+  :init
+  (setq which-key-separator " ")
+  (setq which-key-prefix-prefix "+")
+  :config
+  (which-key-mode)
+  )
+#+end_src
+* Org
+** org-mode
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-org.el
+(use-package org
+  :hook ((org-mode . prettify-symbols-mode)
+         (org-mode . visual-line-mode)
+         (org-mode . variable-pitch-mode))
+  :general
+  (rc/leader-keys
+   "f t" '(org-babel-tangle :wk "tangle")
+
+)
+#+end_src
+
 * Provide Modules
+
 ** init-core
 #+begin_src emacs-lisp  :tangle ~/.vanilla_emacs.d/lisp/init-core.el
 (provide 'init-core)
@@ -418,4 +656,9 @@ We need to load general to handle keybindings for packages
 #+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
 (provide 'init-keybindings)
 ;; init-keybindings ends here
+#+end_src
+** init-org
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-org.el
+(provide 'init-org)
+;; init-org ends here
 #+end_src
