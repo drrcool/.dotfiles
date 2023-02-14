@@ -70,7 +70,8 @@ Again this is mostly stolen from doom
   (require 'init-core)
   (require 'init-keybindings)
   (require 'init-org)
-
+  (require 'init-ui)
+  (require 'init-programming)
 )
 ;; init.el ends here
 
@@ -228,21 +229,13 @@ Conventions:
 (use-package emacs
 
   :init
-  (defun rc/is-macos ()
-    (and (eq system-type 'darwin)
-	 (= 0 (length (shell-command-to-string "uname -a | grep iPad"))))
-  )
-
-  (when (rc/is-macos)
    (setq mac-command-modifier 'super)
     (setq mac-option-modifier 'meta)
-    (setq right-command-modifier 'control)
+    (setq mac-right-command-modifier 'control)
     (setq mac-right-option-modifier 'meta)
     (setq mac-control-modifier 'meta)
     (setq mac-right-control-modifier 'control)
-    )
-  )
-
+)
 #+end_src
 ** Garbage Collection Magic
 #+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
@@ -276,7 +269,6 @@ Conventions:
 #+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
 (straight-use-package 'exec-path-from-shell)
 (use-package exec-path-from-shell
-  :if (rc/is-macos)
   :hook (emacs-startup . (lambda ()
 			   (setq exec-path-from-shell-arguments '("-1"))
 			   (exec-path-from-shell-initialize))))
@@ -367,7 +359,7 @@ We need to load general to handle keybindings for packages
     "gD" '(xref-find-references :wk "references")
     )
 
-  (rc/leader_keys
+  (rc/leader-keys
    "SPC" '(execute-extended-command :which-key "execute command")
    "`" '((lambda () (interactive) (switch-to-buffer (other-buffer (current-buffer) 1))) :which-key "prev buffer")
    "<escape>" 'keyboard-escape-quit
@@ -379,7 +371,7 @@ We need to load general to handle keybindings for packages
 
    "c" '(:ignore t :which-key "code")
 
-   "f" (:ignore t :which-key "file")
+   "f" '(:ignore t :which-key "file")
    "fD" '((lambda () (interactive) (delete-file (buffer0-file-name))) :wk "delete")
    "ff" 'find-file
    "fs" 'save-buffer
@@ -400,7 +392,7 @@ We need to load general to handle keybindings for packages
 
    "p" '(:ignore t :which-key "project")
 
-   "s" (:ignore t :which-key "search")
+   "s" '(:ignore t :which-key "search")
 
    "t" '(:ignore t :which-key "toggle")
    "t d" '(toggle-debug-on-error :wkl "debug on error")
@@ -429,7 +421,7 @@ We need to load general to handle keybindings for packages
     "e" '(:ignore t :which-key "eval")
     "t" '(:ignore t :which-key "test")))
 #+end_src
-** COMMENT Evil
+** Evil
 Search Tricks:
  - =*= / =#= to go to next/prev of symbol under point
  - =/= starts a Search =n= / =N= to go to next/prev
@@ -467,7 +459,7 @@ Marks:
 (setq evil-search-module 'evil-search)
 (setq evil-split-window-below t)
 (setq evil-vsplit-window-right t)
-(setq evil-auto-indent nil)
+(setq evil-auto-indent t)
 :config
 (evil-mode 1)
 (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
@@ -606,9 +598,8 @@ Keybindings:
 =V=: toggle visibility of matches
 
 #+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
-(straight-use-package 'evil-iedit-state)
 (use-package evil-iedit-state
-  :straight (evil-iedddit-state :type git :host github :repo "kassick/evil-iedit-state" :branch "master")
+  :straight (evil-iedit-state :type git :host github :repo "kassick/evil-iedit-state" :branch "master")
   :general
   (rc/leader-keys
    "s e" '(evil-iedit-state/iedit-mode :wk "iedit")
@@ -641,10 +632,380 @@ Keybindings:
   :general
   (rc/leader-keys
    "f t" '(org-babel-tangle :wk "tangle")
+   "o C" '(org-capture :wk "capture")
+   "o l" '(org-todo-list :wk "todo list")
+   )
+
+  (rc/local-leader-keys
+   :keymaps 'org-mode-map
+   "a" '(org-archive-subtree :wk "archive subtree")
+   "E" '(org-export-dispatch :wk "export")
+   "i" '(org-insert-structure-template :wk "insert src")
+   "l" '(:ignore t :wk "link")
+   "l l" '(org-insert-link :wk "insert link")
+   "l s" '(org-store-link :wk "store link")
+   "L" '((lambda () (interactive) (org-latex-preview)) :wk "latex preview")
+   "r" '(org-refile :wk ":refile")
+   "n" '(org-toggle-narrow-to-subtree :wk "narrow subtree")
+   "p" '(org-priority :wk "priority")
+   "q" '(org-set-tags-command :wk :"tag")
+   "s" '(org-sort :wk "sort")
+   "t" '(:ignore t :wk "todo")
+   "t t" '(org-todo :wk "heading todo")
+   "t s" '(org-schedule :wk "schedule")
+   "t d" '(org-deadline :wk "deadline")
+   "x" '(org-toggle-checkbox :wk "toggle checkbox")
+   )
+  (org-mode-map
+   :states 'insert
+   "TAB" 'nil
+   "S-TAB" 'nil)
+  (org-mode-map
+   :states 'normal
+   "z i" '(org-toggle-inline-images :wk "inline images"))
+  :init
+  (when (file-directory-p "~/org")
+    (setq org-directory "~/org"
+          +org-export-directory "~/org/export"
+          org-default-notes-file "~/org/notes.org"
+          org-id-locations-file "~/org/.orgids"
+          ))
+  (setq org-src-preserve-indentation t
+        org-startup-indented t
+        org-hide-emphasis-markers t
+        org-catch-invisible-edits 'smart
+        org-image-actual-width nil
+        org-indent-indentation-per-level 1
+        org-list-demote-modify-bullet '(("-" . "+") ("+" . "*")))
+  (setq org-modules '(ol-docview org-habit))
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "NEXT(n)" "PROP(p)" "|" "HOLD(h)" "CANCEL(c)" "DONE(d)")))
+    (setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "»")
+                                         ("#+END_SRC" . "«")
+                                         ("#+begin_src" . "»")
+                                         ("#+end_src" . "«")
+                                         ("lambda"  . "λ")
+                                         ("->" . "→")
+                                         ("->>" . "↠")))
+    (setq  prettify-symbols-unprettify-at-point 'right-edge)
+    :config
+    (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+    (add-to-list 'org-structure-template-alist '("py" . "src python"))
+    (add-to-list 'org-structure-template-alist '("js" . "src javascript"))
+    (add-to-list 'org-export-backends 'beamer)
+    (plist-put org-format-latex-options :scale 1.2)
+   )
+
+
+#+end_src
+** Org code blocks in monospace
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-org.el
+(use-package org
+:config
+(defun my-adjoin-to-list-or-symbol (element list-or-symbol)
+  (let ((list (if (not (listp list-or-symbol))
+                  (list list-or-symbol)
+                list-or-symbol)))
+    (require 'cl-lib)
+    (cl-adjoin element list)))
+
+(eval-after-load "org"
+  '(mapc
+    (lambda (face)
+      (set-face-attribute
+       face nil
+       :inherit
+       (my-adjoin-to-list-or-symbol
+        'fixed-pitch
+        (face-attribute face :inherit))))
+    (list 'org-code 'org-block)))
+    )
+#+end_src
+** Org Agenda
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-org.el
+(use-package org
+  :general
+  (rc/leader-keys
+   "o a" '(org-agenda-list :wk "agenda")
+   "o A" '(org-agenda :wk "agenda")
+   "o C" '(org-capture :wk "capture")
+   "o l" '(org-todo-list :wk "todo list")
+   "o n" '((lambda () (interactive) (org-agenda nil "n")) :wk "next")
+   "o p" '((lambda () (interactive) (find-file (concat org-directory "todo.org")))
+             :wk "open todos"))
+   :init
+   (setq org-agenda-files '())
+   (when (file-directory-p "~/org/personal/")
+     (setq org-agenda-files
+           (append org-agenda-files
+                   '("~/org/personal/birthdays.org"))))
+   (when (file-directory-p "~/roam/work")
+     (setq org-agenda-files
+           (append org-agenda-files
+                   '("~/roam/work/todo.org"))))
+   (when (file-directory-p "~/roam/recovery")
+     (setq org-agenda-files
+           (append org-agenda-files
+                   '("~/roam/recovery/todo.org"))))
+   (setq org-agenda-custom-commands
+         '(("d" "Dashboard"
+            ((agenda "" ((org-deadline-warning-days 7)))
+             (todo "NEXT"
+                   ((org-agenda-overriding-header "Next Tasks")))
+             (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
+           ("n" "Next Tasks"
+            ((todo "NEXT"
+                   ((org-agenda-overriding-header "Next Tasks")))))
+           ("w" "Work Tasks" tags-todo "+work")
+           ("r" "Recovery Tasks" tags-todo "+recovery")))
+   )
+#+end_src
+** Org capture templates
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-org.el
+(use-package org
+  :init
+  (setq org-capture-templates
+        `(("b" "Blog" entry
+           (file+headline "personal/todo.org" "Blog")
+           ,(concat "* WRITE %^{Title} %^g\n"
+                    "SCHEDULED: %^t\n"
+                    ":PROPERTIES:\n"
+                    ":CAPTURED: %U\n:END:\n\n"
+                    "%i%?"))
+          ("d" "New Diary Entry" entry(file+olp+datatree"~/org/personal/diagry.org" "Daily Logs")
+           "* %^{thought for the day}
+                 :PROPERTIES:
+                 :CATEGORY: %^{category}
+                 :SUBJECT: %^{subject}
+                 :MOOD:  %^{mood}
+                 :END:
+                 :RESOURCES:
+                 :END:
+
+                \*What was one good thing you learned today?*:
+                - %^{whatilearnedtoday}
+
+               \*List one thing you could have done better*:
+                - %^{onethingdobetter}
+
+                \*Describe in your own words how your day was*:
+                - %?")
+          ("i" "Inbox" entry
+           (file+headline "personal/todo.org" "Inbox")
+           ,(concat "* %^{Title}\n"
+                    ":PROPERTIES:\n"
+                    ":CAPTURED: %U%\n"
+                    ":END:\n\n"
+                    "%i%l"))
+          ("u" "New URL Entry" entry
+           (file+function "~/org/personal/dailies.org" org-reverse-datatree-goto-date-in-file)
+           "* [[%^{URL}][%^{Description}]] %^g %?")
+          ("w" "Work" entry
+           (file+headline "personal/todo.org" "Work")
+           ,(concat "* TODO [#A] %^{Title} :@work:\n"
+                    "SCHEDULED: %^t\n"
+                    ":PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
+                    "%i%?"))))
+          )
+#+end_src
+** Cycle only one heading
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-org.el
+ (use-package org
+   :init
+   (defun +org-cycle-only-current-subtree-h (&optional arg)
+     "Toggle the local fold at the point, and no deeper.
+   `org-cycles's standard behavior is to cycle betweeen three levels; collapsed,
+   subtree and whole document. This is slow, especially in larger org buffer.  Most
+   of the time, I just want to peek into the current subtree -- at most, expand *only* the
+   current subtree.
+
+  All my (performant) foldings needs are met between this and `org-show-subtree'
+  (on z0 for evil users), and `org-cycle' on shift-TAB if I need it."
+     (interactive "P")
+     (unless (eq this-command 'org-shifttab)
+       (save-excursion
+         (org-beginning-of-line)
+         (let (invisible-p)
+           (when (and (org-at-heading-p)
+                      (or org-cycle-open-archived-trees
+                          (not (member org-archive-tag (org-get-tags))))
+                      (or (not arg)
+                          (setq invisible-p (outline-invisible-p (line-end-position)))))
+             (unless invisible-p
+               (setq org-cycle-subtree-status 'subtree))
+             (org-cycle-internal-local)
+             t)))))
+   :config
+   ;;Only fold the currnet tree, rather than recursively
+   (add-hook 'org-tab-first-hook #'+org-cycle-only-current-subtree-h)
+   )
+#+end_src
+** org reverse datatree
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-org.el
+(use-package org-reverse-datetree
+:after org :demand
+)
+#+end_src
+** org-superstar
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-org.el
+(use-package org-superstar
+:hook (org-mode . org-superstar-mode)
+:init
+(setq org-superstar-headline-bullets-list '("✖" "✚" "◉" "○" "▶")
+  org-superstar-special-todo-items t
+  org-ellipsis " ↴ ")
+)
+#+end_src
+** org-evil-mode:
+nice =+org/insert-item-below= function
+=evil= bindings for =org-agenda=
+text objects:
+   use =vie= to select everything inside a src block
+   use =vir= to select everything inside a heading
+   use ==ie= to format a code block
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-org.el
+(use-package evil-org-mode
+  :straight (evil-org-mode :type git :host github :repo "hlissner/evil-org-mode")
+  :hook ((org-mode . evil-org-mode)
+         (org-mode . (lambda ()
+    (require 'evil-org)
+    (evil-normalize-keymaps)
+    (evil-org-set-key-theme '(textobjects))
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))))
+  :bind
+  ([remap evil-org-org-insert-heading-respect-content-below] . +org/insert-item-below) ;; "<C-return>"
+  ([remap evil-org-org-insert-todo-heading-respect-content-below] . +org/insert-item-above) ;; "<C-S-return>"
+  :general
+  (general-nmap
+    :keymaps 'org-mode-map
+    :states 'normal
+    "RET" #'org-open-at-point
+)
+:init
+(defun +org--insert-item (direction)
+  (let ((context (org-element-lineage
+        (org-element-context)
+  '(table table-row headline inlinetask item plain-list)
+t)))
+(pcase (org-element-type context)
+;; Add a new list item (carrying over checkboxes if needed)
+((or `item `plain-list)
+;;Position determines where org-insert-todo-heading and org-insert item insert the new list tiem
+(if (eq direction 'above)
+(org-beginning-of-item)
+(org-end-of-item)
+(backward-char))
+(org-insert-item (org-element-property :checkbox context))
+;;Handle edge case where current item is empty and bottom of list is flush against a new heading
+(when (and (eq direction 'below)
+(eq (org-element-property :contents-begin context)
+(org-element-property :contents-end context)))
+(org-end-of-item)
+(org-end-of-line)))
+;; Add a new table row
+((or `table `table-row)
+(pcase direction
+('below (save-excursion (org-table-insert-row t))
+(org-table-next-row))
+('above (save-excursion (org-shiftmetadown))
+(+org/table-previous-row))))
+
+;; Otherwise add a new heading carrying over any todo state
+(_
+(let ((level (or (org-current-level) 1)))
+(pcase direction
+(`below
+(let (org-insert-heading-respect-content)
+(goto-char (line-end-position))
+(org-end-of-subtree)
+(insert "\n" (make-string level ?*) " ")))
+(`above
+(org-back-to-heading)
+(insert (make-string level ?*) " ")
+(save-excursion (insert "\n"))))
 
 )
 #+end_src
+* UI
+** Doom themes
+#+BEGIN_SRC emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-ui.el
+(use-package doom-themes
+:demand
+:config
+ (setq doom-themes-enable-bold t
+       doom-themes-enable-italic t)
+ (load-theme 'doom-outrun-electric t)
 
+;; Enable flashing mode-line on errors
+(doom-themes-visual-bell-config)
+;; Enable custom neotree theme (with all-the-icons)
+(doom-themes-neotree-config)
+;; and for treemacs
+(setq doom-themes-treemacs-theme "doom-colors")
+(doom-themes-treemacs-config)
+;; corrects and improves org's native fontifcation
+(doom-themes-org-config)
+)
+#+END_SRC
+** All the icons
+#+BEGIN_SRC emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-ui.el
+(use-package all-the-icons
+  :demand
+)
+
+(use-package all-the-icons-completion
+ :after (marginalia all-the-icons)
+:hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+:init
+(all-the-icons-completion-mode)
+)
+#+END_SRC
+** Doom Modeline
+#+BEGIN_SRC emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-ui.el
+(use-package doom-modeline
+:demand
+:init
+(setq doom-modeline-buffer-encoding nil)
+(setq doom-modeline-env-enable-python nil)
+(setq doom-modeline-height 15)
+(setq doom-modeline-project-detection 'projectile)
+:config
+(doom-modeline-mode 1)
+(set-face-attribute 'doom-modeline-evil-insert-state nil :foreground "orange")
+)
+#+END_SRC
+* Programming
+** Snippets
+#+BEGIN_SRC :tangle ~/.vanilla_emacs.d/lisp/init-programming.el
+(use-package yasnippet
+:general
+(yas-minor-mode-map
+:states 'insert
+"TAB" 'nil
+"C-TAB" 'yas-expand)
+:hook
+((prog-mode org-mode dap-ui-repl-mode vterm-mode) . yas-minor-mod)
+:init
+(defun rc/yas-try-expanding-auto-snippets ()
+ (when (and (boundp 'yas-minor-mode) yas-minor-mode)
+ (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
+ (yas-expand))))
+ :config
+ (yas-reload-all)
+ (add-hook 'post-comment-hook #'rc/yas-try-expanding-auto-snippets)
+ )
+#+END_SRC
+** undo fu
+#+BEGIN_SRC emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-programming.el
+(use-package undo-fu
+  :demand
+  :general
+  (:states 'normal
+    "u" 'undo-fu-only-undo
+    "\C-r" 'undo-fu-only-redo))
+#+END_SRC
 * Provide Modules
 
 ** init-core
@@ -662,3 +1023,13 @@ Keybindings:
 (provide 'init-org)
 ;; init-org ends here
 #+end_src
+** init-programming
+#+BEGIN_SRC emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-programming.el
+(provide 'init-programming)
+;; init-programming ends here
+#+END_SRC
+** init-ui
+#+BEGIN_SRC emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-ui.el
+(provide 'init-ui)
+;; init-ui ends here
+#+END_SRC
