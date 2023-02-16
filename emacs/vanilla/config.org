@@ -1357,13 +1357,164 @@ After =consult-line= you can press =M-n= twice to search for the symbol at point
   :commands (consult-ripgrep)
   :general
   (general-nmap
-   :states '(normal insert)
-   "C-p" 'consult-yank-pop)
+		:states '(normal insert)
+		"C-p" 'consult-yank-pop)
   (rc/leader-keys
-   "s i" )
+		"s i" '(consult-isearch :wk "isearch")
+		"s o" '(consult-outline :wk "outline")
+		"s s" 'consult-line
+		"s p" '(consult-ripgrep :wk "ripgrep project")
+		"b b" 'consult-buffer
+		"f r" 'consult-recent-file
+		"s !" '(consult-flymake :wk "flymake")
+		)
+	:init
+	(setq xref-show-xrefs-function #'consult-xref
+				xref-show-definitions-function #'consult-xref)
+	:config
+	(autoload 'projectile-project-root "projectile")
+	(setq consult-project-root-function #'projectile-project-root)
+	(with-eval-after-load 'selectrum
+    (require 'consult-selectrum))
+  )
 #+end_src
 
+** embark-consult
 
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-completion.el
+(use-package embark-consult
+:demand t
+:hook
+(embark-collect-mode . embark-consult-preview-minor-mode)
+)
+#+end_src
+
+** Vertico
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-completion.el
+(use-package vertico
+	:straight (vertico :type git :host github :reppo "minad/vertico")
+	:demand
+	:general
+	(:keymaps 'vertico-map
+						"C-j" #'vertico-next
+						"C-k" #'vertico-previous
+						"<escape>" #'minibuffer-keyboard-quit
+						"M-<backspace>" #'vertico-directory-delete-workd
+						)
+	(:keymaps '(normal insert visual motion)
+						"M-." #'vertico-repeat)
+	:init
+	;; Multiform
+	(setq vertico-grid-separator "         ")
+	(setq vertico-grid-lookahead 50)
+	(setq vertico-buffer-display-action '(display-buffer-reuse-window))
+	(setq vertico-multiform-categories
+				'((file indexed)
+					(consult-grep buffer)
+					(consult-location)
+					(imenu buffer)
+					(library reverse indexed)
+					(t reverse)
+					))
+	(setq vertico-multiform-commands '(("flyspell-correct-*" grid reverse)
+																		 (org-refile grid reverse indexed)
+																		 (consult-yank-pop indexed)
+																		 (consult-flycheck)
+																		 (consult-lsp-diagnostics)
+																		 ))
+	(setq completion-in-region-function
+				(lambda (&rest args)
+					(apply (if vertico-mode
+										 #'consult-completion-in-region
+									 #'completion--in-region)
+								 args)))
+	:config
+	(vertico-mode)
+
+	;; Prefix the candidate with >>
+	(advice-add #'vertico--format-candidate :around
+							(lambda (orig cand prefix suffix index _start)
+								(setq cand (funcall orig cand prefix suffix index _start))
+								(concat
+								 (if (= vertico--index index)
+										 (propertize "» " 'face 'vertico-current)
+									 "  ")
+                 cand)))
+
+  )
+#+end_src
+
+** Orderless
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-completion.el
+(use-package orderless
+	:init
+	(setq completion-styles '(orderless)
+				completion-category-defaults nil
+				completion-category-overrides '((file (styles partial-completion)))))
+
+(use-package savehist
+	:init
+	(savehist-mode))
+
+(use-package emacs
+  :init
+	;; Add prmpt indicator for completing read-multiple
+	(defun crm-indicator (args)
+		(const (concat "[CRM] " (ars args)) (cdr args)))
+	(advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+
+	;; Do not allow the cursor in the minibuffer prompt
+	(setq minibuffer-prompt-properties
+				'(read-only t cursor-intangible t face minibuffer-prompt))
+	(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+
+	;; Enable recusrive minibuffers
+	(setq enable-recursive-minibuffers t))
+
+;; Hide commands in M-x which do not work in the current mode
+;; (setq read-extended-command-predicate #'commands-completion-default-include-p)
+)
+#+end_src
+
+** Dabbrev
+When =TAB= does not work use =S-Tab=
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-completion.el
+(use-package dabbrev
+:general
+(python-mode-map
+:states 'insert
+"<backtab>" 'dabbrev-completion))
+#+end_src
+** Corfu
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-completion.el
+(use-package corfu
+:straight (corfu :type git :host github :repo "minad/corfu")
+:hook ((prog-mode . corfu-mode)
+(org-mode . corfu-mode))
+:bind
+(:map corfu-map
+("C-j" . corfu-next)
+("C-k" . corfu-previous))
+:general
+(evil-insert-state-map "C-k" nil)
+:init
+(setq corfu-auto nil) ;; enable auto completion
+(setq corfu-cycle t) ;; enable cycling
+(setq corfu-min-width 80)
+(setq corfu-max-width corfu-min-width)
+(setq corfu-preselect-first t)
+
+(defun corfu-enable-always-in-minibuffer ()
+"Enable corfu in minibuffer if Vertico is not active"
+(unless (or (bound-and-true-p mct--active)
+(bound-and-true-p vertico--input))
+(setq-local corfu-auto nil)
+(corfu-mode 1)))
+
+(add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
+
+)
+#+end_src
 * Programming
 ** Snippets
 #+BEGIN_SRC :tangle ~/.vanilla_emacs.d/lisp/init-programming.el
