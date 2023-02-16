@@ -505,26 +505,6 @@ Marks:
 (evil-goggles-use-diff-faces)
 )
 
-   "u" '(universal-argument :wk "universal")
-
-   "w" '(:ignore t :wk "window")
-   "wl" 'winmove-right
-   "wh" 'winmove-left
-   "wk" 'winmove-up
-   "wj" 'winmove-down
-   "wr" 'winner-redo
-   "wd" 'delete-window
-   "w=" 'balance-windows-area
-   "w0" 'kill-buffer-and-window
-   "wu" 'winner-undo
-   "wm" '(delete-other-windows :wk "maximize")
-   )
-
-  (rc/local-leader-keys
-   :states 'normal
-   "d" '(:ignore t :wk "debug")
-   "e" '(:ignore t :wk "eval")
-   "t" '(:ignore t :wk "test")))
 
 #+end_src
 
@@ -1320,7 +1300,7 @@ text objects:
   )
 #+end_src
 * Completion
-** Marginalia
+*** Marginalia
 #+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-completion.el
 (use-package marginalia
 	:after vertico
@@ -1331,6 +1311,59 @@ text objects:
 		(add-to-list 'marginalia-command-categories '(projectile-find-file . file)))
 	)
 #+end_src
+** Embark
+You can act on candidates with =C-l=
+You can run =embark-export= in all results (e.g. after a =consult-line=) with =C-l E=
+You can run =embark-export-snapshot= with =C-l S=
+
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-completion.el
+(use-package embark
+  :after vertigo
+  :general
+  (general-nmap "C-l" 'embark-act)
+  (vertico-map
+   "C-l" #'embark-act
+   )
+  (:keymaps 'embark-file-map
+            "o" 'find-file-other-window
+            "x" 'rc/dired-open-externally)
+  :init
+  (setq prefix-help-command #'embark-prefix-help-command)
+  :config
+  ;; Hide the mode line of the Emark live/completions buffer
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none))))
+  )
+
+#+end_src
+
+** wgrep
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-completion.el
+(use-package wgrep
+:general
+(grep-mode-map "W" 'wgrep-change-to-wgrep-mode)
+:init
+(setq wgrep-auto-save-buffer t)
+(setq wgrep-change-readonly-file t)
+                )
+#+end_src
+
+** Consult
+After =consult-line= you can press =M-n= twice to search for the symbol at point
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-completion.el
+(use-package consult
+  :commands (consult-ripgrep)
+  :general
+  (general-nmap
+   :states '(normal insert)
+   "C-p" 'consult-yank-pop)
+  (rc/leader-keys
+   "s i" )
+#+end_src
+
+
 * Programming
 ** Snippets
 #+BEGIN_SRC :tangle ~/.vanilla_emacs.d/lisp/init-programming.el
