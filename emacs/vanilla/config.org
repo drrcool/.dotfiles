@@ -203,6 +203,7 @@ Conventions:
 ** Fonts
 #+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-core.el
 (use-package emacs
+	:after doom-themes
   :init
   (defcustom rc/default-font-family "Spleen32x64 Nerd Font"
     "default font family"
@@ -1023,6 +1024,8 @@ text objects:
 		"'" '(org-edit-src-exit :wk "exit"))
 	:init
 	(setq org-confirm-babel-evaluate nil)
+  (setq org-src-tab-acts-natively t)
+  (setq org-src-window-setup 'current-window)
 	:config
 	(org-babel-do-load-languages
 	 'org-babel-load-languages
@@ -1068,6 +1071,8 @@ text objects:
 (doom-themes-treemacs-config)
 ;; corrects and improves org's native fontifcation
 (doom-themes-org-config)
+
+
 )
 #+END_SRC
 ** All the icons
@@ -1469,7 +1474,7 @@ After =consult-line= you can press =M-n= twice to search for the symbol at point
 	(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
 	;; Enable recusrive minibuffers
-	(setq enable-recursive-minibuffers t))
+	(setq enable-recursive-minibuffers t)
 
 ;; Hide commands in M-x which do not work in the current mode
 ;; (setq read-extended-command-predicate #'commands-completion-default-include-p)
@@ -1516,8 +1521,100 @@ When =TAB= does not work use =S-Tab=
 )
 #+end_src
 * Programming
+** Projects
+*** Projectile
+#+BEGIN_SRC emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-programming.el
+(use-package projectile
+	:demand
+	:general
+	(rc/leader-keys
+		:states 'normal
+		"p" '(:keymap projectile-command-map :wk "project")
+		"p <escape>" 'keyboard-escape-quit
+		"p a" '(projectile-add-known-project :wk "add known")
+		"p F" '(rc/projectile-find-file-all :wk "find file (all)")
+		"p t" '(projectile-run-vterm :wk "term"))
+	:init
+	(when (file-directory-p "~/git")
+		(setq projectile-project-search-path '("~/git")))
+	(setq projectile-completion-system 'default)
+	(setq projectile-project-root-files '(".envrc" ".projectile" "project.clj" "deps.edn"))
+	(setq projectile-swithc-project-action 'projectile-commander)
+	;; Do not include straight repos
+	(setq projectile-ignore-project-function
+				(lambda (project-root)
+					(string-prefix-p (expand-file-name "straight/" user-emacs-directory) project-root)))
+	(defun rc/projectile-find-file-all ()
+		(interactive)
+		(let ((projectile-git-command "git ls-files -zco"))
+			(projectile-find-file)))
+	:config
+	(defadvice projectile-project-root (around ignore-remote first activate)
+		(unless (file-remote-op default-directory) ad-do-it))
+	(projectile-mode)
+	;; Projectile commander methods
+	(setq projectile-commander-methods nil)
+	(def-projectile-commander-method ?? "commander help buffer."
+																	 (ignore-errors (kill-buffer projectile-commander-help-buffer))
+																	 (with-current-buffer (get-buffer-create projectile-commander-help-buffer)
+																		 (insert "Project Commander Methods:\n\n")
+																		 (dolist (met projectile-commander-methods)
+																			 (insert (format "%c:\t%s\n" (car met) cadr met))))
+																	 (goto-char (point-min))
+																	 (help-mode)
+																	 (display-buffer (current-buffer t))
+																	 (projectile-commander))
+	(def-projectile-commander-method ?t
+																	 "Open a shell buffer for the project"
+																	 (projectile-run-vterm))
+	(def-projectile-commander-method ?\C-?
+																	 "Go back to project selection"
+																	 (projectile-switch-project))
+	(def-projectile-commander-method ?d
+																	 "Open project root in dired"
+																	 (projectile-dired))
+	(def-projectile-commander-method ?f
+																	 "Open Find file in Project"
+																	 (projectile-find-file))
+	(def-projectile-commander-method ?s
+																	 "RipGrep Project"
+																	 (projectile-ripgrep))
+	(def-projectile-commander-method ?g
+																	 "Git Status in project"
+																	 (projectile-vc))
+)
+#+end_src
+*** Perspective
+#+BEGIN_SRC emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-programming.el
+(use-package perspective
+	:commands (persp-new persp-switch persp-state-save)
+	:general
+	(rc/leader-keys
+		"TAB" '(ignore :true :wk "Workspace")
+		"TAB TAB" 'persp-switch
+		"TAB `" 'persp-switch-last
+		"TAB d" 'persp-kill
+		"TAB h" 'persp-prev
+		"TAB l" 'persp-next
+		"TAB x" '((lambda () (interactive) (persp-kill (pers-current-name))) :wk "kill current")
+		"TAB X" '((lambda () (interactive) (persp-kill (persp-names))) :wk "kill all")
+		"TAB m" '(rc/main-tab :wk "main"))
+	:init
+	(setq persp-state-default-file (expand-file-name ".persp" user-emacs-directory))
+
+	(defun rc/main-tab ()
+		"Jump to the dashboard buffer, if it doesnt exist create one"
+		(interactive)
+		(persp-switch "main")
+		(switch-to-buffer dashboard-buffer-name)
+		(dashboard-mode)
+		(dashboard-insert-startupify-lists)
+		(dashboard-refresh-buffer))
+	
+	)
+#+end_src
 ** Snippets
-#+BEGIN_SRC :tangle ~/.vanilla_emacs.d/lisp/init-programming.el
+#+BEGIN_SRC emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-programming.el
 (use-package yasnippet
 :general
 (yas-minor-mode-map
@@ -1525,7 +1622,7 @@ When =TAB= does not work use =S-Tab=
 "TAB" 'nil
 "C-TAB" 'yas-expand)
 :hook
-((prog-mode org-mode dap-ui-repl-mode vterm-mode) . yas-minor-mod)
+((prog-mode org-mode dap-ui-repl-mode vterm-mode) . yas-minor-mode)
 :init
 (defun rc/yas-try-expanding-auto-snippets ()
  (when (and (boundp 'yas-minor-mode) yas-minor-mode)
@@ -1578,6 +1675,6 @@ When =TAB= does not work use =S-Tab=
 ;; init-completion ends here
 #+end_src
 ** Languages
-#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-languages.el
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-languages.eL
 (provide 'init-languages)
 #+end_src
