@@ -1,1 +1,0 @@
-/Users/rcool2/.dotfiles/nightfox.colors/carbonfox/nightfox_fish.fish

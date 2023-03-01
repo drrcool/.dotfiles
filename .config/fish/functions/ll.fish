@@ -1,3 +1,4 @@
-function ll --wraps='colorls --sd -lAa' --wraps=exa_git --description 'alias ll exa_git'
-  exa_git $argv; 
+function ll --wraps='exa -lbhH --color-scale --git -icons --group-directories-first' --wraps='exa -lbhH --color-scale --git -iicons --group-directories-first' --wraps='exa -lbhH --color-scale --git --icons --group-directories-first' --description 'alias ll exa -lbhH --color-scale --git --icons --group-directories-first'
+  exa -lbhH --color-scale --git --icons --group-directories-first $argv
+        
 end
