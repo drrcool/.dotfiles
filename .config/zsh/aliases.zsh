@@ -22,9 +22,6 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATN="$HOME/.fig/bin:$PATH"
 alias reset_bluetooth="sudo pkill bluetoothd"
 
-alias npm='newt exec npm'
-alias yarn='newt exec yarn'
-
 alias pylon='ssh root@rcool.pylon.prod.container.dataeng.netflix.net'
 alias ls='exa  --group --icons --group-directories-first --binary'
 alias ec='emacsclient -c'

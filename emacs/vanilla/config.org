@@ -445,36 +445,44 @@ Marks:
 - =gi= go back to insert mode where you left off
 
 #+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-keybindings.el
+(defun modeline-face-color()
+  (let ((color (cond ((minibufferp) '("#1d1d1f" . "#ffffff")))))))
+
 (straight-use-package 'evil)
 (use-package evil
-:demand
-:general
-(rc/leader-keys
- "wv" 'evil-window-vsplit
- "ws" 'evil-window-split
-  )
-:init
-(setq evil-want-integration t)
-(setq evil-want-keybinding nil)
-(setq evil-want-C-u-scroll t)
-(setq evil-want-C-i-jump t)
-(setq evil-want-Y-yank-to-eol t)
-(setq evil-undo-system 'undo-fu)
-(setq evil-search-module 'evil-search)
-(setq evil-split-window-below t)
-(setq evil-vsplit-window-right t)
-(setq evil-auto-indent t)
-:config
-(evil-mode 1)
-(define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-(define-key evil-motion-state-map "_" 'evil-end-of-line)
-(define-key evil-motion-state-map "0" 'evil-beginning-of-line)
-(evil-set-initial-state 'messages-buffer-mode 'normal)
-(evil-set-initial-state 'dashboard-mode 'normal)
-(defun rc/evil-dont-move-cursor (orig-fn &rest args)
-  (save-excursion (apply orig-fn args)))
-(advice-add 'evil-indent :around #'rc/evil-dont-move-cursor)
-)
+	:demand
+	:general
+	(rc/leader-keys
+		"wv" 'evil-window-vsplit
+		"ws" 'evil-window-split
+		)
+	:init
+	(setq evil-want-integration t)
+	(setq evil-want-keybinding nil)
+	(setq evil-want-C-u-scroll t)
+	(setq evil-want-C-i-jump t)
+	(setq evil-want-Y-yank-to-eol t)
+	(setq evil-undo-system 'undo-fu)
+	(setq evil-search-module 'evil-search)
+	(setq evil-split-window-below t)
+	(setq evil-vsplit-window-right t)
+	(setq evil-auto-indent t)
+	(setq evil-want-fine-undo t)
+	()
+	:config
+	(evil-mode 1)
+	(define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+	(define-key evil-motion-state-map "_" 'evil-end-of-line)
+	(define-key evil-motion-state-map "0" 'evil-beginning-of-line)
+	(evil-set-initial-state 'messages-buffer-mode 'normal)
+	(evil-set-initial-state 'dashboard-mode 'normal)
+	(evil-set-initial-state 'bufler-list-mode 'emacs)
+	(evil-set-initial-state 'term-mode 'emacs)
+	(add-hook 'post-command-hook 'modeline-face-color)
+	(defun rc/evil-dont-move-cursor (orig-fn &rest args)
+		(save-excursion (apply orig-fn args)))
+	(advice-add 'evil-indent :around #'rc/evil-dont-move-cursor)
+	)
 #+End_src
 
 ** Evil-collection
@@ -1673,7 +1681,7 @@ Viewf files with =go= and exit qith =q=
 (use-package dired
 	:straight (:type built-in)
 	:hook
-	(dired-mode . dired-high-details-mode)
+	(dired-mode . dired-hide-details-mode)
 	:general
 	(rc/leader-keys
 		"f d" 'dired
@@ -2321,7 +2329,7 @@ Got to parent sexp with =U=
 ** yaml mode
 #+BEGIN_SRC emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-programming.el
 (use-package yaml-mode
-:mode ((rx ".yml" eos) .yaml-mode))
+:mode ((rx ".yml" eos) . yaml-mode))
 #+end_src
 ** Toml Mode
 #+BEGIN_SRC emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-programming.el
@@ -2359,13 +2367,66 @@ display-buffer-in-previous-window)))
 (winner-mode +1))
 #+end_src
 ** Bufler
-
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-extra.el
+(use-package bufler
+	:config
+	(setq bufler-filter-buffer-modes nil
+        bufler-filter-buffer-name-regexps nil)
+  (setf bufler-groups (bufler-defgroups
+												(group
+												 ;; All named workspaces
+												 (auto-workspace))
+												(group
+												 (group-or "*Help/Info*"
+																	 (mode-match "*Help*" (rx bos "help-"))
+																	 (mode-match "*Info*" (rx bos "info-"))))
+												(group
+												 (group-and "*Special*"
+																		(lambda (buffer)
+																			(unless (or (funcall (mode-match "Magit" (rx bos "magit-status"))
+																													 buffer)
+																									(funcall (mod-match "Dired" (rx bos "dired"))
+																													 buffer)
+																									(funcall (auto-file) buffer))
+																				"*Special*"))))
+												(group
+												 ;; Special special buffers
+												 (name-match "**Special**"
+																		 (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace") "*")))
+												(group
+												 ;; All other magit buffers by directory
+												 (mode-match "*Magit* (non-status)" (rx bos (or "magit" "forge") "-"))
+												 (auto-directory))
+												(auto-directory)
+												(auto-mode)))
+	:general
+	(:keymaps 'bufler-list-mode-map "Q" 'kill-this-buffer))
+#+end_src
 ** Avy
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-extra.el
+(use-package avy)
+#+end_src
 ** Flycheck
-** Modelline status with evil state
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-extra.el
+(use-package flycheck
+:config
+(global-flycheck-mode))
+
+#+end_src
 ** Copilot
 ** Snippet sources
 ** Rainbow mode
+#+begin_src emacs-lisp :tangle ~/.vanilla_emacs.d/lisp/init-extra.el
+(use-package rainbow-mode
+	:diminish
+	:config
+	(define-globalized-minor-mode global-rainbow-mode rainbow-mode
+		(lambda ()
+			(when (not (memq major-mode
+											 (list 'org-agenda-mode)))
+        (rainbow-mode 1))))
+)
+#+end_src
 ** Auto-revert
 ** formatting o save
 ** Web mode

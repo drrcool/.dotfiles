@@ -16,6 +16,7 @@ require("lazy").setup({
 	spec = {
 		{ import = "plugins" },
 		{ import = "plugins.extras.ui" },
+		{ import = "plugins.extras.lang" },
 	},
 	defaults = { lazy = true, version = nil },
 	install = { missing = true, colorscheme = { "carbonfox" } },
