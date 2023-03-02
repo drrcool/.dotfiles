@@ -1,9 +1,6 @@
--- Keymaps are automatically loaded on the VeryLazy event
--- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
--- Add any additional keymaps here
-
 local keymap = vim.keymap.set
 
+-- Better escape with jk
 keymap("i", "jk", "<ESC>")
 keymap("t", "jk", "<C-\\><C-n>")
 keymap("t", "<C-h>", "<C-\\><C-n><C-w>h")
@@ -17,6 +14,7 @@ keymap("v", ">", ">gv")
 
 -- Paste over selected text without yanking it
 keymap("v", "p", '"_dP')
+
 -- Move Lines
 keymap("n", "<A-j>", ":m .+1<CR>==")
 keymap("v", "<A-j>", ":m '>+1<CR>gv=gv")
