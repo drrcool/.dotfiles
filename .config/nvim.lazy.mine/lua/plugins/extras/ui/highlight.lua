@@ -29,4 +29,12 @@ return {
 			end,
 		},
 	},
+	{
+		"andymass/vim-matchup",
+		lazy = false,
+		enabled = true,
+		init = function()
+			vim.g.matchup_matchparens_offscreen = { method = "popup" }
+		end,
+	},
 }
