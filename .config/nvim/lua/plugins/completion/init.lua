@@ -12,7 +12,9 @@ return {
 		config = function()
 			local cmp = require("cmp")
 			local luasnip = require("luasnip")
+			local neogen = require("neogen")
 			local icons = require("config.icons")
+			local compare = require("cmp.config.compare")
 
 			local has_words_before = function()
 				local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -23,6 +25,19 @@ return {
 			cmp.setup({
 				completion = {
 					completeopt = "menu,menuone,noinsert",
+				},
+				sorting = {
+					priority_weight = 2,
+					comparators = {
+						compare.score,
+						compare.recently_used,
+						compare.offset,
+						compare.exact,
+						compare.kind,
+						compare.sort_text,
+						compare.length,
+						compare.order,
+					},
 				},
 				snippet = {
 					expand = function(args)
@@ -49,6 +64,8 @@ return {
 							cmp.select_next_item()
 						elseif luasnip.expand_or_jumpable() then
 							luasnip.expand_or_jump()
+						elseif neogen.jumpable() then
+							neogen.jump_next()
 						elseif has_words_before() then
 							cmp.complete()
 						else
@@ -64,6 +81,8 @@ return {
 							cmp.select_prev_item()
 						elseif luasnip.jumpable(-1) then
 							luasnip.jump(-1)
+						elseif neogen.jumpable(true) then
+							neogen.jump_prev()
 						else
 							fallback()
 						end
@@ -78,6 +97,7 @@ return {
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },
 					{ name = "buffer" },
+					{ name = "orgmode" },
 					{ name = "path" },
 				}),
 				formatting = {
@@ -115,16 +135,34 @@ return {
 					{ name = "buffer" },
 				},
 			})
+
+			-- Auto pairs
+			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } }))
 		end,
 	},
 	{
 		"L3MON4D3/LuaSnip",
 		dependencies = {
-			"rafamadriz/friendly-snippets",
-			config = function()
-				require("luasnip.loaders.from_vscode").lazy_load()
-			end,
+			{
+				"rafamadriz/friendly-snippets",
+				config = function()
+					require("luasnip.loaders.from_vscode").lazy_load()
+				end,
+			},
+			{
+				"honza/vim-snippets",
+				config = function()
+					require("luasnip.loaders.from_snipmate").lazy_load()
+
+					-- One peculiarity of honza/vim-snippets is that the file with the global snippets is _.snippets, so global snippets
+					-- are stored in `ls.snippets._`.
+					-- We need to tell luasnip that "_" contains global snippets:
+					require("luasnip").filetype_extend("all", { "_" })
+				end,
+			},
 		},
+		build = "make install_jsregexp",
 		opts = {
 			history = true,
 			delete_check_events = "TextChanged",
@@ -132,14 +170,24 @@ return {
     -- stylua: ignore
     keys = {
       {
-        "<tab>",
+        "<C-j>",
         function()
-          return require("luasnip").jumpable(1) and "<Plug>luasnip-jump-next" or "<tab>"
+          return require("luasnip").jumpable(1) and "<Plug>luasnip-jump-next" or "<C-j>"
         end,
         expr = true, remap = true, silent = true, mode = "i",
       },
-      { "<tab>", function() require("luasnip").jump(1) end, mode = "s" },
-      { "<s-tab>", function() require("luasnip").jump(-1) end, mode = { "i", "s" } },
+      { "<C-j>", function() require("luasnip").jump(1) end, mode = "s" },
+      { "<C-k>", function() require("luasnip").jump(-1) end, mode = { "i", "s" } },
     },
+		config = function(_, opts)
+			require("luasnip").setup(opts)
+
+			local snippets_folder = vim.fn.stdpath("config") .. "/lua/plugins/completion/snippets/"
+			require("luasnip.loaders.from_lua").lazy_load({ paths = snippets_folder })
+
+			vim.api.nvim_create_user_command("LuaSnipEdit", function()
+				require("luasnip.loaders.from_lua").edit_snippet_files()
+			end, {})
+		end,
 	},
 }

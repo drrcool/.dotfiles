@@ -1,4 +1,5 @@
 local M = {}
+
 M.autoformat = true
 
 function M.toggle()
@@ -16,7 +17,7 @@ function M.format()
     filter = function(client)
       if have_nls then
         return client.name == "null-ls"
-      end 
+      end
       return client.name ~= "null-ls"
     end,
   }
