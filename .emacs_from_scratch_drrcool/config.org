@@ -1,0 +1,280 @@
+#+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
+#+TITLE: Emacs Config DrrCool - March 2023
+* Startup Performance
+#+begin_src emacs-lisp :tangle yes
+(setq gc-cons-threshold (* 50 1000 1000))
+;; Profile Emacs Startup
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "*** Emacs loaded in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
+
+#+end_src
+* Emacs Dashboard
+* Package System Setup
+- Using MELPA, ELPA, and Org Package repos
+- =use-package= setup
+  #+begin_src emacs-lisp :tangle yes
+(require 'package)
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ("org" . "https://orgmode.org/elpa/")
+                         ("elpa" . "https://elpa.gnu.org/packages/")))
+(package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
+
+(require 'use-package)
+(setq use-package-always-ensure t)
+
+(use-package exec-path-from-shell
+  :init
+  (exec-path-from-shell-initialize))
+  #+end_src
+* Basic UI Configuration
+** Setup
+*** Basic Configuration
+#+begin_src emacs-lisp :tangle yes
+(setq inhibit-startup-messages t)
+(scroll-bar-mode -1) ;; Disable Visible Scrollbars
+(tool-bar-mode -1)   ;; Disable the toolbar
+;;(tooltip-mode -1)  ;; Disable tooltip
+(set-fringe-mode 10) ;; Give some breathing room
+(menu-bar-mode -1)   ;; Diable the meu bar
+
+(setq initial-scratch-message "; Hello Doctor Cool. C-x C-f eh" ) ;; Message on Scratch Buffer
+#+end_src
+*** Emacs Window
+*** Bell
+*** Column Number
+** Font Configuration
+** Icons
+** Modeline
+*** Doom Modeline
+** Hide Modeline
+** Theme
+** Rainbow Delimiter
+* Keybinding Configuration
+** General
+#+begin_src emacs-lisp :tangle yes
+(use-package general
+  :config
+  (general-create-definer rcool/leader-keys
+    :keymaps '(normal insert visual emacs)
+    :prefix "SPC"
+    :global-prefix "C-SPC"))
+#+end_src
+** Evil Configuration
+*** Evil
+#+begin_src emacs-lisp :tangle yes
+(defun rcool/disble-arrow-keys ()
+  (interactive)
+  (message "STOP USING ARROW KEYS!"))
+
+(use-package evil
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll nil)
+  (setq evil-want-C-i-jump nil)
+  (setq evil-undo-system 'undo-redo)
+  :config
+  (evil-mode 1)
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+
+  ;; Use visual line motions even outside of visual-line-mode-buffers
+  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+  (define-key evil-normal-state-map (kbd "<left>") 'rcool/diable-arrow-keys)
+  (define-key evil-normal-state-map (kbd "<down>") 'rcool/diable-arrow-keys)
+  (define-key evil-normal-state-map (kbd "<right>") 'rcool/diable-arrow-keys)
+  (define-key evil-normal-state-map (kbd "<up>") 'rcool/diable-arrow-keys)
+  (evil-global-set-key 'motion (kbd "<left>") 'rcool/disable-arrow-keys)
+  (evil-global-set-key 'motion (kbd "<down>") 'rcool/disable-arrow-keys)
+  (evil-global-set-key 'motion (kbd "<right>") 'rcool/disable-arrow-keys)
+  (evil-global-set-key 'motion (kbd "<up>") 'rcool/disable-arrow-keys)
+
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal)
+  )
+#+end_src
+*** Evil Collection
+#+begin_src emacs-lisp :tangle yes
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+#+end_src
+** Which Key
+#+begin_src emacs-lisp :tangle yes
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 0.1))
+#+end_src
+* Editing Configuration
+** Command log mode
+** Ivy
+** Counsel
+** Helpful Help Commands
+** Productivity
+*** Autopair Config
+*** Smartparens
+*** Emmet Mode
+** Text Scaling
+* Org Mode
+** Basic Config
+*** Setup
+#+begin_src emacs-lisp :tangle yes
+(defun rcool/org-mode-setup ()
+  (org-indent-mode)
+  (variable-pitch-mode)
+  (visual-line-mode 1))
+
+(use-package org-buellets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+#+end_src
+*** Font Configuration
+#+begin_src emacs-lisp :tangle yes
+(defun rcool/org-font-setup ()
+  ;; Replace list hyphen with dot
+  (font-lock-add-keywords 'org-mode
+                          '(("^ *\\([-]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+  ;; Set faces for heading levels
+  (dolist (face '((org-level-1 . 1.2)
+                  (org-level-2 . 1.1)
+                  (org-level-3 . 1.05)
+                  (org-level-4 . 1.0)
+                  (org-level-5 . 1.1)
+                  (org-level-6 . 1.1)
+                  (org-level-7 . 1.1)
+                  (org-level-8 . 1.1)))
+  (set-face-attribute (car face) nil :font "Spleen32x64 Nerd Font" :weight 'regular :height (cdr face)))
+
+(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-code nil :inherit ('shadow fixed-pitch))
+(set-face-attribute 'org-table nil :inherit ('shadow fixed-pitch))
+(set-face-attribute 'org-verbatim nil :inherit ('shadow fixed-pitch))
+(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+#+end_src
+*** Use Org
+#+begin_src emacs-lisp :tangle yes
+(use-package org
+  :hook (org-mode . rcool/org-mode-setup)
+  :ensure org-plus-contrib
+  :config
+  (setq org-src-fontify-natively t)
+  (setq org-agenda-start-with-log-mode t)
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
+  (setq org-agenda-files
+        '("~/org/birthdays.org"
+          "~/org/inbox.org"
+          "~/org/journal.org"
+          "~/org/notes.org"
+          "~/org/projects.org"
+          "~/org/notes.org"
+          "~/org/work.org"))
+  (setq org-refile-targets
+        '(("archive.org" :maxlevel . 1)
+          ("tasks.org" :maxlevel . 1)))
+  (advice-add 'org-refile :after 'org-save-all-org-buffers)
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+          (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
+  (rcool/org-font-setup))
+#+end_src
+*** Tag List
+*** Custom Commands
+*** Capture Templates
+*** Org Mode Ui
+** Configure Babel Languages
+** Org Special Blocks
+** Table of Contents
+** Create Template Snippets
+** Auto Tangle Configuration Files
+** Org Aalert
+** Org Wild Notifier
+** Org Tree Slide
+* Markdown mode
+* revealjs
+* Emojis
+* Utilities
+** Counsel OSX App
+** Speed Type
+** Bluetooth
+* Development
+** Languages
+*** Language Server
+**** Basic Setup
+**** LSP UI
+**** LSP Ivy
+**** LSP Treemacs
+*** Dap Mode
+*** Programming Languages
+**** typescript
+**** javascript
+**** html
+**** css
+**** python
+**** yaml
+**** markdown
+** Copilot
+** flycheck
+** company mode
+** projectile
+** magit
+*** Configuration
+** git-gutter
+** lorem-ipsum
+** commenting lines
+** keybindings
+** darkroom
+* Credential Management
+* Calendar Sync
+* Music
+** Spotify
+* Terminal
+** term-mode
+** colors
+** vterm
+** eshell
+*** configure
+*** fish completion
+*** command highlighting
+*** history autocompletion
+*** eshell toggle
+* Buffer Management With Bufler
+* File Management
+** Dired
+*** Keybindings
+**** Navigation
+**** Marking Files
+**** Copying and Renaming Files
+**** Deleting Files
+**** Creating and Extracting Archives
+**** Other Common Operations
+*** Basic Config
+*** Dired Single
+*** All the icons
+*** Open External Files
+*** Hide/Show Dotfiles
+*** Dired Rainbow
+* Calendar
+* Window Management
+* Cricket
