@@ -51,11 +51,11 @@
   :config
   (general-evil-setup t)
   (general-create-definer rcool/leader-keys
-    :keymaps '(normal visual emacs)
+    :keymaps '(normal visual emacs insert)
     :prefix "SPC"
     :global-prefix "C-SPC")
   (general-create-definer rcool/local-leader-keys
-    :keymaps '(normal visual emacs)
+    :keymaps '(normal visual emacs insert)
     :prefix ","
     :global-prefix "SPC m"))
 
@@ -175,12 +175,14 @@
 
   :general
   (rcool/local-leader-keys
+    :states '(normal visual motion)
     :keymaps 'org-mode-map
     "'" '(org-edit-special :wk "Edit Special")
     "-" '(org-babel-demarcate-block :wk "Split Block")
     "z" '(org-babel-hide-result-toggle :wk "Fold Result"))
   (rcool/local-leader-keys
     :keymaps 'org-scr-mode-map
+   :states '(normal motion visual)
     "'" '(org-edit-src-exit :wk "exit"))
   :init
   (setq org-confirm-babel-evaluate nil)
@@ -223,6 +225,12 @@
    "r n" '(org-roam-dailies-goto-next-note :wk "Next Daily Note")
    "r b" '(org-roam-buffer-toggle :wk "Toggle Buffer")
    ))
+
+(setq org-roam-dailies-capture-templates
+      '(("d" "default" entry
+         "* %?"p
+         :if-new (file+head "%<%Y-%m-%d>.org"
+                            "#+TITLE: %<%Y-%m-%d>\n#+filetags: Daily\n\n"))))
 
 (use-package yasnippet
   :init
