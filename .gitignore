@@ -11,3 +11,8 @@ yarn-error.log*
 *.tsbuildinfo
 .npm
 .eslintcache
+.emacs_from_scratch_drrcool/eln-cache/30.0.50-e82136db
+.emacs_from_scratch_drrcool/elpa
+.emacs_from_scratch_drrcool/straight
+.emacs_from_scratch_drrcool/transient
+.emacs_from_scratch_drrcool/org-roam.db

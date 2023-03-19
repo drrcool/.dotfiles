@@ -51,11 +51,9 @@
   :config
   (general-evil-setup t)
   (general-create-definer rcool/leader-keys
-    :keymaps '(normal visual emacs insert)
     :prefix "SPC"
     :global-prefix "C-SPC")
   (general-create-definer rcool/local-leader-keys
-    :keymaps '(normal visual emacs insert)
     :prefix ","
     :global-prefix "SPC m"))
 
@@ -210,13 +208,19 @@
   (org-roam-completion-everywhere t)
   :general
   (rcool/leader-keys
+    :states '(normal visual motion)
+    :prefix "SPC"
+   "" nil
    "d" '(:ignore t :which-key "+Daily Notes")
    "d t" '(org-roam-dailies-goto-today :wk "Today's Daily Note")
    "d y" '(org-roam-dailies-goto-yesterday :wk "Yesterday's Daily Note")
    )
   (rcool/local-leader-keys
+    :states '(normal visual motion)
    :keymaps 'org-mode-map
    "r" '(:ignore t :which-key "+Roam")
+   "b" '(:ignore t :wk "+Babel")
+   "b t" '(org-babel-tangle :wk "Tangle")
    "i" '(completion-at-point :wk "Completion at Point")
    "r f" '(org-roam-node-find :wk "Find Node")
    "r i" '(org-roam-node-insert :wk "Insert Node")
@@ -231,6 +235,99 @@
          "* %?"p
          :if-new (file+head "%<%Y-%m-%d>.org"
                             "#+TITLE: %<%Y-%m-%d>\n#+filetags: Daily\n\n"))))
+
+(defvar rcool/org-created-property-name "CREATED")
+
+(defun rcool/org-set-created-property (&optional active name)
+  (interactive)
+  (let* ((created (or name rcool/org-created-property-name))
+         (fmt (if active "<%s>" "[%s]"))
+         (now (format fmt (format-time-string "%Y-%m-%d %a %H:%M"))))
+    (unless (org-entry-get (point) created nil)
+      (org-set-property created now)
+      now)))
+
+(defun rcool/org-find-time-file-property (property &optional anywhere)
+  (save-execursion
+   (goto-char (point-min))
+   (let ((first-heading
+          (save-excursion
+            (re-search-forward org-outline-regexp-bol nil t))))
+     (when (re-search-forward (format "^#\\+%s:" property)
+                              (if anywhere nil first-heading) t)
+       (point)))))
+
+(defun rcool/org-has-time-file-property-p (property &optional anywhere)
+  (when-let ((pos (rcool/org-find-time-file-property property anywhere)))
+    (save-excursion
+      (goto-char pos)
+      (if (and (looking-at-p " ")
+               (progn (forward-char)
+                      (org-at-timestamp-p 'lax)))
+          pos -1))))
+
+
+(defun rcool/org-set-time-file-property (property &optional anywhere pos)
+  (when-let ((pos (or pos
+                      (rcool/org-find-time-file-property property))))
+    (save-excursion
+      (goto-char pos)
+      (if (looking-at-p " ")
+          (forward-char)
+        (insert " "))
+      (delete-region (point) (line-end-position))
+      (let* ((now (format-time-string "[%Y-%m-%d %a %H:%M]")))
+        (insert now)))))
+
+(defun rcool/org-set-last-modified ()
+  "Update the LAST_MODIFIED file property in the preamble."
+  (when (derived-mode-p 'org-mode)
+    (rcool/org-set-time-file-property "LAST_MODIFIED")))
+
+(defun rcool/org-roam-create-id ()
+ (interactive)
+ (org-id-get-create)
+ (rcool/org-set-created-property))
+
+(defvar current-time-format "%H:%M:%S"
+  "Format of date to insert with `insert-current-time' function.
+Note the weekly scope of the command's precision.")
+
+(defun insert-current-time ()
+  "Insert the current time (1-week scope) into the current buffer."
+  (interactive)
+  (insert "* ")
+  (insert (format-time-string current-time-format (current-time)))
+  (insert "\n")
+  )
+
+(rcool/leader-keys
+  :states '(normal visual motion)
+  :keymap 'org-mode-map
+  "," '(insert-current-time :wk "current time"))
+
+(setq org-roam-capture-templates
+      '(("d" "default" plain
+         "%?"
+         :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n\n")
+         :unnarrowed t)
+        ("a" "area" plain
+         "#+filetags: Area\n\n* Goals\n\n%^{Goals}\n\n* Tasks\n\n** TODO %?"
+         :if-new (file+head "%<%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+         :unnarrowed t)
+        ("j" "project" plain
+         "#+filetags: Project\n\n* Goals\n\n%^{{Goals}\n\n* Tasks\n\n TODO %?"
+         :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+         :unnarrowed t)
+        ("p" "people" plain
+         "#+filetags: People CRM\n\n* Contacts\n\nRelationship: %^{Relationship}\nPhone:\nAddress\nBirthday\n\n* Notes\n\n %?"
+         :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+         :unnarrowed t)
+        ("i" "institution" plain
+         "#+filetags: Institution CRM\n\n* Contracts\n\nRelationship: %^{Relationship}\nPhone:\nAddress\n\n* Notes\\n %?"
+         :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+         :unnarrowed t)
+        ))
 
 (use-package yasnippet
   :init
