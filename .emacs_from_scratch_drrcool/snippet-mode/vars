@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: Snippet header
-# key: vars
-# --
-# name: $1{$2:
-# key: ${3:trigger-key}${4:
-# --
-$0
