@@ -16,3 +16,4 @@ yarn-error.log*
 .emacs_from_scratch_drrcool/straight
 .emacs_from_scratch_drrcool/transient
 .emacs_from_scratch_drrcool/org-roam.db
+.emacs_from_scratch_drrcool/init.el

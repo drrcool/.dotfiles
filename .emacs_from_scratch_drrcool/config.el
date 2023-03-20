@@ -1,6 +1,16 @@
 (setq user-full-name "Richard Cool"
       user-mail-address "richardjcool@gmail.com")
 
+(defvar rcool/black-color "#1F2528")
+(defvar rcool/red-color "#EC5F67")
+(defvar rcool/yellow-color "#FAC863")
+(defvar rcool/blue-color "#6699CC")
+(defvar rcool/green-color "#99C794")
+(defvar rcool/purple-color "#C594C5")
+(defvar rcool/teal-color "#5FB3B3")
+(defvar rcool/light-grey-color "#C0C5CE")
+(defvar rcool/dark-grey-color "#65737E")
+
 (setq gc-cons-threshold (* 50 1000 1000))
 ;; Profile Emacs Startup
 (add-hook 'emacs-startup-hook
@@ -113,13 +123,9 @@
 (defun rcool/org-mode-setup ()
   (org-indent-mode)
   (variable-pitch-mode)
-  (visual-line-mode 1))
-
-(use-package org-bullets
-  :after org
-  :hook (org-mode . org-bullets-mode)
-  :custom
-  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+  (visual-line-mode 1)
+(auto-fill-mode 0)
+(setq evil-auto-indent nil))
 
 (defun rcool/org-font-setup ()
   ;; Replace list hyphen with dot
@@ -154,14 +160,9 @@
   (setq org-agenda-start-with-log-mode t)
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
-  (setq org-agenda-files
-        '("~/org/birthdays.org"
-          "~/org/inbox.org"
-          "~/org/journal.org"
-          "~/org/notes.org"
-          "~/org/projects.org"
-          "~/org/notes.org"
-          "~/org/work.org"))
+  (setq org-edit-src-content-indentation 2)
+  (setq org-hide-emphasis-markers t)
+  (setq org-hide-block-startup nil)
   (setq org-refile-targets
         '(("archive.org" :maxlevel . 1)
           ("tasks.org" :maxlevel . 1)))
@@ -186,15 +187,127 @@
   (setq org-confirm-babel-evaluate nil)
   (setq org-src-tab-acts-natively t)
   (setq org-src-window-setup 'current-window)
+  (rcool/leader-keys
+    :states '(normal visual motion)
+    "" nil
+    "a" '(org-agenda :wk "Agenda")
+  ))
 
+(setq org-todo-keywords
+      '((sequence "TODO(t)"
+                  "NEXT(n)"
+                  "WAITING(w)"
+                  "SOMEDAY(s)"
+                  "|"
+                  "CANCELLED(c)"
+                  "DONE(d)")))
 
-  )
+(setq org-tag-persistent-alist
+      '(("Inbox" . ?i)
+        ("@home" . ?h)
+        ("@work" . ?w)
+        ("@recovery" . ?r)
+        ("@Manny" . ?m)
+        ("@car" . ?c)
+        ("#phone" . ?p)
+        ("#computer" . ?u)))
+
+(setq org-tag-faces
+      '(("@home" . ,rcool/green-color)
+        ("@car" . ,rcool/purple-color)
+        ("@work" . ,rcool/red-color)
+        ("Inbox" . ,rcool/teal-color)
+        ("@recovery" . ,rcool/blue-color)
+        ))
+
+(defun rcool/define-agenda-files ()
+  (interactive)
+  "Return a list of note files containing 'HasTodo' tag.  I use this to denote files with tasks for org-agenda"
+  (seq-uniq
+   (seq-map
+    #'car
+    (org-roam-db-query
+     [:select [nodes:file]
+              :from tags
+              :left-join nodes
+              :on (= tags:node-id nodes:id)
+              :where (in tag $v1)] '(["Project" "Area" "Daily"])))))
+
+(defun rcool/buffer-prop-get (name)
+  "Get a buffer property called NAME as a string."
+  (org-with-point-at 1
+    (when (re-search-forward (concat "^#\\+" name ": \\(.*\\)")
+                             (point-max) t)
+      (buffer-subststring-no-properties
+       (match-beginning 1)
+       (match-end 1)))))
+
+(defun rcool/agenda-category (&optional len)
+  "Get category of item at point for agenda."
+  (let* ((file-name (when buffer-file-name
+                      (filke-name-sans-extension
+                       (file-name-nondirectory buffer-file-name))))
+         (title (rcool/buffer-prop-get "title"))
+         (category (org-get-category))
+         (result
+          (or (if (and
+                   title
+                   (string-equal category file-name))
+                  title
+                category)
+              "")))
+    (if (numberp len)
+        (s-truncate len (s-pad-right len " " result))
+      result)))
+
+(setq org-agenda-prefix-format
+      '((agenda . " %i %(rcool/agenda-category 32)%?-32t% s")
+        (todo . " %i %(rcool/agenda-category 32) ")
+        (tags . " %i %(rcool/agenda-category 32) ")
+        (search . " %i %(rcool/agenda-category 32) ")))
+
+(use-package org-super-agenda
+  :after org-agenda
+  :init
+  (setq org-agenda-dim-blocked-tasks nil))
+
+;;Dashboard View
+(setq org-super-agenda-groups
+      '((:name "Priority"
+               :priority "A")
+        (:name "Inbox"
+               :tag ("Inbox" "Daily"))
+        (:name "Next Actions for Work"
+               :and (
+                     :todo ("NEXT")
+                           :tag ("Active")
+                           :tag ("@work")))
+        (:name "Next Actions at Home"
+               :and (
+                     :todo ("NEXT")
+                           :tag ("Active")
+                           :tag ("@home")))
+        (:name "Waiting"
+               :todo "WAITING")
+        (:name "Maintenance"
+               :todo "MAINTAIN")
+        (:name "Home"
+               :tag "@home")
+        (:name "Work"
+               :tag "@work")
+        (:name "Productivity"
+               :tag "Productivity")
+        (:name "Someday"
+               :todo "SOMEDAY")))
+(org-super-agenda-mode)
 
 (use-package org-roam
   :straight (:host github :repo "org-roam/org-roam"
                    :files (:defaults "extensions/*"))
   :init
   (setq org-roam-v2-ack t)
+
+
   (add-to-list 'display-buffer-alist
                '("\\*org-roam\\*"
                  (display-buffer-in-direction)
@@ -202,6 +315,10 @@
                  (window-width . 0.33)
                  (window-height . fit-window-to-buffer)))
   (org-roam-db-autosync-mode)
+  :config
+
+  ;; Roam daily and project files only
+  (setq org-agenda-files (rcool/define-agenda-files))
   :custom
   (org-roam-directory (file-truename "~/org/roam"))
   (org-roam-dailies-directory "daily/")
@@ -210,25 +327,26 @@
   (rcool/leader-keys
     :states '(normal visual motion)
     :prefix "SPC"
-   "" nil
-   "d" '(:ignore t :which-key "+Daily Notes")
-   "d t" '(org-roam-dailies-goto-today :wk "Today's Daily Note")
-   "d y" '(org-roam-dailies-goto-yesterday :wk "Yesterday's Daily Note")
-   )
+    "" nil
+    "X" '(org-roam-capture :wk "Roam Capture") 
+    "d" '(:ignore t :which-key "+Daily Notes")
+    "d t" '(org-roam-dailies-goto-today :wk "Today's Daily Note")
+    "d y" '(org-roam-dailies-goto-yesterday :wk "Yesterday's Daily Note")
+    "a" '(rcool/define-agenda-files :wk "Refresh Agenda DB"))
   (rcool/local-leader-keys
     :states '(normal visual motion)
-   :keymaps 'org-mode-map
-   "r" '(:ignore t :which-key "+Roam")
-   "b" '(:ignore t :wk "+Babel")
-   "b t" '(org-babel-tangle :wk "Tangle")
-   "i" '(completion-at-point :wk "Completion at Point")
-   "r f" '(org-roam-node-find :wk "Find Node")
-   "r i" '(org-roam-node-insert :wk "Insert Node")
-   "r c" '(rcool/org-roam-create-id :wk "Create Roam ID")
-   "r p" '(org-roam-dailies-goto-previous-note :wk "Prev Daily Note")
-   "r n" '(org-roam-dailies-goto-next-note :wk "Next Daily Note")
-   "r b" '(org-roam-buffer-toggle :wk "Toggle Buffer")
-   ))
+    :keymaps 'org-mode-map
+    "r" '(:ignore t :which-key "+Roam")
+    "b" '(:ignore t :wk "+Babel")
+    "b t" '(org-babel-tangle :wk "Tangle")
+    "i" '(completion-at-point :wk "Completion at Point")
+    "r f" '(org-roam-node-find :wk "Find Node")
+    "r i" '(org-roam-node-insert :wk "Insert Node")
+    "r c" '(rcool/org-roam-create-id :wk "Create Roam ID")
+    "r p" '(org-roam-dailies-goto-previous-note :wk "Prev Daily Note")
+    "r n" '(org-roam-dailies-goto-next-note :wk "Next Daily Note")
+    "r b" '(org-roam-buffer-toggle :wk "Toggle Buffer")
+    ))
 
 (setq org-roam-dailies-capture-templates
       '(("d" "default" entry
@@ -328,6 +446,13 @@ Note the weekly scope of the command's precision.")
          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
          :unnarrowed t)
         ))
+
+(use-package org-superstar
+  :after org
+  :hook (org-mode . org-superstar-mode)
+  :custom
+  (org-superstar-remove-leading-stars t)
+  (org-superstar-headline-bullets-list '("•" "•" "•" "◦" "◦" "◦" "◦")))
 
 (use-package yasnippet
   :init
