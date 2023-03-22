@@ -43,6 +43,7 @@
   #+begin_src emacs-lisp :tangle yes
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+("nonGNU" . "https://elpa.nongnu.org/nongnu/")
                          ("elpa" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 (unless package-archive-contents
@@ -702,7 +703,7 @@ These are templates used to create new nodes.
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
            :unnarrowed t)
           ("i" "institution" plain
-           "#+filetags: Institution CRM\n\n* Contracts\n\nRelationship: %^{Relationship}\nPhone:\nAddress\n\n* Notes\n\n %?"
+           "#+filetags: Institution CRM\n\n* Contracts\n\nRelationship: %^{Relationship}\nPhone:\nAddress\n\n* Notes\\n %?"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
            :unnarrowed t)
           ))
@@ -975,7 +976,7 @@ Presentation in org-mode.  Run =org-tree-slide-mode= and navigate slides with =C
 * Markdown mode
 #+begin_src emacs-lisp :tangle yes
   (use-package markdown-mode
-    :mode "\\.md\\'"
+    :mode "\\.md'\\"
     :config
     (defun rcool/set-markdown-header-font-sizes ()
       (font-lock-add-keywords 'markdown-mode
@@ -996,351 +997,38 @@ Presentation in org-mode.  Run =org-tree-slide-mode= and navigate slides with =C
 #+end_src
 
 
-* Reveal.js
-#+begin_src emacs-lisp :tangle yes
-  (use-package ox-reveal
-    :ensure t
-    :config
-    (require 'ox-reveal)
-    (setq org-reveal-root "https://cdn.jsdelivr/net/npm/reveal.js")
-    (setq org-reveal-mathjax t))
-
-  (use-package htmlize
-    :ensure t)
-#+end_src
-
-
 * Emojis
-#+begin_src emacs-lisp :tangle yes
-  (use-package emojify
-    :hook (after-init . global-emojify-mode)
-    :commands emojify-mode)
-#+end_src
-
 * Utilities
 ** Counsel OSX App
-#+begin_src emacs-lisp :tangle yes
-  (use-package counsel-osx-app
-    :bind* ("S-M-SPC" . counsel-osx-app)
-    :commands counsel-osx-app
-    :config
-    (setq counsel-osx-app-location
-          (list "/Applications"
-                "/Applications/Misc"
-                "/Applications/Utilities"
-                (expand-file-name "~/Applications")
-                "/Applications/Xcode.app/Contents/Applications")))
-#+end_src
-
 ** Speed Type
-#+begin_src emacs-lisp :tangle yes
-  (use-package speed-type
-    :ensure t)
-#+end_src
-
+** Bluetooth
 * Development
 ** Languages
 *** Language Server
 **** Basic Setup
-#+begin_src emacs-lisp :tangle yes
-  (defun rcool/lsp-mode-setup ()
-    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-    (lsp-headerline-breadchrump-mode)
-    (lsp))
-
-  (use-package lsp-mode
-    :ensure t
-    :bind (:map lsp-mode-map
-                ("TAB" . completion-at-point))
-    :commands (lsp lsp-deferred)
-    :hook (lsp-mode . rcool/lsp-mode-setup)
-    :init
-    (setq lsp-keymap-prefix "C-c s-p")
-    :config
-    (lsp-enable-which-key-integration t))
-#+end_src
-
 **** LSP UI
-#+begin_src emacs-lisp :tangle yes
-  (use-package lsp-ui
-    :hook (lsp-mode . lsp-ui-mode)
-    :custom
-    (lsp-io-doc-position 'bottom))
-#+end_src
-
 **** LSP Ivy
-#+begin_src emacs-lisp :tangle yes
-  (use-package lsp-ivy)
-#+end_src
-
 **** LSP Treemacs
-#+begin_src emacs-lisp :tangle yes
-  (use-package lsp-treemacs
-    :init (treemacks-display-current-project-exclusively)
-    :after lsp)
-  (rcool/leader-keys
-    "e" '(treemacs :wk "Explorer")
-    "t e" '(treemacs :wk "Explorer")
-    "p e" '(treemacs-display-current-project-exclusively :wk "Project Explorer"))
-#+end_src
-
 *** Dap Mode
-#+begin_src emacs-lisp :tangle yes
-  (use-package dap-mode)
-#+end_src
-
 *** Programming Languages
 **** typescript
-#+begin_src emacs-lisp :tangle yes
-  (use-package typescript-mode
-    :mode "\\.ts\\'"
-    :hook (typescript-mode . lsp-deferred)
-    :config
-    (setq typescript-indent-level 2))
-#+end_src
-
 **** javascript
-#+begin_src emacs-lisp :tangle yes
-  (defun rcool/set-js-indentation ()
-    (setq js-indent-level 2)
-    (setq evil-shift-width js-indent-level)
-    (setq-default tab-width 2))
-
-  (use-package js2-mode
-    :mode "\\.js\\'"
-    :hook (js2-mode . lsp-deferred)
-    :config
-    (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
-    (setq js-mode-show-strict-warnings nil)
-    (add-hook 'js2-mode-hook #'rcool/set-js-indentation)
-    (add-hook 'json-mode-hook #'rcool/set-js-indentation)
-    (require 'dap-node)
-    (dap-node-setup))
-
-  (use-package prettier-js
-    :hook ((js2-mode . prettier-js-mode)
-           (typescript-mode . prettier-js-mode)
-           (web-mode . prettier-js-mode))
-    :config
-    (setq prettier-js-show-errors nil))
-#+end_src
-
 **** html
-#+begin_src emacs-lisp :tangle yes
-  (use-package web-mode
-    :mode "(\\.\\(html?\\|ejs\\|tsx\\|js[x]?\\|edge\\)\\'"
-    :hook (web-mode . lsp-deferred)
-    :config
-    (setq-default web-mode-code-indent-offset 2)
-    (setq-default web-mode-markup-indent-offset 2)
-    (setq-default web-mode-attribute-indent-offset 2))
-
-  (use-package impatient-mode
-    :ensure t)
-
-  (use-package skewer-mode
-    :ensure t)
-#+end_src
-
 **** css
-#+begin_src emacs-lisp :tangle yes
-  (use-package css-mode
-    :mode "\\.css\\'"
-    :hook (css-mode . lsp-deferred)
-    :config
-    (setq css-indent-offset 2))
-#+end_src
-
 **** python
-#+begin_src emacs-lisp :tangle yes
-  (use-package python-mode
-    :ensure t
-    :hook (python-mode . lsp-deferred)
-    :custom
-    (python-shell-interpreter "python3"))
-
-#+end_src
-
 **** yaml
-#+begin_src emacs-lisp :tangle yes
-  (use-package yaml-mode
-    :hook (yaml-mode . lsp-deferred)
-    :mode "\\.ya?ml\\'")
-
-#+end_src
-
+**** markdown
 ** Copilot
 ** flycheck
-#+begin_src emacs-lisp :tangle yes
-  (use-package flycheck
-    :defer t
-    :hook (lsp-mode . flycheck-mode))
-
-#+end_src
-
 ** company mode
-#+begin_src emacs-lisp :tangle yes
-  (use-package company
-    :after lsp-mode
-    :hook ((lsp-mode . company-mode)
-           (eldoc-mode . company-mode))
-    :bind
-    (:map company-active-map
-          ("<tab>" . company-complete-selection))
-    (:map lsp-mode-map
-          ("<tab>" . company-indent-or-complete-common))
-    :custom
-    (company-minimum-prefix-length 1)
-    (company-idle-delay 0.0)
-    )
-
-  (use-package company-box
-    :diminish
-    :functions (all-the-icons-faicon
-                all-the-icons-material
-                all-the-icons-octicon
-                all-the-icons-alltheicon)
-    :hook (company-mode . company-box-mode)
-    :init (setq company-box-enable-icon (display-graphic-p))
-    :config
-    (setq company-box-backends-colors nil))
-#+end_src
-
-** Projectile
-#+begin_src emacs-lisp :tangle yes
-  (use-package projectile
-    :diminish projectile-mode
-    :config (projectile-mode)
-    :custom ((projectiled-completion-system 'ivy))
-    :bind-keymap
-    ("C-c p" . projectile-command-map)
-    :init
-    (when (file-directory-p "~/Documents/projects")
-      (setq projectile-project-search-path '("~/Documents/projects")))
-    (setq projectile-switch-project-action #'projectile-dired))
-
-  (use-package counsel-projectile
-    :config (counsel-projectile-mode))
-#+end_src
-
-** Magit
-#+begin_src emacs-lisp :tangle yes
-  (use-package magit
-    :custom
-    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-#+end_src
-
-** Git-gutter
-#+begin_src emacs-lisp :tangle yes
-  (use-package git-gutter-fringe
-    :diminish
-    :config
-    (setq git-gutter:update-interval 2)
-    (setq-default left-fringe-width 20)
-    (set-face-foreground 'git-gutter-fr:added "LightGreen")
-    (fringe-helper-define 'git-gutter-fr:added nil
-      ".XXXXXX."
-      "XX....XX"
-      "X......X"
-      "X......X"
-      "XXXXXXXX"
-      "XXXXXXXX"
-      "X......X"
-      "X......X"
-      )
-    (set-face-foreground 'git-gutter-fr:modified "LightGoldenrod")
-    (fringe-helper-define 'git-gutter-fr:modified nil
-      "XXXXXXXX"
-      "X..XX..X"
-      "X..XX..X"
-      "X..XX..X"
-      "X..XX..X"
-      "X..XX..X"
-      "X..XX..X"
-      "X..XX..X")
-    (set-face-foreground 'git-gutter-fr:deleted "LightCoral")
-    (fringe-helper-define 'git-gutter-fr:deleted nil
-      "XXXXXX.."
-      "XX....X."
-      "XX.....X"
-      "XX.....X"
-      "XX.....X"
-      "XX.....X"
-      "XX....X."
-      "XXXXXX..")
-    ;; These characters are used in terminal mode
-    (setq git-gutter:modified-sign "≡")
-    (setq git-gutter:added-sign "≡")
-    (setq git-gutter:deleted-sign "≡")
-    (set-face-foreground 'git-gutter:added "LightGreen")
-    (set-face-foreground 'git-gutter:modified "LightGoldenrod")
-    (set-face-foreground 'git-gutter:deleted "LightCoral")
-    )
-#+end_src
-
-** Lorem-ipsum
-#+begin_src emacs-lisp :tangle yes
-  (use-package lorem-ipsum
-    :ensure t
-    :config
-    (lorem-ipsum-use-default-bindings))
-#+end_src
-
-** Commenting lines
-#+begin_src emacs-lisp :tangle yes
-    (use-package evil-nerd-commenter
-      :general
-      (rcool/leader-keys
-        "/" '(evilnc-comment-or-uncomment-lines :wk "Comment Lines")))
-    ;; INFO this is a test of the commenter, but not sure we are in prog mode
-    (use-package comment-tags
-      :init
-      (autoload 'comment-tags-mode "comment-tags-mode")
-      (setq comment-tags-keyword-faces
-            `(("TODO" . ,(list :weight 'bold :foreground "#28ABE3"))
-              ("BUG" . ,(list :weight 'bold :foreground "#DB3340"))
-              ("INFO" . ,(list :weight 'bold :foreground "#F7EAC8"))
-              ("DONE" . ,(list :weight 'bold :foreground "#1FDA9A"))))
-      (setq comment-tags-keymap-prefix (kbd "C-c t"))
-      (setq comment-tags-comment-start-only t
-            comment-tags-require-color nil 
-            comment-tags-case-sensitive t
-            comment-tags-show-faces t
-            comment-tags-lighter nil)
-      :config
-      (add-hook 'prog-mode-hook 'comment-tags-mode))
-#+end_src
-
-** Darkroom
-#+begin_src emacs-lisp :tangle yes
-    (use-package darkroom
-      :commands darkroom-mode
-      :config
-      (setq darkroom-text-scale-increase 0))
-
-    (defun rcool/enter-focus-mode ()
-      (interactive)
-      (darkroom-mode 1)
-      )
-
-    (defun rcool/leave-focus-mode ()
-      (interactive)
-      (darkroom-mode 0)
-      )
-
-    (defun rcool/toggle-focus-mode ()
-      (interactive)
-      (if (symbol-value darkroom-mode)
-        (rcool/leave-focus-mode)
-        (rcool/enter-focus-mode)))
-
-    (rcool/leader-keys
-      "tf" '(rcool/toggle-focus-mode :wk "Focus Mode")
-      )
-
-#+end_src
-
+** projectile
+** magit
+*** Configuration
+** git-gutter
+** lorem-ipsum
+** commenting lines
+** keybindings
+** darkroom
 ** Snippets
 #+begin_src emacs-lisp :tangle yes
 (use-package yasnippet
@@ -1353,395 +1041,35 @@ Presentation in org-mode.  Run =org-tree-slide-mode= and navigate slides with =C
 #+end_src
 
 * Credential Management
-- =pass= to manage all passwords locally
-- =ivy-pass= to make managing passwords easier in Emacs
-- =auth-source-pass= to store passwords in one place
-
-A primer for using pass to manage passwords: [[https://medium.com/@chasinglogic/the-definitive-guide-to-password-store-c337a8f023a1][link]]
-
-
-  #+begin_src emacs-lisp :tangle yes
-    (use-package ivy-pass
-      :commands ivy-pass
-      :config
-      (setq password-store-password-length 12)
-      (setq epa-file-cache-passphrase-for-symmetric-encryption nil))
-
-    (use-package auth-source-pass
-      :config
-      (auth-source-pass-enable))
-
-    (rcool/leader-keys
-      "P" '(:ignore t :wk "Passwords")
-      "Pp" '(ivy-pass :wk "Ivy Pass")
-    "Pi" '(password-store-insert :wk "Insert Password")
-    "Pg" '(password-store-generate :wk "Generate Password")
-      )
-  #+end_src
-
 * Calendar Sync
 * Music
 ** Spotify
-#+begin_src emacs-lisp :tangle yes
-  (use-package counsel-spotify
-    :after ivy
-    :config
-    (setq counsel-spotify-client-id (password-store-get "API/Spotify/rcool-emacs-id"))
-    (setq counsel-spotify-client-secret (password-store-get "API/Spotify/rcool-emacs-secret")))
-
-  (rcool/leader-keys
-    "S" '(:ignore t :wk "Counsel Spotify")
-    "Ss" '(:ignore t :wk "Search")
-    "Ssp" '(counsel-spotify-search-playlist :wk "Search Playlist")
-    "Sst" '(counsel-spotify-search-track :wk "Search Track")
-    "Sp" '(counsel-spotify-toggle-play-pause :wk "Toggle Play Pause")
-    "Sa" '(counsel-spotify-search-album :wk "Search Album")
-    "S>" '(counsel-spotify-next :wk "Next")
-    "S<" '(counsel-spotify-previous :wk "Previous")
-    )
-#+end_src
-
-** Youtube
-#+begin_src emacs-lisp :tangle yes
-  (use-package ivy-youtube
-    :config
-    (setq ivy-youtube-key (password-store-get "API/Youtube/rcool-emacs-api-key")))
-
-  (rcool/leader-keys
-    "y" '(ivy-youtube :wk "Ivy Youtube"))
-#+end_src
-
 * Terminal
 ** term-mode
-#+begin_src emacs-lisp :tangle yes
-  (use-package term
-    :config
-    (setq explicit-shell-file-name "bash")
-    (setq term-prompt-regexp "^[^#$%>\\n]*[#$%>] *"))
-#+end_src
-
 ** colors
-#+begin_src emacs-lisp :tangle yes
-  (use-package eterm-256color
-    :hook (term-mode . eterm-256color-mode))
-#+end_src
-
 ** vterm
-#+begin_src emacs-lisp :tangle yes
-    (use-package vterm
-      :commands vterm
-      :config
-      (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
-      (setq vterm-max-scrollback 10000)
-  )
-    (use-package vterm-toggle
-      :after vterm
-      :init
-      (setq vterm-toggle-fullscreen-p nil)
-      (add-to-list 'display-buffer-alist
-                   '((lambda (buffer-or-name _)
-                       (let ((buffer (get-buffer buffer-or-name)))
-                         (with-current-buffer buffer
-                           (or (equal major-mode 'vterm-mode)
-                               (string-prefix-p vterm-buffer-name (buffer-name buffer))))))
-                     (display-buffer-reuse-window display-buffer-in-side-window)
-                     (side . bottom)
-                     (reusable-frames . visible)
-                     (window-height . 0.3)))
-      :general
-      (rcool/leader-keys
-        "ot" '(vterm-toggle-cd :wk "Vterm")))
-#+end_src
-
 ** eshell
 *** configure
-#+begin_src emacs-lisp :tangle yes
-  (defun read-file (file-path)
-    (with-temp-buffer
-      (insert-file-contents file-path)
-      (buffer-string)))
-
-  (defun rcool/get-current-package-version ()
-    (interactive)
-    (let ((package-json-file (concat (eshell/pwd) "/package.json")))
-      (when (file-exists-p package-json-file)
-        (let* ((package-json-contents (read-file package-json-file))
-               (package-json (ignore-errors (json-parse-string package-json-contents))))
-          (when package-json
-            (ignore-errors (gethash "version" package-json)))))))
-
-  (defun rcool/get-prompt-path ()
-    (let* ((current-path (eshell/pwd))
-           (git-output (shell-command-to-string "git rev-parse --show-toplevel"))
-           (has-path (not (string-match "^fatal" git-output))))
-      (if (not has-path)
-          (abbreviate-file-name current-path)
-        (string-remove-prefix (file-name-directory git-output) current-path))))
-
-  (defun rcool/eshell-prompt ()
-    (let ((current-branch (magit-get-current-branch))
-          (package-version (rcool/get-current-package-version)))
-      (concat
-       "\n"
-       (propertize (system-name) 'face '(:foreground "#62aeed"))
-       (propertize " ॐ " 'face '(:foreground "white"))
-       (propertize (rcool/get-prompt-path) 'face '(:foreground "#82cfd3"))
-       (when current-branch
-         (concat
-          (propertize " • " 'face '(:foreground "white"))
-          (propertize (concat " " current-branch) 'face '(:foreground "#c475f0"))))
-       (when package-version
-         (concat
-          (propertize " @ " 'face '(:foreground "white"))
-          (propertize package-version 'face '(:foreground "#e8a206"))))
-       (propertize " • " 'face `(:foreground "white"))
-       (propertize (format-time-string "%I:%M:%S %p") 'face `(:foreground "#5a5b7f"))
-       (if (= (user-uid) 0)
-           (propertize "\n#" 'face `(:foreground "red2"))
-         (propertize "\nλ" 'face `(:foreground "#aece4a")))
-       (propertize " " 'face `(:foreground "white")))))
-
-  (defun rcool/configure-eshell ()
-    (require 'evil-collection-eshell)
-    (evil-collection-eshell-setup)
-    (use-package xterm-color)
-    (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
-    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
-
-    (add-hook 'eshell-before-prompt-hook
-              (lambda ()
-                (setq xterm-color-preserver-properties t)))
-    (add-hook 'eshell-pre-command-hook
-              '(lambda () (setenv "TERM" "xterm-256color")))
-    (add-hook 'eshell-post-command-hook
-              '(lambda () (setenv "TERM" "dumb")))
-
-    (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)
-
-    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
-    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-beginning-of-input)
-    (evil-normalize-keymaps)
-
-    (setq eshell-history-size 10000
-          eshell-buffer-maximum-lines 10000
-          eshell-prompt-regexp "^λ "
-          eshell-highlight-prompt t
-          eshell-hist-ignoredups t
-          eshell-prompt-function 'rcool/eshell-prompt))
-  (use-package eshell-git-prompt)
-
-  (use-package eshell
-    :hook (eshell-first-time-mode . rcool/configure-eshell)
-    :config
-    (with-eval-after-load 'esh-opt
-      (setq eshell-destroy-buffer-when-process-dies t)
-      (setq eshell-visual-commands '("htop" "zsh" "nvim")))
-    (eshell-git-prompt-use-theme 'powerline))
-
-  (rcool/leader-keys
-    "oE" '(eshell :wk "Eshell (Non-Toggle)"))
-#+end_src
-
 *** fish completion
-#+begin_src emacs-lisp :tangle yes
-  (use-package fish-completion
-    :hook (eshell-mode . fish-completion-mode))
-#+end_src
-
 *** command highlighting
-#+begin_src emacs-lisp :tangle yes
-  (use-package eshell-syntax-highlighting
-    :after esh-mode
-    :config
-    (eshell-syntax-highlighting-global-mode +1))
-#+end_src
-
 *** history autocompletion
-#+begin_src emacs-lisp :tangle yes
-  (use-package esh-autosuggest
-    :hook (eshell-mode . esh-autosuggest-mode)
-    :config
-    (setq esh-autosuggest-use-company-map t)
-    (set-face-foreground 'company-preview-common "#4b5668")
-    (set-face-background 'company-preview nil))
-
-#+end_src
-
 *** eshell toggle
-#+begin_src emacs-lisp :tangle yes
-    (use-package eshell-toggle
-      :general
-      (rcool/leader-keys
-      "oe" '(eshell-toggle :wk "Eshell"))
-      :custom
-      (eshell-toggle-size-function 3)
-      (eshell-toggle-use-projectile-root t)
-      (eshell-toggle-run-command nil))
-#+end_src
-
 * Buffer Management With Bufler
-#+begin_src emacs-lisp :tangle yes
-  (use-package bufler
-    :ensure t
-    :general
-    (rcool/leader-keys
-      "bb" '(bufler-switch-buffer :wk "Bufler Switch")
-      "bw" '(bufler-workspace-frame-set :wk "Workspace Buffers"))
-    :config
-    (evil-collection-define-key 'normal 'bufler-list-mode-map
-      (kbd "RET") 'bufler-list-buffer-switch
-      (kbd "M-RET") 'bufler-list-buffer-peak
-      (kbd "D")     'bufler-list-buffer-kill)
-
-    (setq bufler-groups
-          (bufler-defgroups
-           ;; Subgroup collecting all named workspaces
-           (group (auto-workspace))
-           ;; Supgroup collecting buffers in a projectile project
-           (group (auto-projectile))
-           ;; Supgroup collecting all `help-mode' and `info-mode' buffers.
-           (group
-            (group-or "Help/Info"
-                      (mode-match "*Help*" (rx bos (or "help-" "helpful-")))
-                      (mode-match "*Info*" (rx bos "info-"))))
-           ;; Supgroup collecting all special buffers (i.e. ones that are not
-           ;; file-backed), except `magit-status-mode' buffers (which are allowed to fall
-           ;; to other groups so they end up grouped with their project buffers).
-           (group
-            (group-and "*Special*"
-                       (name-match "**Special**"
-                                   (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace" "Pinentry") "*"))
-                       (lambda (buffer)
-                         (unless (or (funcall (mode-match "Magit" (rx bos "magit-status"))
-                                              buffer)
-                                     (funcall (mode-match "Dired" (rx bos "dired"))
-                                              buffer)
-                                     (funcall (auto-file) buffer))
-                           "*Special*"))))
-           ;; Group Remaining buffers my major-mode
-           (auto-mode))))
-#+end_src
-
 * File Management
 ** Dired
-Dired is a built-in file manager for Emacs that does some pretty amazing things. 
 *** Keybindings
 **** Navigation
-- =j= next line
-- =k= prev line
-- =J= jump to file in buffer
-- =RET= select file or directory
-- =^= go to parent directory
-- =g O= open file in other window
-- =M-RET= open file in other window without focusing
-- =g o= open the file in preview mode, close with =q=
 **** Marking Files
-- =m= marks a file
-- =u= unmarks a file
-- =U= unmarks all files in buffer
-- =t= inverts marked files in buffer
-- =%m= Mark files using regexp
-- =*= lots of other auto-marking functions
-- =k= kill marked items
 **** Copying and Renaming Files
-- =C= Copy marked files
-- =U= Unmark all files in buffers
-- =R= Rename marked files
-- =%R= Rename based regular expression
 **** Deleting Files
-- =D= Delete Marked File
-- =d= mark file for deletion
-- =x= execute deletion for marked files
-- =delete-by-moving-to-trash= Move to trash instead of permanentaly
 **** Creating and Extracting Archives
-- =Z= Compress or uncompress a file or folder to =.tar.gz=
-- =c= compress selection to a specific file
 **** Other Common Operations
-- =T= Touch the file
-- =M= Change file mode
-- =O= Change file owner
-- =G= Change file group
-- =S= Create symbolic link to the file
-- =L= Load emacs lisp file into Emacs
 *** Basic Config
-#+begin_src emacs-lisp :tangle yes
-        (use-package dired
-          :straight (:type built-in)
-          :commands (dired dired-jump)
-          :bind (("C-x C-j" . dired-jump))
-          :custom
-          ((dired-listing-switches "-agho --group-directories-first")
-           (insert-directory-program "/opt/homebrew/bin/gls")
-           (delete-by-moving-to-trash t))
-          :config
-          (evil-collection-define-key 'normal 'dired-mode-map
-            "h" 'dired-single-up-directory
-            "l" 'dired-single-buffer)
-          :general
-          (rcool/leader-keys
-            "t-" '(dired :wk "Dired")))
-#+end_src
-
 *** Dired Single
-#+begin_src emacs-lisp :tangle yes
-(use-package dired-single)
-#+end_src
-
 *** All the icons
-#+begin_src emacs-lisp :tangle yes
-  (use-package all-the-icons-dired
-    :hook (dired-mode . all-the-icons-dired-mode))
-#+end_src
-
 *** Open External Files
-#+begin_src emacs-lisp :tangle yes
-              (use-package dired-open
-                :config
-                (setq dired-open-extensions '(("png" . "open")
-                                              ("jpg" . "open")
-                                              ("jpeg" . "open")
-                                              ("pdf" . "open")
-                                              ("mov" . "open")
-                                              ("html" . "open"))))
-#+end_src
-
 *** Hide/Show Dotfiles
-#+begin_src emacs-lisp :tangle yes
-  (use-package dired-hide-dotfiles
-    :hook (dired-mode . dired-hide-dotfiles-mode)
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "H" 'dired-hide-dotfiles-mode))
-#+end_src
-
 *** Dired Rainbow
-#+begin_src emacs-lisp :tangle yes
-(use-package dired-rainbow
-  :config
-  (progn
-    (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
-    (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
-    (dired-rainbow-define xml "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
-    (dired-rainbow-define document "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
-    (dired-rainbow-define markdown "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
-    (dired-rainbow-define database "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
-    (dired-rainbow-define media "#de751f" ("mp3" "mp4" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
-    (dired-rainbow-define image "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
-    (dired-rainbow-define log "#c17d11" ("log"))
-    (dired-rainbow-define shell "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
-    (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
-    (dired-rainbow-define compiled "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
-    (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
-    (dired-rainbow-define compressed "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
-    (dired-rainbow-define packaged "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
-    (dired-rainbow-define encrypted "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
-    (dired-rainbow-define fonts "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
-    (dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
-    (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
-    (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")
-    )) 
-#+end_src
-
 * Calendar
 * Window Management
 * Cricket
