@@ -1742,6 +1742,21 @@ Dired is a built-in file manager for Emacs that does some pretty amazing things.
     )) 
 #+end_src
 
-* Calendar
 * Window Management
-* Cricket
+#+begin_src emacs-lisp :tangle yes
+  (use-package ace-window)
+
+    (rcool/leader-keys
+      "w=" '(balance-windows :wk "Balance")
+      "wa" '(ace-window :wk "Ace Window")
+      "wd" '(ace-delete-window :wk "Delete")
+      "wh" '(evil-window-left :wk "Left Window")
+      "wj" '(evil-window-down :wk "Down Window")
+      "wk" '(evil-window-up :wk "Up Window")
+      "wl" '(evil-window-right :wk "Right Window")
+      "ws" '(evil-window-split :wk "Split")
+      "wS" '(ace-swap-window :wk "Swap")
+      "wu" '(winner-undo :wk "Winner Undo")
+      "wv" '(evil-window-vsplit :wk "Vsplit")
+      )
+#+end_src

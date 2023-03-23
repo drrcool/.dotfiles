@@ -17,3 +17,5 @@ yarn-error.log*
 .emacs_from_scratch_drrcool/transient
 .emacs_from_scratch_drrcool/org-roam.db
 .emacs_from_scratch_drrcool/init.el
+.emacs_from_scratch_drrcool/.extension/vscode/ms-vscode.node-debug2
+.emacs_from_scratch_drrcool/emojis/emojione-v2.2.6-22
