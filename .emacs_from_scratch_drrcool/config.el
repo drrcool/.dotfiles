@@ -225,6 +225,14 @@
   :init
   (ivy-rich-mode 1))
 
+(use-package ivy-posframe
+  :init
+  (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display)))
+  (setq ivy-posframe-parameters
+        '((left-fringe . 8)
+          (right-fringe . 8)))
+  (ivy-posframe-mode +1))
+
 (use-package counsel
     :custom
     (counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)
