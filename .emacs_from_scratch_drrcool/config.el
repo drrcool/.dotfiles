@@ -52,8 +52,14 @@
 ;;(tooltip-mode -1)  ;; Disable tooltip
 (set-fringe-mode 10) ;; Give some breathing room
 (menu-bar-mode -1)   ;; Disable the meu bar
+(setq display-line-numbers-type 'relative)
+(global-display-line-numbers-mode)
 
-(setq initial-scratch-message "; Hello Doctor Cool. C-x C-f eh" ) ;; Message on Scratch Buffer
+(setq use-short-answers t) ;; When emacs ask yes or no, accept y or n
+(setq confirm-kill-emacs 'yes-or-no-p) ;; Confirm to quit
+(setq initial-major-mode 'org-mode)
+(setq initial-scratch-message "")
+(setq initial-buffer-choice t)
 
 (set-frame-parameter (selected-frame) 'alpha '(90 . 90))
 (add-to-list 'default-frame-alist '(alpha . (90 . 90)))
@@ -84,8 +90,16 @@
 
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
-  :custom
-  (doom-modeline-height 15))
+  :config
+  (setq doom-modeline-buffer-file-name-style 'relative-from-project
+        doom-modeline-enable-word-count nil
+        doom-modeline-buffer-encoding nil
+        doom-modeline-icon t
+        doom-modeline-modal-icon nil
+        doom-modeline-major-mode-color-icon nil
+        doom-modeline-major-mode-icon t
+        doom-modeline-bar-width 3
+        doom-modeline-height 28))
 
 (use-package hide-mode-line)
 
@@ -168,9 +182,15 @@
   (evil-collection-init))
 
 (use-package which-key
-  :init (which-key-mode)
+  :init
+  (which-key-mode)
+  (which-key-setup-minibuffer)
   :diminish which-key-mode
   :config
+  (setq which-key-prefix-prefix  "◉ ")
+  (setq which-key-sort-order 'which-key-key-order-alpha
+        which-key-min-display-lines 3
+        which-key-max-display-columns nil)
   (setq which-key-idle-delay 0.1))
 
 (setq
@@ -187,6 +207,11 @@
 (use-package ivy
   :diminish
   :config
+  (setq ivy-extra-directories nil)
+  (setq ivy-initial-inputs-alist nil)
+  (setq-default ivy-height 10)
+  (setq ivy-fixed-height-minibuffer t)
+  (add-to-list 'ivy-height-alist '(counsel-M-x . 7))
   (ivy-mode 1)
   :general
   (rcool/leader-keys
@@ -216,6 +241,18 @@
     :defer 1
     :after counsel)
 
+(use-package prescient
+  :config
+  (setq-default history-length 1000)
+  (setq-default prescient-history-length 1000)
+  (prescient-persist-mode +1))
+
+;; Use Prescient for Ivy
+(use-package ivy-prescient
+  :after ivy
+  :config
+  (ivy-prescient-mode +1))
+
 (use-package helpful
 :custom
 (counsel-describe-function-function #'helpful-callable)
@@ -225,6 +262,25 @@
 ([remap describe-commpand] . helpful-command)
 ([remap describe-variable] . counsel-describe-variable)
 ([remap describe-key] . helpful-key))
+
+(rcool/leader-keys
+  "h'" 'describe-char
+  "ha" 'apropos
+  "hc" 'describe-key-briefly
+  "hf" 'describe-function
+  "hF" 'describe-face
+  "hk" 'describe-key
+  "hm" 'describe-mode
+  "ho" 'describe-symbol
+  "hv" 'describe-variable
+  "hx" 'describe-command
+  "hb" '(:ignore t :wk "Bindings")
+  "hbb" 'describe-bindings
+  "hbf" 'which-key-show-full-keymap
+  "hbi" 'which-key-show-minor-mode-keymap
+  "hbk" 'which-key-show-keymap
+  "hbm" 'which-key-show-major-mode
+  "hbt" 'which-key-show-top-level)
 
 (use-package autopair)
 (autopair-global-mode)
@@ -320,7 +376,25 @@
     :keymaps 'org-mode-map
     "'" '(org-edit-special :wk "Edit Special")
     "-" '(org-babel-demarcate-block :wk "Split Block")
-    "z" '(org-babel-hide-result-toggle :wk "Fold Result"))
+    "z" '(org-babel-hide-result-toggle :wk "Fold Result")
+    "t" '(org-todo :wk "Todo")
+    "<return>" '(org-open-at-point :wk "Open")
+    "K" '(org-shiftup :wk "Move up")
+    "J" '(org-shiftdown :wk "Move down")
+    "R" '(org-refile :wk "Refile")
+    "i" '(org-insert-link :wk "Insert Link")
+    "A" '(org-archive-subtree-default :wk "Archive")
+    "a" '(org-agenda :wk "Agenda")
+    "6" '(org-sort :wk "Sort")
+    "s" '(org-schedule :wk "Schedule")
+    "d" '(org-deadline :wk "Deadline")
+    "g" '(counsel-org-goto :wk "Goto Heading")
+    "T" '(counsel-org-tag :wk "Set Tags")
+    "p" '(org-set-property :wk "Set Priority")
+    "e" '(org-export-dispatch :wk "Export")
+    "1" '(org-toggle-link-display :wk "Toggle Links")
+    )
+
   (rcool/local-leader-keys
     :keymaps 'org-scr-mode-map
    :states '(normal motion visual)
@@ -877,6 +951,14 @@ Note the weekly scope of the command's precision.")
   :custom
   (company-minimum-prefix-length 1)
   (company-idle-delay 0.0)
+  :init
+  (setq company-tooltip-limit 14
+        company-tooltip-align-annotations t
+        company-frontends
+        '(company-pseudo-tooltip-frontend
+          company-echo-metadata-frontend)
+        company-backends '(company-capf company-files company-keywords)
+        )
   )
 
 (use-package company-box
@@ -896,6 +978,23 @@ Note the weekly scope of the command's precision.")
   :custom ((projectiled-completion-system 'ivy))
   :bind-keymap
   ("C-c p" . projectile-command-map)
+  :general
+  (rcool/leader-keys
+    "p!" '(projectile-run-shell-command-in-root :wk "Run cmd in root")
+    "p&" '(projectile-run-async-shell-command-in-root :wk "Async cmd")
+    "pa" '(projectile-add-known-project :wk "Add new project")
+    "pb" '(projectile-switch-to-buffer :wk "Switch to project buffer")
+    "pd" '(projectile-remove-known-project :wk "Remove project")
+    "pf" '(projectile-find-file :wk "Find project file")
+    "pg" '(projectile-configure-project :wk "Configure project")
+    "pk" '(projectile-kill-buffers :wk "Kill project buffers")
+    "po" '(projectile-find-other-file :wk "Find other file")
+    "pp" '(projectile-switch-project :wk "Switch projects")
+    "pr" '(projectile-recentf :wk "Find recent project files")
+    "ps" '(projectile-save-project-buffers :wk "Save project files")
+    "pt" '(magit-todos-list :wk "List project todos")
+    )
+
   :init
   (when (file-directory-p "~/Documents/projects")
     (setq projectile-project-search-path '("~/Documents/projects")))
@@ -912,7 +1011,7 @@ Note the weekly scope of the command's precision.")
   :diminish
   :config
   (setq git-gutter:update-interval 2)
-  (setq-default left-fringe-width 20)
+  (setq-default left-fringe-width 5)
   (set-face-foreground 'git-gutter-fr:added "LightGreen")
   (fringe-helper-define 'git-gutter-fr:added nil
     ".XXXXXX."
@@ -1296,6 +1395,12 @@ Note the weekly scope of the command's precision.")
     (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")
     ))
 
+(rcool/leader-keys
+  "ff" '(find-file :wk "Find File")
+  "fr" '(recentf-open-files :wk "Recent Files")
+  "fs" '(save-buffer :wk "Save Buffer")
+  "fw" '(write-file :wk "Write File"))
+
 (use-package ace-window)
 
   (rcool/leader-keys
@@ -1311,3 +1416,7 @@ Note the weekly scope of the command's precision.")
     "wu" '(winner-undo :wk "Winner Undo")
     "wv" '(evil-window-vsplit :wk "Vsplit")
     )
+
+(setq frame-resize-pixelwise t)
+(setq window-resize-pixelwise nil)
+(setq split-width-threshold 80)

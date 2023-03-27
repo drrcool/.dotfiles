@@ -1,0 +1,20 @@
+
+;; ----- smex-history -----
+(
+ org-mode
+ find-file
+ org-roam-node-find
+ org-toggle-checkbox
+ org-toggle-item
+ cd
+ 5x5
+)
+
+;; ----- smex-data -----
+(
+ (org-toggle-item . 1)
+ (org-toggle-checkbox . 29)
+ (org-roam-node-find . 1)
+ (find-file . 1)
+ (org-mode . 1)
+)
