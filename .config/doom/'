@@ -23,3 +23,6 @@ This block is designed for the Dygma raise
               ("C-TAB" . 'copilot-accept-completion-by-word)
               ("C-<tab>" . 'copilor-accept-completion-by-word)))
 #+end_src
+#+begin_src emacs-lisp :tangle yes
+
+#+end_src

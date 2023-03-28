@@ -38,7 +38,7 @@
 ;(package! builtin-package :recipe (:branch "develop"))
 
 ;; Use `:pin' to specify a particular commit to install.
-;(package! builtin-package :pin "1a2b3c4d5e")
+;(package! builtin-package )
 
 
 ;; Doom's packages are pinned to a specific commit and updated from release to
@@ -48,5 +48,62 @@
 ;(unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
+;
+(package! apheleia)
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
+(package! rainbow-mode)
+(package! org-auto-tangle)
+(package! beacon)
+(package! modus-themes)
+(package! focus )
+(package! flycheck-posframe)
+(package! info-colors )
+(package! elpy )
+(package! semgrep
+  :disable t
+  :recipe (:host github
+           :repo "Ruin0x11/semgrep.el")
+  )
+(package! magit-pretty-graph
+  :recipe (:host github
+           :repo "georgek/magit-pretty-graph")
+  )
+(unpin! lsp-mode)
+(unpin! dap-mode)
+
+(package! org-modern)
+(package! moe-theme)
+(package! ivy-posframe)
+(package! org-super-agenda)
+(package! org-auto-tangle)
+(package! tsi 
+          :recipe (:host github :repo "orzechowskid/tsi.el"))
+(package! tsx-mode
+	  :recipe (:host github :repo "orzechowskid/tsx-mode.el" :branch "emacs28"))
+(package! mixed-pitch)
+(package! centered-cursor-mode)
+(package! avy)
+(package! undo-fu)
+(package! quickrun)
+(package! hercules)
+(package! origami)
+(package! org-appear)
+(package! olivetti)
+(package! org-super-agenda)
+(package! org-bookmark-heading)
+(package! org-sticky-header)
+(package! evil-dvorak)
+(package! focus)
+(package! aggressive-indent)
+(package! info-colors)
+(package! conventional-commit :recipe (:host github :repo "akirak/conventional-commit.el"))
+(package! org-wild-notifier)
+(package! org-menu)
+(package! org-ol-tree :recipe (:host github :repo "Townk/org-ol-tree"))
+(package! org-modern)
+(package! doct)
+(package! mini-frame)
+(package! windresize)
+(package! cyberpunk-theme)
+(package! kaolin-themes)
