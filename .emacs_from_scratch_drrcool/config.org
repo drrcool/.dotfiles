@@ -46,7 +46,7 @@
                          ("elpa" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 (unless package-archive-contents
-  (package-refresh-contents))
+  (package-efresh-contents))
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 
@@ -81,11 +81,11 @@
 #+end_src
 *** Interaction
 #+begin_src emacs-lisp :tangle yes
-  (setq use-short-answers t) ;; When emacs ask yes or no, accept y or n
-  (setq confirm-kill-emacs 'yes-or-no-p) ;; Confirm to quit
-  (setq initial-major-mode 'org-mode)
-  (setq initial-scratch-message "")
-  (setq initial-buffer-choice t)
+    (setq use-short-answers t) ;; When emacs ask yes or no, accept y or n
+    (setq confirm-kill-emacs 'yes-or-no-p) ;; Confirm to quit
+    (setq initial-major-mode 'org-mode)
+    (setq initial-scratch-message "")
+    (setq initial-buffer-choice nil)
 #+end_src
 
 *** Emacs Window
@@ -401,6 +401,7 @@
     "hm" 'describe-mode
     "ho" 'describe-symbol
     "hv" 'describe-variable
+    "ht" 'counsel-load-theme
     "hx" 'describe-command
     "hb" '(:ignore t :wk "Bindings")
     "hbb" 'describe-bindings
@@ -412,24 +413,7 @@
 #+end_src
 
 ** Productivity
-*** Autopair Config
-#+begin_src emacs-lisp :tangle yes
-  (use-package autopair)
-(autopair-global-mode)
-#+end_src
 
-#+RESULTS:
-: t
-
-*** Smartparens
-#+begin_src emacs-lisp :tangle yes
-    (use-package evil-smartparens
-      :hook (smartparens-enabled-hook . evil-smartparens-mode)
-      (prog-mode . evil-smartparens-mode))
-#+end_src
-
-#+RESULTS:
-| evil-smartparens-mode | rainbow-delimiters-mode |
 
 *** Emmet Mode
 #+begin_src emacs-lisp :tangle yes
@@ -627,6 +611,11 @@
 #+end_src
 
 ** Org Roam
+
+*** Functions
+#+begin_src emacs-lisp :tangle yes
+#+end_src
+
 *** Basic Setup
 #+begin_src emacs-lisp :tangle yes
   (use-package org-roam
@@ -1125,6 +1114,17 @@ Presentation in org-mode.  Run =org-tree-slide-mode= and navigate slides with =C
                 (expand-file-name "~/Applications")
                 "/Applications/Xcode.app/Contents/Applications")))
 #+end_src
+** Rainbow Mode
+#+begin_src emacs-lisp :tangle yes
+  (use-package rainbow-mode)
+
+  (define-globalized-minor-mode global-rainbow-mode rainbow-mode
+    (lambda ()
+      (when (not (memq major-mode
+                 (list 'org-agenda-mode)))
+        (rainbow-mode 1))))
+  (global-rainbow-mode 1)
+#+end_src
 
 ** Speed Type
 #+begin_src emacs-lisp :tangle yes
@@ -1167,16 +1167,6 @@ Presentation in org-mode.  Run =org-tree-slide-mode= and navigate slides with =C
   (use-package lsp-ivy)
 #+end_src
 
-**** LSP Treemacs
-#+begin_src emacs-lisp :tangle yes
-  (use-package lsp-treemacs
-    :init (treemacks-display-current-project-exclusively)
-    :after lsp)
-  (rcool/leader-keys
-    "e" '(treemacs :wk "Explorer")
-    "t e" '(treemacs :wk "Explorer")
-    "p e" '(treemacs-display-current-project-exclusively :wk "Project Explorer"))
-#+end_src
 
 *** Dap Mode
 #+begin_src emacs-lisp :tangle yes
@@ -1264,6 +1254,26 @@ Presentation in org-mode.  Run =org-tree-slide-mode= and navigate slides with =C
 #+end_src
 
 ** Copilot
+#+begin_src emacs-lisp :tangle yes
+    (use-package copilot
+      :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+      :ensure t
+      :init
+      (add-hook 'prog-mode-hook 'copilot-mode)
+
+      )
+
+    (defun rcool/copilot-tab ()
+      (interactive)
+      (or (copilot-accept-completion)
+          (indent-for-tab-command)))
+  (with-eval-after-load 'company
+    (delq 'company-preview-if-just-one-frontend company-frontends))
+    (with-eval-after-load 'copilot
+      (evil-define-key 'insert copilot-mode-map
+        (kbd "<tab>") #'rcool/copilot-tab))
+#+end_src
+
 ** flycheck
 #+begin_src emacs-lisp :tangle yes
   (use-package flycheck
@@ -1340,6 +1350,28 @@ Presentation in org-mode.  Run =org-tree-slide-mode= and navigate slides with =C
 
   (use-package counsel-projectile
     :config (counsel-projectile-mode))
+#+end_src
+
+** Perspective
+#+begin_src emacs-lisp :tangle yes
+  (use-package perspective
+
+    :general
+    (rcool/leader-keys
+      "W" '(:ignore t :wk "Workspaces")
+      "W." '(persp-switch :wk "Switch Workspace")
+      "Ws" '(persp-state-save :wk "Save")
+      "Wl" '(persp-state-load :wk "Load")
+      "Wn" '(persp-next :wk "Next")
+      "Wp" '(persp-prev :wk "Prev")
+      "Wr" '(persp-rename :wk "Rename")
+      "Wn" '(persp-switch-by-number :wk "Switch to number"))
+    :custom
+    (persp-mode-prefix-key (kbd "M-p"))  ; pick your own prefix key here
+    :init
+
+    (persp-mode))
+
 #+end_src
 
 ** Magit
@@ -1743,7 +1775,6 @@ A primer for using pass to manage passwords: [[https://medium.com/@chasinglogic/
 
 * File Management
 ** Dired
-** 
 Dired is a built-in file manager for Emacs that does some pretty amazing things. 
 *** Keybindings
 **** Navigation
@@ -1869,6 +1900,33 @@ Dired is a built-in file manager for Emacs that does some pretty amazing things.
     "fr" '(recentf-open-files :wk "Recent Files")
     "fs" '(save-buffer :wk "Save Buffer")
     "fw" '(write-file :wk "Write File"))
+#+end_src
+
+** Treemacs
+#+begin_src emacs-lisp :tangle yes
+  (use-package treemacs
+    :defer t
+    :init
+    (with-eval-after-load 'winum
+      (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+    :general
+    (rcool/leader-keys
+      "t" '(:ignore t :which-key "toggles")
+      "tt" '(treemacs :which-key "toggle treemacs"))
+    )
+  (use-package treemacs-evil
+    :after (treemacs evil))
+  (use-package treemacs-projectile
+    :after (treemacs projectile))
+
+  (use-package treemacs-icons-dired
+    :hook (dired-mode . treemacs-icons-dired-enable-once)
+    ) 
+  (use-package treemacs-magit
+    :after (treemacs magit))
+  (use-package treemacs-perspective
+    :after (treemacs perspective)
+    :config (treemacs-set-scope-type 'Perspectives))
 #+end_src
 
 * Window Management

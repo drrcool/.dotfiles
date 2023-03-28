@@ -26,7 +26,7 @@
                          ("elpa" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 (unless package-archive-contents
-  (package-refresh-contents))
+  (package-efresh-contents))
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 
@@ -59,7 +59,7 @@
 (setq confirm-kill-emacs 'yes-or-no-p) ;; Confirm to quit
 (setq initial-major-mode 'org-mode)
 (setq initial-scratch-message "")
-(setq initial-buffer-choice t)
+(setq initial-buffer-choice nil)
 
 (set-frame-parameter (selected-frame) 'alpha '(90 . 90))
 (add-to-list 'default-frame-alist '(alpha . (90 . 90)))
@@ -281,6 +281,7 @@
   "hm" 'describe-mode
   "ho" 'describe-symbol
   "hv" 'describe-variable
+  "ht" 'counsel-load-theme
   "hx" 'describe-command
   "hb" '(:ignore t :wk "Bindings")
   "hbb" 'describe-bindings
@@ -289,13 +290,6 @@
   "hbk" 'which-key-show-keymap
   "hbm" 'which-key-show-major-mode
   "hbt" 'which-key-show-top-level)
-
-(use-package autopair)
-(autopair-global-mode)
-
-(use-package evil-smartparens
-  :hook (smartparens-enabled-hook . evil-smartparens-mode)
-  (prog-mode . evil-smartparens-mode))
 
 (use-package emmet-mode
   :mode "\\.edge\\'"
@@ -455,6 +449,8 @@
         ("w" "Workflow")
         ("we" "Checking Email" entry (file+olp+datetree "~/org/journal.org")
          "* Checking Email :email:\n\n%?" :clock-in :clock-resume :empty-lines 1)))
+
+
 
 (use-package org-roam
   :straight (:host github :repo "org-roam/org-roam"
@@ -848,6 +844,15 @@ Note the weekly scope of the command's precision.")
               (expand-file-name "~/Applications")
               "/Applications/Xcode.app/Contents/Applications")))
 
+(use-package rainbow-mode)
+
+(define-globalized-minor-mode global-rainbow-mode rainbow-mode
+  (lambda ()
+    (when (not (memq major-mode
+               (list 'org-agenda-mode)))
+      (rainbow-mode 1))))
+(global-rainbow-mode 1)
+
 (use-package speed-type
   :ensure t)
 
@@ -873,14 +878,6 @@ Note the weekly scope of the command's precision.")
   (lsp-io-doc-position 'bottom))
 
 (use-package lsp-ivy)
-
-(use-package lsp-treemacs
-  :init (treemacks-display-current-project-exclusively)
-  :after lsp)
-(rcool/leader-keys
-  "e" '(treemacs :wk "Explorer")
-  "t e" '(treemacs :wk "Explorer")
-  "p e" '(treemacs-display-current-project-exclusively :wk "Project Explorer"))
 
 (use-package dap-mode)
 
@@ -942,6 +939,24 @@ Note the weekly scope of the command's precision.")
 (use-package yaml-mode
   :hook (yaml-mode . lsp-deferred)
   :mode "\\.ya?ml\\'")
+
+(use-package copilot
+    :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+    :ensure t
+    :init
+    (add-hook 'prog-mode-hook 'copilot-mode)
+
+    )
+
+  (defun rcool/copilot-tab ()
+    (interactive)
+    (or (copilot-accept-completion)
+        (indent-for-tab-command)))
+(with-eval-after-load 'company
+  (delq 'company-preview-if-just-one-frontend company-frontends))
+  (with-eval-after-load 'copilot
+    (evil-define-key 'insert copilot-mode-map
+      (kbd "<tab>") #'rcool/copilot-tab))
 
 (use-package flycheck
   :defer t
@@ -1010,6 +1025,24 @@ Note the weekly scope of the command's precision.")
 
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
+
+(use-package perspective
+
+  :general
+  (rcool/leader-keys
+    "W" '(:ignore t :wk "Workspaces")
+    "W." '(persp-switch :wk "Switch Workspace")
+    "Ws" '(persp-state-save :wk "Save")
+    "Wl" '(persp-state-load :wk "Load")
+    "Wn" '(persp-next :wk "Next")
+    "Wp" '(persp-prev :wk "Prev")
+    "Wr" '(persp-rename :wk "Rename")
+    "Wn" '(persp-switch-by-number :wk "Switch to number"))
+  :custom
+  (persp-mode-prefix-key (kbd "M-p"))  ; pick your own prefix key here
+  :init
+
+  (persp-mode))
 
 (use-package magit
   :custom
@@ -1408,6 +1441,30 @@ Note the weekly scope of the command's precision.")
   "fr" '(recentf-open-files :wk "Recent Files")
   "fs" '(save-buffer :wk "Save Buffer")
   "fw" '(write-file :wk "Write File"))
+
+(use-package treemacs
+  :defer t
+  :init
+  (with-eval-after-load 'winum
+    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+  :general
+  (rcool/leader-keys
+    "t" '(:ignore t :which-key "toggles")
+    "tt" '(treemacs :which-key "toggle treemacs"))
+  )
+(use-package treemacs-evil
+  :after (treemacs evil))
+(use-package treemacs-projectile
+  :after (treemacs projectile))
+
+(use-package treemacs-icons-dired
+  :hook (dired-mode . treemacs-icons-dired-enable-once)
+  ) 
+(use-package treemacs-magit
+  :after (treemacs magit))
+(use-package treemacs-perspective
+  :after (treemacs perspective)
+  :config (treemacs-set-scope-type 'Perspectives))
 
 (use-package ace-window)
 
