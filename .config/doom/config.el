@@ -179,10 +179,3 @@
 (global-display-line-numbers-mode 1)
 (setq display-line-numbers-type 'relative)
 
-;; Disable for some modes
-(dolist (mode '(term-mode-hook
-                shell-mode-hook
-                treemacs-mode-hook
-                vterm-mode-hook
-                eshell-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))

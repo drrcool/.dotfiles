@@ -55,3 +55,4 @@
 (package! flycheck-posframe)
 (package! company-posframe)
 (package! ivy-posframe)
+(package! org-super-agenda)
