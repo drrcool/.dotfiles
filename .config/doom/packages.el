@@ -50,3 +50,8 @@
 ;(unpin! t)
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
+(package! rainbow-mode)
+(package! doct)
+(package! flycheck-posframe)
+(package! company-posframe)
+(package! ivy-posframe)
