@@ -1,6 +1,18 @@
 #+title: Richard Cool's Doom Emacs Config
 #+PROPERTY: header-args:emacs-lisp :results none
 
+* Set Theme
+#+begin_src emacs-lisp :tangle yes
+(use-package! doom-themes
+  :config
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic t)
+  (load-theme 'doom-Iosvkem t)
+  (doom-themes-neotree-config)
+  (setq doom-themes-treemacs-theme "doom-atom")
+  (doom-themes-treemacs-config)
+  (doom-themes-org-config))
+#+end_src
 * Define some colors
 #+begin_src emacs-lisp :tangle yes
 (defvar rcool/black-color "#1F2528")
@@ -407,7 +419,7 @@ This block is designed for the Dygma raise
 ** Evil mode
 #+begin_src emacs-lisp :tangle yes
 (map! :map evil-org-mode-map
-      :after evil-oprg
+      :after evil-org
       :n "g <up>" #'org-backward-heading-same-level
         :n "g <down>" #'org-forward-heading-same-level
         :n "g <left>" #'org-up-element
@@ -460,3 +472,23 @@ This block is designed for the Dygma raise
 (global-display-line-numbers-mode 1)
 (setq display-line-numbers-type 'relative)
 #+end_src
+
+* Test Runner
+#+begin_src emacs-lisp :tangle yes
+(use-package! jest-test-mode
+  :commands jest-test-mode
+  :hook (typescript-mode js-mode typescript-tsx-mode web-mode)
+  )
+(map! :leader
+      (:prefix ("j" . "Jest")
+       :desc "Running Tests in Buffer" "b" #'jest-test-run
+       :desc "Run with Debuffer" "d" #'jest-test-debug
+       :desc "Rerun last test" "r" #'jest-test-rerun-test
+       :desc "Run test at point" "p" #'jest-test-run-at-point
+       :desc "Run all tests in project" "a" #'jest-test-run-all-tests
+       :desc "Rerun last with debugger" "R" #'jest-test-debug-rerun-test
+       :desc "Run test at point with debugger" "P" #'jest-test-debug-run-at-point
+       )
+      )
+#+end_src
+

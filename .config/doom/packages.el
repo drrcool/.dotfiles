@@ -56,3 +56,4 @@
 (package! company-posframe)
 (package! ivy-posframe)
 (package! org-super-agenda)
+(package! jest-test-mode)
