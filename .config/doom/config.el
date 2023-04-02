@@ -187,7 +187,7 @@
                                #'org-capture-reinitialise-hook))))))
 
 (after! org
-  (setq org-directory "~/Dropbox/org"
+  (setq org-directory "~/org/"
         org-log-done 'time
         org-tags-column 1
         org-auto-align-tags t
@@ -231,25 +231,25 @@
                  (window-height . fit-window-to-buffer)))
   (org-roam-db-autosync-mode)
   (setq org-roam-capture-templates
-        '(("d" "default" plain
-           "%?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n\n")
+          '(("d" "default" plain
+           ""
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "${title}\n\n")
            :unnarrowed t)
           ("a" "area" plain
            "#+filetags: Area\n\n* Goals\n\n%^{Goals}\n\n* Tasks\n\n** TODO %?"
-           :if-new (file+head "%<%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+           :if-new (file+head "%<%<%Y%m%d%H%M%S>-${slug}.org" "${title}")
            :unnarrowed t)
           ("j" "project" plain
            "#+filetags: Project\n\n* Goals\n\n%^{{Goals}\n\n* Tasks\n\n TODO %?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "${title}")
            :unnarrowed t)
           ("p" "people" plain
            "#+filetags: People CRM\n\n* Contacts\n\nRelationship: %^{Relationship}\nPhone:\nAddress\nBirthday\n\n* Notes\n\n %?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "${title}")
            :unnarrowed t)
           ("i" "institution" plain
            "#+filetags: Institution CRM\n\n* Contracts\n\nRelationship: %^{Relationship}\nPhone:\nAddress\n\n* Notes\n\n %?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "${title}")
            :unnarrowed t)
           ))
   :custom
@@ -258,6 +258,14 @@
   (org-roam-complete-everywhere t)
 
   )
+
+(defun rcool/org-journal-find-location()
+  "Open today's journal, but specify a non-nill prefix arguement in order to
+   inhibit inserting the heading;"
+  (org-journal-new-entry t)
+  (unless (eq org-journal-file-type 'daily)
+              (org-narrow-to-subtree))
+    (goto-char (point-max)))
 
 (defun rcool/define-agenda-files ()
   (interactive)
@@ -274,7 +282,8 @@
 
 ;; Roam daily and project files only
 (setq org-agenda-files (rcool/define-agenda-files))
-
+(map! :leader
+      :desc "Refresh Agenda Files" "n A" #'rcool/define-agenda-files )
 (defun rcool/buffer-prop-get (name)
   "Get a buffer property called NAME as a string."
   (org-with-point-at 1
@@ -308,81 +317,112 @@
         (tags . " %i %(rcool/agenda-category 32) ")
         (search . " %i %(rcool/agenda-category 32) ")))
 
-  (use-package! org-super-agenda
-    :after org-agenda
-    :init
-    (setq org-agenda-dim-blocked-tasks nil))
+(use-package! org-super-agenda
+  :after org-agenda
+  :init
+  (setq org-agenda-dim-blocked-tasks nil))
 
-  ;;Dashboard View
-  (setq org-super-agenda-groups
-        '((:name "Priority"
-                 :priority "A")
-          (:name "Inbox"
-                 :tag ("Inbox" "Daily"))
-          (:name "Next Actions for Work"
-                 :and (
-                       :todo ("NEXT")
-                             :tag ("Active")
-                             :tag ("@work")))
-          (:name "Next Actions at Home"
-                 :and (
-                       :todo ("NEXT")
-                             :tag ("Active")
-                             :tag ("@home")))
-          (:name "Waiting"
-                 :todo "WAIT")
-          (:name "Home"
-                 :tag "@home")
-          (:name "Work"
-                 :tag "@work")
-          (:name "Productivity"
-                 :tag "Productivity")))
-  (org-super-agenda-mode)
+;;Dashboard View
+(setq org-super-agenda-groups
+      '((:name "Priority"
+               :priority "A")
+        (:name "Inbox"
+               :tag ("Inbox" "Daily"))
+        (:name "Next Actions for Work"
+               :and (
+                     :todo ("NEXT")
+                           :tag ("Active")
+                           :tag ("@work")))
+        (:name "Next Actions at Home"
+               :and (
+                     :todo ("NEXT")
+                           :tag ("Active")
+                           :tag ("@home")))
+        (:name "Waiting"
+               :todo "WAIT")
+        (:name "Home"
+               :tag "@home")
+        (:name "Work"
+               :tag "@work")
+        (:name "Productivity"
+               :tag "Productivity")))
+(org-super-agenda-mode)
 
-  (setq org-agenda-custom-commands
-        '(("d" "Dashboard"
-           ((agenda "" ((org-deadline-warning-days 7)))
-            (todo "TODO"
-                  ((org-agenda-overriding-header "TODO Tasks")))
-            (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
-          ("n" "TODO Tasks"
-           ((todo "TODO"
-                  ((org-agenda-overriding-header "Todo Tasks")))))
-          ("h" "Home Tasks" tags-todo "+@home")
-          ("w" "Work Tasks" tags-todo "+@work")
-          ("u" "Computer Tasks" tags-todo "+#computer")
-          ("r" "Recovery Tasks" tags-todo "+@recovery")
-          ;; Low-effort next actions
-          ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
-           ((org-agenda-overriding-header "Low Effort Taskss")
-            (org-agenda-max-todos 20)
-            (org-agenda-files org-agenda-files)))
+(setq org-agenda-custom-commands
+      '(("d" "Dashboard"
+         ((agenda "" ((org-deadline-warning-days 7)))
+          (todo "TODO"
+                ((org-agenda-overriding-header "TODO Tasks")))
+          (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
+        ("n" "TODO Tasks"
+         ((todo "TODO"
+                ((org-agenda-overriding-header "Todo Tasks")))))
+        ("h" "Home Tasks" tags-todo "+@home")
+        ("w" "Work Tasks" tags-todo "+@work")
+        ("u" "Computer Tasks" tags-todo "+#computer")
+        ("r" "Recovery Tasks" tags-todo "+@recovery")
+        ;; Low-effort next actions
+        ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
+         ((org-agenda-overriding-header "Low Effort Taskss")
+          (org-agenda-max-todos 20)
+          (org-agenda-files org-agenda-files)))
 
-          ("w" "Workflow Status"
-           ((todo "WAIT"
-                  ((org-agenda-overriding-header "Waiting on External")
-                   (org-agenda-files org-agenda-files)))
-            (todo "REVIEW"
-                  ((org-agenda-overriding-header "In Review")
-                   (org-agenda-files org-agenda-files)))
-            (todo "PLAN"
-                  ((org-agenda-overriding-header "In Planning")
-                   (org-agenda-files org-agenda-files)))
-            (todo "BACKLOG"
-                  ((org-agenda-overriding-header "Project Backlog")
-                   (org-agenda-files org-agenda-files)))
-            (todo "READY"
-                  ((org-agenda-overriding-header "Ready for Work")
-                   (org-agenda-files org-agenda-files)))
-            (todo "ACTIVE"
-                  ((org-agenda-overriding-header "Active Projects")
-                   (org-agenda-files org-agenda-files)))
-            (todo "COMPLETED"
-                  ((org-agenda-overriding-header "Completed Projects")
-                   (org-agenda-files org-agenda-files)))
-            (todo "CANC"
-                  ((org-agenda-overriding-header "Cancelled Projects")
-                   (org-agenda-files org-agenda-files)))))))
+        ("w" "Workflow Status"
+         ((todo "WAIT"
+                ((org-agenda-overriding-header "Waiting on External")
+                 (org-agenda-files org-agenda-files)))
+          (todo "REVIEW"
+                ((org-agenda-overriding-header "In Review")
+                 (org-agenda-files org-agenda-files)))
+          (todo "PLAN"
+                ((org-agenda-overriding-header "In Planning")
+                 (org-agenda-files org-agenda-files)))
+          (todo "BACKLOG"
+                ((org-agenda-overriding-header "Project Backlog")
+                 (org-agenda-files org-agenda-files)))
+          (todo "READY"
+                ((org-agenda-overriding-header "Ready for Work")
+                 (org-agenda-files org-agenda-files)))
+          (todo "ACTIVE"
+                ((org-agenda-overriding-header "Active Projects")
+                 (org-agenda-files org-agenda-files)))
+          (todo "COMPLETED"
+                ((org-agenda-overriding-header "Completed Projects")
+                 (org-agenda-files org-agenda-files)))
+          (todo "CANC"
+                ((org-agenda-overriding-header "Cancelled Projects")
+                 (org-agenda-files org-agenda-files)))))))
+
+(setf (alist-get 'height +org-capture-frame-parameters) 15)
+(setq +org-capture-fn
+      (lambda ()
+        (interactive)
+        (set-window-parameter nil 'mode-line-format 'none)
+        (org-capture)))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)
+   (shell . t)
+   (emacs-lisp . t)
+   (org . t)
+   (sqlite . t)
+   (js . t)
+   (lisp . t)
+   (css . t)
+))
+(setq python-shell-completion-native-enable nil)
+(setq org-src-window-setup 'current-window)
+(defun org-babel-execute:typescript (body params)
+                                          (let ((org-babel-js-cmd "npx ts-node < "))
+                                            (org-babel-execute:js body params)))
+
+(use-package! org-menu
+  :commands (org-menu)
+  :init
+  (map! :localleader
+        :map org-mode-map
+        :desc "Org Menu" "M" #'org-menu))
 
 (map! :map evil-org-mode-map
       :after evil-org
@@ -392,26 +432,46 @@
         :n "g <right>" #'org-down-element
         )
 
-  (defun rcool/presentation-setup ()
-    (setq text-scale-mode-amount 3)
-    (org-display-inline-images)
-    (hide-mode-line-mode 1)
-    (text-scale-mode 1))
+(defun rcool/presentation-setup ()
+  (setq text-scale-mode-amount 3)
+  (org-display-inline-images)
+  (hide-mode-line-mode 1)
+  (text-scale-mode 1))
 
-  (defun rcool/presentation-end ()
-    (hide-mode-line-mode 0)
-    (text-scale-mode 0))
+(defun rcool/presentation-end ()
+  (hide-mode-line-mode 0)
+  (text-scale-mode 0))
 
-  (use-package! org-tree-slide
-    :hook ((org-tree-slide-play . rcool/presentation-setup)
-           (org-tree-slide-stop . rcool/presentation-end))
-    :custom
-    (org-tree-slide-in-effect t)
-    (org-tree-slide-activate-message "Presentation Started")
-    (org-tree-slide-deactivate-message "Presentation Ended")
-    (org-tree-slide-header t)
-    (org-tree-slide-breadcrumbs " // ")
-    (org-image-actual-width nil))
+(use-package! org-tree-slide
+  :hook ((org-tree-slide-play . rcool/presentation-setup)
+         (org-tree-slide-stop . rcool/presentation-end))
+  :custom
+  (org-tree-slide-in-effect t)
+  (org-tree-slide-activate-message "Presentation Started")
+  (org-tree-slide-deactivate-message "Presentation Ended")
+  (org-tree-slide-header t)
+  (org-tree-slide-breadcrumbs " // ")
+  (org-image-actual-width nil))
+
+(use-package! org-appear
+  :hook (org-mode . org-appear-mode)
+  :config
+  (setq org-appear-autoemphasis t
+        org-appear-autosubmarkers t
+        org-appear-autolinks nil)
+  (run-at-time nil nil #'org-appear--set-elements))
+
+(setq org-list-demote-modify-bullet
+          '(("+"  . "-")
+        ("-"  . "+")
+        ("*"  . "+")
+        ("1." . "a.")))
+(setq org-hide-emphasis-markers t
+      org-pretty-entities t
+      org-ellipsis " ▾"
+        org-hide-leading-stars t
+        org-startup-indented t
+        )
 
 (setq doom-font (font-spec :family "Spleen32x64 Nerd Font" :size 20 :Weight 'light))
 (setq doom-variable-pitch-font (font-spec :family "Spleen32x64 Nerd Font" :size 16))
@@ -441,3 +501,39 @@
        :desc "Run test at point with debugger" "P" #'jest-test-debug-run-at-point
        )
       )
+
+(use-package! lsp-ui
+  :after lsp
+  :hook ((lsp-mode . lsp-ui-mode)
+         (lsp-mode . lsp-ui-sideline-mode))
+  :config
+  (setq lsp-ui-sideline-show-hover t)
+  (setq lsp-ui-doc-position 'top
+        lsp-lens-enable t
+        lsp-semantic-tokens-enable t
+        lsp-enable-symbol-highlighting t
+        lsp-headerline-breadcrumb-enable nil
+        lsp-ui-sideline-enable t
+        lsp-ui-sideline-show-hover nil
+        lsp-ui-sideline-show-symbols nil
+        lsp-ui-sideline-show-diagnostics t
+        lsp-ui-sideline-show-code-actions t)
+  )
+
+(use-package! tsi
+  :hook ((web-mode-hook . tsi-typescript-mode)
+         (typescript-mode-hook . tsi-typescript-mode)
+         (tsx-mode-hook . tsi-typescript-mode)
+         (json-mode-hook . tsi-typescript-mode)
+         (css-mode-hook . tsi-typescript-mode)
+         (scss-mode-hook . tsi-typescript-mode)
+      )
+  :config
+  (require 'tsi-css)
+  (require 'tsi-json)
+  (require 'tsi-typescript)
+)
+
+(use-package! web-mode
+  :hook (web-mode-hook . lsp)
+                )

@@ -209,7 +209,7 @@ This block is designed for the Dygma raise
 ** Basic Setup
 #+begin_src emacs-lisp :tangle yes
 (after! org
-  (setq org-directory "~/Dropbox/org/"
+  (setq org-directory "~/org/"
         org-log-done 'time
         org-tags-column 1
         org-auto-align-tags t
@@ -256,25 +256,25 @@ This block is designed for the Dygma raise
                  (window-height . fit-window-to-buffer)))
   (org-roam-db-autosync-mode)
   (setq org-roam-capture-templates
-        '(("d" "default" plain
-           "%?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n\n")
+          '(("d" "default" plain
+           ""
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "${title}\n\n")
            :unnarrowed t)
           ("a" "area" plain
            "#+filetags: Area\n\n* Goals\n\n%^{Goals}\n\n* Tasks\n\n** TODO %?"
-           :if-new (file+head "%<%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+           :if-new (file+head "%<%<%Y%m%d%H%M%S>-${slug}.org" "${title}")
            :unnarrowed t)
           ("j" "project" plain
            "#+filetags: Project\n\n* Goals\n\n%^{{Goals}\n\n* Tasks\n\n TODO %?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "${title}")
            :unnarrowed t)
           ("p" "people" plain
            "#+filetags: People CRM\n\n* Contacts\n\nRelationship: %^{Relationship}\nPhone:\nAddress\nBirthday\n\n* Notes\n\n %?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "${title}")
            :unnarrowed t)
           ("i" "institution" plain
            "#+filetags: Institution CRM\n\n* Contracts\n\nRelationship: %^{Relationship}\nPhone:\nAddress\n\n* Notes\n\n %?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "${title}")
            :unnarrowed t)
           ))
   :custom
@@ -284,6 +284,18 @@ This block is designed for the Dygma raise
 
   )
 #+end_src
+** Define org-journal templates
+#+begin_src emacs-lisp :tangle yes
+(defun rcool/org-journal-find-location()
+  "Open today's journal, but specify a non-nill prefix arguement in order to
+   inhibit inserting the heading;"
+  (org-journal-new-entry t)
+  (unless (eq org-journal-file-type 'daily)
+              (org-narrow-to-subtree))
+    (goto-char (point-max)))
+
+#+end_src
+
 ** Define org agenda files
 #+begin_src emacs-lisp :tangle yes
 (defun rcool/define-agenda-files ()
@@ -301,7 +313,8 @@ This block is designed for the Dygma raise
 
 ;; Roam daily and project files only
 (setq org-agenda-files (rcool/define-agenda-files))
-
+(map! :leader
+      :desc "Refresh Agenda Files" "n A" #'rcool/define-agenda-files )
 (defun rcool/buffer-prop-get (name)
   "Get a buffer property called NAME as a string."
   (org-with-point-at 1
@@ -415,6 +428,47 @@ This block is designed for the Dygma raise
                   ((org-agenda-overriding-header "Cancelled Projects")
                    (org-agenda-files org-agenda-files)))))))
 #+end_src
+** Resize the org-capture bin
+#+begin_src emacs-lisp :tangle yes
+(setf (alist-get 'height +org-capture-frame-parameters) 15)
+(setq +org-capture-fn
+      (lambda ()
+        (interactive)
+        (set-window-parameter nil 'mode-line-format 'none)
+        (org-capture)))
+
+#+end_src
+** Setup org-Babel
+#+begin_src emacs-lisp :tangle yes
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)
+   (shell . t)
+   (emacs-lisp . t)
+   (org . t)
+   (sqlite . t)
+   (js . t)
+   (lisp . t)
+   (css . t)
+))
+(setq python-shell-completion-native-enable nil)
+(setq org-src-window-setup 'current-window)
+(defun org-babel-execute:typescript (body params)
+                                          (let ((org-babel-js-cmd "npx ts-node < "))
+                                            (org-babel-execute:js body params)))
+
+#+end_src
+
+** Org-menu
+#+begin_src emacs-lisp :tangle yes
+(use-package! org-menu
+  :commands (org-menu)
+  :init
+  (map! :localleader
+        :map org-mode-map
+        :desc "Org Menu" "M" #'org-menu))
+
+#+end_src
 
 ** Evil mode
 #+begin_src emacs-lisp :tangle yes
@@ -451,11 +505,38 @@ This block is designed for the Dygma raise
     (org-image-actual-width nil))
 #+end_src
 
+** Org appear
+#+begin_src emacs-lisp :tangle yes
+(use-package! org-appear
+  :hook (org-mode . org-appear-mode)
+  :config
+  (setq org-appear-autoemphasis t
+        org-appear-autosubmarkers t
+        org-appear-autolinks nil)
+  (run-at-time nil nil #'org-appear--set-elements))
+#+end_src
+
+** Styling
+#+begin_src emacs-lisp :tangle yes
+(setq org-list-demote-modify-bullet
+          '(("+"  . "-")
+        ("-"  . "+")
+        ("*"  . "+")
+        ("1." . "a.")))
+(setq org-hide-emphasis-markers t
+      org-pretty-entities t
+      org-ellipsis " ▾"
+        org-hide-leading-stars t
+        org-startup-indented t
+        )
+#+end_src
+
 * Fonts
 #+begin_src emacs-lisp :tangle yes
 (setq doom-font (font-spec :family "Spleen32x64 Nerd Font" :size 20 :Weight 'light))
 (setq doom-variable-pitch-font (font-spec :family "Spleen32x64 Nerd Font" :size 16))
 #+end_src
+
 
 * Rainbow Mode
 #+begin_src emacs-lisp :tangle yes
@@ -492,3 +573,46 @@ This block is designed for the Dygma raise
       )
 #+end_src
 
+* LSP
+** LSP UI
+#+begin_src emacs-lisp :tangle yes
+(use-package! lsp-ui
+  :after lsp
+  :hook ((lsp-mode . lsp-ui-mode)
+         (lsp-mode . lsp-ui-sideline-mode))
+  :config
+  (setq lsp-ui-sideline-show-hover t)
+  (setq lsp-ui-doc-position 'top
+        lsp-lens-enable t
+        lsp-semantic-tokens-enable t
+        lsp-enable-symbol-highlighting t
+        lsp-headerline-breadcrumb-enable nil
+        lsp-ui-sideline-enable t
+        lsp-ui-sideline-show-hover nil
+        lsp-ui-sideline-show-symbols nil
+        lsp-ui-sideline-show-diagnostics t
+        lsp-ui-sideline-show-code-actions t)
+  )
+#+end_src
+** TSX Mode
+#+begin_src emacs-lisp :tangle yes
+(use-package! tsi
+  :hook ((web-mode-hook . tsi-typescript-mode)
+         (typescript-mode-hook . tsi-typescript-mode)
+         (tsx-mode-hook . tsi-typescript-mode)
+         (json-mode-hook . tsi-typescript-mode)
+         (css-mode-hook . tsi-typescript-mode)
+         (scss-mode-hook . tsi-typescript-mode)
+      )
+  :config
+  (require 'tsi-css)
+  (require 'tsi-json)
+  (require 'tsi-typescript)
+)
+#+end_src
+** LSP
+#+begin_src emacs-lisp :tangle yes
+(use-package! web-mode
+  :hook (web-mode-hook . lsp)
+                )
+#+end_src

@@ -57,3 +57,8 @@
 (package! ivy-posframe)
 (package! org-super-agenda)
 (package! jest-test-mode)
+(package! org-menu)
+(package! org-appear)
+(package! org-modern)
+(package! tsi
+          :recipe (:host github :repo "orzechowskid/tsi.el"))
