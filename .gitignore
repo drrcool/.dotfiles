@@ -22,3 +22,4 @@ yarn-error.log*
 .emacs_from_scratch_drrcool/request
 .emacs_from_scratch_drrcool/var
 .emacs_from_scratch_drrcool/bookmarks~
+.emacs_raw

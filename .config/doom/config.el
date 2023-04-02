@@ -187,7 +187,7 @@
                                #'org-capture-reinitialise-hook))))))
 
 (after! org
-  (setq org-directory "~/org/"
+  (setq org-directory "~/Dropbox/org"
         org-log-done 'time
         org-tags-column 1
         org-auto-align-tags t
