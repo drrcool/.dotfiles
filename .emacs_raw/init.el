@@ -260,6 +260,8 @@ inhibit-compacting-font-caches t)
   :init
   (org-super-agenda-mode))
 
+(use-package centered-cursor-mode :diminish)
+
 (use-package org-superstar
   :config
   (setq org-superstar-leading-bullet " "
@@ -334,6 +336,28 @@ inhibit-compacting-font-caches t)
  org-tree-slide-skip-outline-level 3))
 
 (use-package valign :defer t)
+
+(use-package org-roam
+  :straight (:host github :repo "org-roam/org-roam"
+                   :files (:defaults "extensions/*"))
+
+  :init
+  (setq org-roam-v2-ack t)
+
+  (add-to-list 'display-buffer-alist
+               '("\\*org-roam\\*"
+                 (display-buffer-in-direction)
+                 (direction . right)
+                 (window-width . 0.33)
+                 (window-height . fit-window-to-buffer)))
+
+  (org-roam-db-autosync-mode)
+
+  :custom
+  (org-roam-directory (file-truename "~/org"))
+  (org-roam-dailies-directory "roam/daily/")
+  (org-roam-completion-everywhere t)
+ )
 
 (setq org-special-ctrl-a/e t)
 
@@ -453,3 +477,102 @@ inhibit-compacting-font-caches t)
   (advice-add 'org-agenda-switch-to :after #'rcool/post-org-goto)
 
   )
+
+(use-package org
+  :config
+  (setq org-tags-column -1)
+  )
+
+(use-package org
+:config
+(setq org-todo-keywords '((type
+                           "TODO(t)" "WAITING(h)" "INPROG(i)"
+                           "READ(r)" "PROJ(p)" "DONE(d)" "CANCELLED(C@)")))
+(setq org-todo-keyword-faces
+      '(("TODO" :inherit (region org-todo) :foreground "DarkOrange1" :weight bold)
+        ("WAITING" :inherit (org-todo region) :foreground "DarkOrange1" :weight bold)
+        ("INPROG" :inherit (org-todo region) :foreground "MediumPurple2" :weight bold)
+        ("READ" :inherit (org-todo region) :foreground "orange3" :weight bold)
+        ("PROJ" :inherit (org-todo region) :foreground "blue3" :weight bold)
+        ("DONE" . "SeaGreen4")
+        ("CANCELLED" . "SeaGreen4")))
+)
+
+(use-package org
+:config
+ (setq org-lowest-priority ?F)
+ (setq org-default-priority ?E)
+
+ (setq org-priority-faces
+       '((65 . "red2")
+       (66 . "Gold1")
+       (67 . "DarkOrange1")
+       (68 . "PaleTurquoise3")
+       (69 . "DarkSlateGrey4")
+       (70 . "PaleTurquoise4")))
+)
+
+(use-package org
+  :config
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '( (python . t)
+      (shell . t)
+      (gnuplot . t)
+      (emacs-lisp . t)
+      (js . t)
+      (sql . t)
+      (calc . t)
+      (lua . t)))
+
+  (use-package gnuplot :defer t)
+
+
+  ;; Don't prompt before running code
+  (setq org-confirm-babel-evaluate nil
+        python-shell-completion-native-enable nil)
+
+  ;; How to open the src buffer
+  (setq org-src-window-setup 'current-window)
+  )
+
+(use-package smartparens
+  :diminish
+  :defer 1
+  :config
+  (require 'smartparens-config)
+  (setq sp-max-prefix-length 25
+        sp-max-pair-length 4
+        sp-highlight-pair-overlay nil
+        sp-highlihgt-wrap-overlay nil
+        sp-highlihgt-wrap-tag-overlap nil)
+
+  (with-eval-after-load 'evil
+    (setq sp-show-pair-from-inside t
+          sp-cancel-autoskip-on-backward-movement nil
+          sp-pair-overlay-keymap (make-sparse-keymap)))
+
+  (let ((unless-list '(sp-point-before-word-p
+                       sp-point-after-word-p
+                       sp-point-before-same-p)))
+    (sp-pair "'" nil :unless unless-list)
+    (sp-pair "\"" nil :unless unless-list))
+
+  (sp-local-pair sp-lisp-modes "(" ")" :unless '(:rem sp-point-before-same-p))
+  (sp-local-pair '(emacs-lisp-mode org-mode markdown-mode gfm-mode)
+                 "[" nil :post-handlers '(:rem ("|" "SPC")))
+  (smartparens-global-mode t))
+
+(use-package hl-prog-extra
+:commands (hl-prog-extra-mode)
+  :config
+  (setq hl-prog-extra-list
+      (list
+       '("\\<\\(TODO\\|NOTE\\)\\(([^)+]+)\\)?" 0 comment
+         (:weight bold :inherit diff-removed))
+       ;; Match TKs in quotation marks (hl-prog-extra sees them as strings)
+       '("\\(TK\\)+" 0 string '(:weight bold :inherit font-lock-warning-face))
+       ;; Match TKs not in quotation marks
+       '("\\(TK\\)+" 0 nil '(:weight bold :inherit font-lock-warning-face))))
+(global-hl-prog-extra-mode))
