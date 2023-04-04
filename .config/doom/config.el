@@ -278,12 +278,14 @@
       :from tags
       :left-join nodes
       :on (= tags:node-id nodes:id)
-      :where (in tag $v1)] '(["Project" "Area" "Daily"])))))
+      ])))
 
-;; Roam daily and project files only
-(setq org-agenda-files (rcool/define-agenda-files))
+  )
+(defun rcool/set-agenda-files ()
+  (interactive)
+  (setq org-agenda-files (rcool/define-agenda-files)))
 (map! :leader
-      :desc "Refresh Agenda Files" "n A" #'rcool/define-agenda-files )
+      :desc "Refresh Agenda Files" "n A" #'rcool/set-agenda-files )
 (defun rcool/buffer-prop-get (name)
   "Get a buffer property called NAME as a string."
   (org-with-point-at 1
