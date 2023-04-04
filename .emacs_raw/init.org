@@ -141,17 +141,26 @@
     :config
   (general-evil-setup t)
   (general-create-definer rcool/leader-keys
+  :states '(normal motion visual)
   :prefix "SPC")
-  (general-create-definer rcool/local-leader-keys
-  :prefix ","
-  :global-prefix "SPC m"))
+
+  (rcool/leader-keys
+  "" nil 
+  ))
 #+end_src
 
 ** Which-Key
 #+begin_src emacs-lisp :tangle yes
   (use-package which-key
-    :init (which-key-mode))
-  
+    :init
+    (which-key-mode)
+    (which-key-setup-minibuffer)
+    :config
+    (setq which-key-idle-delay 0.3
+          which-key-prefix-prefix "+"
+          which-key-sort-order 'which-key-key-order-alpha
+          which-key-min-display-lines 3
+          which-key-max-display-columns nil)) 
 
 #+end_src
 ** Evil
@@ -251,34 +260,105 @@
 * Company
 #+begin_src emacs-lisp :tangle yes
   (use-package company
-	:diminish
-	:general
-	(general-define-key :keymaps 'company-active-map
-						"C-j" 'company-select-next
-						"C-k" 'company-select-previous)
+    :diminish
+    :general
+    (general-define-key :keymaps 'company-active-map
+                        "C-j" 'company-select-next
+                        "C-k" 'company-select-previous)
 
-	:init
-	(add-hook 'after-init-hook 'global-company-mode)
-	(setq company-minimum-prefix-length 2
-		  company-tooltip-limit 14
-		  company-tooltip-align-annotations t
-		  company-require-match 'never
-		  company-global-modes '(not erc-mode message-mode help-mode gud-mode)
-		  company-frontends
-		  '(company-pseudo-tooltip-frontend
-			 company-echo-metadata-frontend)
-		  company-backends '(company-capf company-files company-keywords)
-		  company-auto-complete nil
-		  company-auto-complete-chars nil
-		  company-dabbrev-other-buffers nil
-		  company-dabbrev-ignore-case nil
-		  company-dabbrev-downcase nil)
+    :init
+    (add-hook 'after-init-hook 'global-company-mode)
+    (setq company-minimum-prefix-length 2
+          company-tooltip-limit 14
+          company-tooltip-align-annotations t
+          company-require-match 'never
+          company-global-modes '(not erc-mode message-mode help-mode gud-mode)
+          company-frontends
+          '(company-pseudo-tooltip-frontend
+             company-echo-metadata-frontend)
+          company-backends '(company-capf company-files company-keywords)
+          company-auto-complete nil
+          company-auto-complete-chars nil
+          company-dabbrev-other-buffers nil
+          company-dabbrev-ignore-case nil
+          company-dabbrev-downcase nil)
 
-	:config
-	(setq company-idle-delay 0.35)
-	:custom-face
-	(company-tooltip ((t (:family "Spleen32x64 Nerd Font")))))
+    :config
+    (setq company-idle-delay 0.35)
+    :custom-face
+    (company-tooltip ((t (:family "Spleen32x64 Nerd Font")))))
+
+  (use-package company-box
+    :diminish
+    :functions (all-the-icons-favicon
+                all-the-icons-material
+                all-the-icons-octicon
+                all-the-icons-alltheicon)
+    :hook (company-mode . company-box-mode)
+    :init (setq company-box-enable-icon (display-graphic-p))
+    :config
+    (setq company-box-backend-colors nil)
+   )
+
 #+end_src
+
+* Projectile
+#+begin_src emacs-lisp :tangle yes
+  (use-package projectile
+    :diminish
+    :config (projectile-mode)
+    :custom ((projectile-completion-system 'ivy))
+    :bind-keymap
+    ("C-c p" . projectile-command-map)
+    :general
+    (rcool/leader-keys
+      "p!" '(projectile-run-shell-command-in-root :wk "Run cmd in root")
+      "p&" '(projectile-run-async-shell-command-in-root :wk "Async cmd in root")
+      "pa" '(projectile-add-known-project :wk "Add new project")
+      "pb" '(projectile-switch-to-buffer :wk "Switch to project buffer")
+      "pd" '(projectile-remove-known-project :wk "Remove project")
+      "pf" '(projectile-find-file :wk "Find Project File")
+      "pg" '(projecfile-configure-project :wk "Configure project")
+      "pk" '(projectile-kill-buffers :wk "Kill project buffers")
+      "po" '(projectile-find-other-file :wk "Find Other File")
+      "pp" '(projectile-switch-project :wk "Switch projects")
+      "pr" '(projectile-recentf :wk "Find Recent Project Files")
+      "ps" '(projectile-save-project-buffers :wk "Save Project Buffers")
+      "pt" '(magit-todos-list :wk "List project todos"))
+
+    :init
+    (when (file-directory-p "~/Documents/projects")
+      (setq projectile-project-search-path '("~/Documents/projects")))
+    (setq projectile-switch-project-action #'projectile-dired))
+
+  (use-package counsel-projectile
+    :config (counsel-projectile-mode))
+
+	
+#+end_src
+
+* Perspective
+#+begin_src emacs-lisp :tangle yes
+  (use-package perspective
+
+    :custom
+    (persp-mode-prefix-key (kbd "M-p"))
+    :init
+    (persp-mode)
+
+    :general
+    (rcool/leader-keys
+      "W" '(:ignore t :wk "Workspaces")
+      "W." '(persp-switch :wk "Switch Workspace")
+      "Ws" '(persp-state-save :wk "Save")
+      "Wl" '(persp-state-load :wk "Load")
+      "Wn" '(persp-next :wk "Next")
+      "Wp" '(persp-prev :wk "Prev")
+      "Wr" '(persp-rename :wk "Rename")
+      "Wn" '(persp-switch-by-number :wk "Switch to Number"))
+    )
+#+end_src
+
 
 * Modeline
 #+begin_src emacs-lisp :tangle yes
@@ -310,6 +390,17 @@
 
 * Org Mode
 ** Orgmode packages
+*** Org Menu
+#+begin_src emacs-lisp :tangle yes
+  (use-package org-menu
+   :after org
+   :commands (org-menu)
+   :general
+   (rcool/leader-keys
+   "om" '(org-menu :wk "Org Menu") )
+  )
+#+end_src
+
 *** Org Super Agenda
 #+begin_src emacs-lisp :tangle yes
 	(use-package org-super-agenda
@@ -454,55 +545,77 @@
     (org-roam-directory (file-truename "~/org"))
     (org-roam-dailies-directory "roam/daily/")
     (org-roam-completion-everywhere t)
+
+    :general
+    (rcool/leader-keys
+      "n" '(:ignore t :wk "Notes")
+      "nd" '(:ignore t :wk "By date")
+      "nd-" '(org-roam-dailies-find-directory :wk "Find Directory")
+      "ndy" '(org-roam-dailies-goto-yesterday :wk "Goto Yesterday")
+      "ndT" '(org-roam-dailies-capture-today :wk "Capture Today")
+      "ndt" '(org-roam-dailies-goto-today :wk "Goto Today")
+      "ndY" '(org-roam-dailies-capture-yesterday :wk "Capture Yesterday")
+      "ndf" '(org-roam-dailies-goto-next-note :wk "Next Note")
+      "ndd" '(org-roam-dailies-goto-date :wk "Goto Date")
+      "nf" '(org-roam-node-find :wk "Find")
+      "ni" '(org-roam-node-insert :wk "Insert")
+      "no" '(org-roam-node-open :wk "Open")
+      "nn" '(org-roam-capture :wk "Capture to node")
+      "ng" '(org-roam-graph :wk "Show graph")
+      "nF" '(org-roam-ref-find :wk "Find Ref")
+      "ns" '(org-roam-db-sync :wk "Sync database")
+	
+
+      )
+
    )
 #+end_src
 
-** Keybindings
+**  Keybindings
 #+begin_src emacs-lisp :tangle yes
   (setq org-special-ctrl-a/e t)
 
   (general-def
-	:states 'normal
-	:keymaps 'org-mode-map
-	"t" 'org-todo
+    :states 'normal
+    :keymaps 'org-mode-map
+    "t" 'org-todo
     "<return>" 'org-open-at-point-global
-	"K" 'org-shiftup
-	"J" 'org-shiftdown
-	)
+    "K" 'org-shiftup
+    "J" 'org-shiftdown
+    )
   (general-def
-	:states 'insert
-	:keymaps 'org-mode-map
-	"C-o" 'evil-org-open-above
-	"M-<up>" 'org-shiftup
-	"M-<down>" 'org-shiftdown
-	"<" 'org-shiftleft
-	">" 'org-shiftright
-	)
+    :states 'insert
+    :keymaps 'org-mode-map
+    "C-o" 'evil-org-open-above
+    "M-<up>" 'org-shiftup
+    "M-<down>" 'org-shiftdown
+    )
 
   (general-def
-	:states 'normal
-	:keymaps 'org-mode-map
-	"M-[" 'org-metaleft
-	"M-]" 'org-metaright
-	)
+    :states 'normal
+    :keymaps 'org-mode-map
+    "M-[" 'org-metaleft
+    "M-]" 'org-metaright
+    )
 
   ;; Org-src
-  (general-def
-	:prefix ","
-  :states 'normal
-	:keymaps 'org-src-mode-map
-	"b" '(nil :wk "Org SRC")
-	"bk" '(org-edit-src-abort :wk "Abort")
-	"bc" '(org-edit-src-exit :wk "Accept & Exit")
-	)
+  (rcool/leader-keys
+    "o" '(:ignore t :wk "Org")
+    "ob" '(:ignore t :wk "Code Block")
+    "obk" '(org-edit-src-abort :wk "Abort")
+    "obc" '(org-edit-src-exit :wk "Accept & Exit")
+    "obe" '(org-edit-special :wk "Edit")
+    "oc" '(org-ctrl-c-ctrl-c :wk "C-c C-c") 
+    )
 
   (general-def
-	:keymaps 'org-src-mode-map
-	"C-c C-c" 'org-edit-src-exit)
+    :keymaps 'org-src-mode-map
+    "C-c C-c" 'org-edit-src-exit)
 
 #+end_src
 
-** Orgmode startup setup function
+** Basic Setup
+*** Orgmode startup setup function
 #+begin_src emacs-lisp :tangle yes
   (setq rcool/default-line-spacing 1)
   (setq-default line-spacing rcool/default-line-spacing)
@@ -510,358 +623,483 @@
     (org-indent-mode)
     (visual-line-mode 1)
     (centered-cursor-mode)
-    (smartparens-mode 0)
-    (hl-prog-extra-mode 0)
     (setq-local line-spacing (+ rcool/default-line-spacing 2))
     (valign-mode)
     )
 #+end_src
-
-** Some Useful functions we will use throughout
 *** Pretty Symbols
 #+begin_src emacs-lisp :tangle yes
-  (defun rcool/prettify-symbols-setup ()
-	;; checkboxes
-	(push '("[ ]" .  "☐") prettify-symbols-alist)
-	(push '("[X]" . "☑" ) prettify-symbols-alist)
-	;; (push '("[X]" . "☒" ) prettify-symbols-alist)
-	(push '("[-]" . "❍" ) prettify-symbols-alist)
-
-	;; org-babel
-	(push '("#+BEGIN_SRC" . ?≫) prettify-symbols-alist)
-	(push '("#+END_SRC" . ?≫) prettify-symbols-alist)
-	(push '("#+begin_src" . ?≫) prettify-symbols-alist)
-	(push '("#+end_src" . ?≫) prettify-symbols-alist)
-
-	(push '("#+BEGIN_QUOTE" . ?❝) prettify-symbols-alist)
-	(push '("#+END_QUOTE" . ?❞) prettify-symbols-alist)
-
-	;; (push '("#+BEGIN_SRC python" . ) prettify-symbols-alist) ;; This is the Python symbol. Comes up weird for some reason
-	(push '("#+RESULTS:" . ?≚ ) prettify-symbols-alist)
-
-	;; drawers
-	(push '(":PROPERTIES:" . ?) prettify-symbols-alist)
-
-	;; tags
-	;; (push '(":Misc:" . "" ) prettify-symbols-alist)
-
-	(prettify-symbols-mode))
-
+    (defun rcool/prettify-symbols-setup ()
+         ;; checkboxes
+         (push '("[ ]" .  "☐") prettify-symbols-alist)
+         (push '("[X]" . "☑" ) prettify-symbols-alist)
+         ;; (push '("[X]" . "☒" ) prettify-symbols-alist)
+         (push '("[-]" . "❍" ) prettify-symbols-alist)
+  
+         ;; org-babel
+         (push '("#+BEGIN_SRC" . ?≫) prettify-symbols-alist)
+         (push '("#+END_SRC" . ?≫) prettify-symbols-alist)
+         (push '("#+begin_src" . ?≫) prettify-symbols-alist)
+         (push '("#+end_src" . ?≫) prettify-symbols-alist)
+  
+         (push '("#+BEGIN_QUOTE" . ?❝) prettify-symbols-alist)
+         (push '("#+END_QUOTE" . ?❞) prettify-symbols-alist)
+  
+         ;; (push '("#+BEGIN_SRC python" . ) prettify-symbols-alist) ;; This is the Python symbol. Comes up weird for some reason
+         (push '("#+RESULTS:" . ?≚ ) prettify-symbols-alist)
+  
+         ;; drawers
+         (push '(":PROPERTIES:" . ?) prettify-symbols-alist)
+  
+         ;; tags
+         ;; (push '(":Misc:" . "" ) prettify-symbols-alist)
+  (prettify-symbols-mode))
 #+end_src
-
-
-** Org Mode Config
-*** Initalization
+*** Initialization
 #+begin_src emacs-lisp :tangle yes
   (use-package org
-	:hook (org-mode . rcool/org-setup)
-	:hook (org-mode . rcool/prettify-symbols-setup)
-	:hook (org-capture-mode . evil-insert-state)
-	:diminish org-indent-mode
-	:diminish visual-line-mode
-	)
-
+	   :hook (org-mode . rcool/org-setup)
+	   :hook (org-mode . rcool/prettify-symbols-setup)
+	   :hook (org-capture-mode . evil-insert-state)
+  )
 #+end_src
-*** COMMENT Visuals
+*** Visuals
 #+begin_src emacs-lisp :tangle yes
-  (use-package org
-	:config
-	(setq org-ellipsis "…"
-		  org-src-fontify-natively t
-		  org-highlight-latex-and-related '(native)
-		  org-startup-folded 'showeverything
-		  org-image-actual-width 300
-		  org-fontify-whole-block-delimiter-line t)
-	)
+(setq org-ellipsis "⤵")
+;; ⤵ ▼ ⬎  
+(setq org-src-fontify-natively t) ;; Syntax highlighting in org src blocks
+(setq org-highlight-latex-and-related '(native)) ;; Highlight inline LaTeX
+(setq org-startup-folded 'showeverything)
+(setq org-image-actual-width 300)
+(setq org-fontify-whole-heading-line t)
 #+end_src
 *** Interaction
 #+begin_src emacs-lisp :tangle yes
-  (use-package org
-	:config
+(setq org-cycle-separator-lines 1)
+(setq org-catch-invisible-edits 'show-and-error) ;; 'smart
+(setq org-src-tab-acts-natively t)
 
-	(setq org-cycle-separator-lines 1
-		  org-catch-invisible-edits 'show-and-error
-		  org-src-tab-acts-natively t)
+;; M-Ret can split lines on items and tables but not headlines and not on anything else (unconfigured)
+(setq org-M-RET-may-split-line '((headline) (item . t) (table . t) (default)))
+(setq org-loop-over-headlines-in-active-region nil)
 
-	;; M-RET can split lines items and tables but not headlines
-	(setq org-M-RET-may-split-line '((headline) (item . t) (default)))
-	(setq org-loop-over-headlines-in-active-region nil)
+;; Opens links to other org file in same frame (rather than splitting)
+(setq org-link-frame-setup '((file . find-file)))
 
-	;;Open Links to other org files in the same frame
-	(setq org-link-frame-setup '((file . find-file)))
+(setq org-log-done t
+      org-log-into-drawer t)
 
-	;; Log when tasks are done
-	(setq org-log-done t
-		  org-log-into-drawer t)
+;; Automatically change bullet type when indenting
+;; Ex: indenting a + makes the bullet a *.
+(setq org-list-demote-modify-bullet
+      '(("+" . "*") ("*" . "-") ("-" . "+")))
 
-	;; Automatically change bullet point when indenting
-	(setq org-list-demote-modify-bullet
-		  '(("+" . "*") ("*" . "-") ("-" . "+")))
+;; Automatically save and close the org files I most frequently archive to.
+;; I see no need to keep them open and crowding my buffer list.
+;; Uses my own function jib/save-and-close-this-buffer.
+(dolist (file '("homework-archive.org_archive" "todo-archive.org_archive"))
+  (advice-add 'org-archive-subtree-default :after 
+              (lambda () (jib/save-and-close-this-buffer file))))
 
-	(defun rcool/post-org-goto ()
-	  (let ((current-prefix-arg '(4)))
-		(call-interactively 'org-reveal))
-	  (org-cycle))
+(defun rcool/post-org-goto ()
+  (let ((current-prefix-arg '(4))) ;; emulate C-u
+    (call-interactively 'org-reveal))
+  (org-cycle))
 
-	(advice-add 'counsel-org-togo :after #'rcool/post-org-goto)
-	(advice-add 'org-agenda-goto :after #'rcool/post-org-goto)
-	(advice-add 'org-agenda-switch-to :after #'rcool/post-org-goto)
+(advice-add 'counsel-org-goto :after #'rcool/post-org-goto)
+(advice-add 'org-agenda-goto :after #'rcool/post-org-goto)
+(advice-add 'org-agenda-switch-to :after #'rcool/post-org-goto)
+#+end_src
+*** Todos tags and priorities
+**** Todos
+#+begin_src emacs-lisp :tangle yes
+(setq org-todo-keywords '((type
+                           "TODO(t)" "WAITING(h)" "INPROG-TODO(i)" "WORK(w)"
+                           "STUDY(s)" "SOMEDAY" "READ(r)" "PROJ(p)" "CONTACT(c)"
+                           "AUDIO(a)" "VIDEO(v)"
+                           "|" "DONE(d)" "CANCELLED(C@)")))
+
+(setq org-todo-keyword-faces
+      '(("TODO"  :inherit (region org-todo) :foreground "DarkOrange1"   :weight bold)
+        ("WORK"  :inherit (org-todo region) :foreground "DarkOrange1"   :weight bold)
+        ("READ"  :inherit (org-todo region) :foreground "MediumPurple2" :weight bold)
+        ("VIDEO"  :inherit (org-todo region) :foreground "MediumPurple2" :weight bold)
+        ("AUDIO"  :inherit (org-todo region) :foreground "MediumPurple2" :weight bold)
+        ("PROJ"  :inherit (org-todo region) :foreground "orange3"     :weight bold)
+        ("STUDY" :inherit (region org-todo) :foreground "plum3"       :weight bold)
+        ("DONE" . "SeaGreen4")))
+#+end_src
+
+**** Tags
+#+begin_src emacs-lisp :tangle yes
+  (setq org-tags-column -1)
+#+end_src
+
+**** Priorities
+#+begin_src emacs-lisp :tangle yes
+(setq org-lowest-priority ?F)  ;; Gives us priorities A through F
+(setq org-default-priority ?E) ;; If an item has no priority, it is considered [#E].
+
+(setq org-priority-faces
+      '((65 . "red2")
+        (66 . "Gold1")
+        (67 . "Goldenrod2")
+        (68 . "PaleTurquoise3")
+        (69 . "DarkSlateGray4")
+        (70 . "PaleTurquoise4")))
+#+end_src
+
+*** Org-babel
+#+begin_src emacs-lisp :tangle yes
+	;; Org-Babel
+	(org-babel-do-load-languages
+	 'org-babel-load-languages
+	 '(
+	   (python . t)
+	   (shell . t)
+	   (gnuplot . t)
+	   (java . t)
+  (js . t)
+	(lua . t)
+  (sql . t)
+	   ))
+
+	(use-package gnuplot :defer t)
+
+	;; Don't prompt before running code in org
+	(setq org-confirm-babel-evaluate nil)
+	(setq python-shell-completion-native-enable nil)
+
+	;; How to open buffer when calling `org-edit-special'.
+	(setq org-src-window-setup 'current-window)
+#+end_src
+
+*** Agenda
+#+begin_src emacs-lisp :tangle yes
+;; custom time stamp format. I don't use this.
+(setq org-time-stamp-custom-formats '("<%A, %B %d, %Y" . "<%m/%d/%y %a %I:%M %p>"))
+
+(setq org-agenda-restore-windows-after-quit t)
+
+(setq org-agenda-window-setup 'current-window)
+
+;; Only show upcoming deadlines for the next X days. By default it shows
+;; 14 days into the future, which seems excessive.
+(setq org-deadline-warning-days 3)
+;; If something is done, don't show its deadline
+(setq org-agenda-skip-deadline-if-done t)
+;; If something is done, don't show when it's scheduled for
+(setq org-agenda-skip-scheduled-if-done t)
+;; If something is scheduled, don't tell me it is due soon
+(setq org-agenda-skip-deadline-prewarning-if-scheduled t)
+
+;; use AM-PM and not 24-hour time
+(setq org-agenda-timegrid-use-ampm 1)
+
+;; A new day is 3am (I work late into the night)
+(setq org-extend-today-until 3)
+
+;; (setq org-agenda-time-grid '((daily today require-timed)
+;;                              (1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000 2100 2200)
+;;                              "        " "----------------"))
+
+(setq org-agenda-time-grid nil)
+
+(setq org-agenda-span 'day)
+
+;; (setq org-agenda-block-separator ?-)
+(setq org-agenda-current-time-string "<----------------- Now")
+
+(setq org-agenda-block-separator nil)
+
+(setq org-agenda-scheduled-leaders '("Plan | " "Sched.%2dx: ") ; ⇛
+      org-agenda-deadline-leaders '("Due: " "Due in %1d d. | " "Due %1d d. ago: "))
+
+(setq org-agenda-prefix-format '((agenda . "  %-6:T %t%s")
+                                 (todo . "  %-6:T %t%s")
+                                 (tags . " %i %-12:c")
+                                 (search . " %i %-12:c")))
+
+(add-hook 'org-agenda-mode-hook
+          #'(lambda () (setq-local line-spacing 6)))
+
+(add-hook 'org-agenda-mode-hook
+          #'(lambda () (hide-mode-line-mode)))
+#+end_src
+
+*** Custom Views
+#+begin_src emacs-lisp :tangle yes
+(setq org-agenda-custom-commands nil)
+(add-to-list '
+ org-agenda-custom-commands
+ '("c" "Day View"
+   ((agenda "" ((org-agenda-overriding-header "Productivity View")
+                (org-agenda-span 'day)
+                (org-super-agenda-groups '(
+                                           (:name "Today's Tasks:"
+                                                  :scheduled t
+                                                  :order 2)
+                                           (:name "Unscheduled Tasks Due Soon:"
+                                                  :deadline t
+                                                  :order 3)
+                                           (:name "Today's Schedule:"
+                                                  :time-grid t
+                                                  :discard (:deadline t)
+                                                  :order 1)))))
+
+    ;; (org-ql-block '(and (not (tags "defer")) (or (todo "PROJ" "STUDY") (and (todo) (or (tags "ec" "lt") (tags "p")))))
+    ;;               ((org-ql-block-header "")
+    ;;                (org-super-agenda-groups '(
+    ;;                                           (:name "Extracurricular:"
+    ;;                                                  :tag "ec"
+    ;;                                                  :order 5)
+    ;;                                           (:name "Personal:"
+    ;;                                                  :tag "p"
+    ;;                                                  :order 10)
+    ;;                                           (:name "Long-Term:"
+    ;;                                                  :todo ("STUDY" "PROJ")
+    ;;                                                  :tag "lt")
+    ;;                                           (:discard (:todo t))))))
+
+    ;; (todo "TODO"
+    ;; 		(
+    ;; 		 ;;(org-agenda-prefix-format "[ ] %T: ")
+    ;; 		 (org-agenda-sorting-strategy '(tag-up priority-down))
+    ;; 		 ;; (org-agenda-todo-keyword-format "")
+    ;; 		 (org-agenda-overriding-header "\n Todos: ")))
+    ;; (todo "PROJ"
+    ;; 		((org-agenda-overriding-header "")))
+
+    (alltodo "" ((org-agenda-overriding-header "")
+             ;; (org-agenda-prefix-format "  %-6:T   ")
+                 ;; (org-agenda-sorting-strategy '(tag-up priority-down))
+                 (org-super-agenda-groups
+                  '(
+                    (:discard (:tag "defer"))
+                    (:name "Extracurricular:"
+                           :tag "ec"
+                           :order 5)
+                    (:name "Personal:"
+                           :tag "p"
+                           :order 10)
+                    (:name "Study:"
+                           :todo "STUDY")
+                    (:name "Projects:"
+                           :todo "PROJ")
+                    (:discard (:todo t))
+                    ))))
+
+    )))
+
+(add-to-list 'org-agenda-custom-commands
+             '("v" "Day View No Agenda"
+               ((org-ql-block '(todo)
+                              ((org-super-agenda-groups '((:name "Today's Tasks"
+                                                                 :scheduled today
+                                                                 :deadline today)
+                                                          (:discard (:tag "defer"))
+                                                          (:name "Extracurricular:"
+                                                                 :tag "ec"
+                                                                 :order 10)
+                                                          (:name "Personal:"
+                                                                 :tag "p"
+                                                                 :order 5)
+                                                          (:name "Projects"
+                                                                 :todo ("STUDY" "PROJ")
+                                                                 :tag "lt")
+                                                          (:discard (:todo t)))))))))
+
+(add-to-list 'org-agenda-custom-commands
+             '("w" "Six-Day View"
+               ((agenda ""
+                        ((org-agenda-span 6)
+                         (org-agenda-entry-types '(:deadline :scheduled))
+                         (org-agenda-start-on-weekday nil)
+                         (org-deadline-warning-days 0)))
+                ;; (todo "PROJ"
+                ;; 	  (
+                ;; 	   ;; (org-agenda-skip-function
+                ;; 	   ;; 	'(org-agenda-skip-entry-if 'deadline))
+                ;; 	   (org-agenda-prefix-format "%s ")
+                ;; 	   (org-agenda-overriding-header "\Long-term:")))
+                (org-ql-block '(and (not (tags "defer")) (or (todo "PROJ" "STUDY") (and (todo) (or (tags "ec" "lt") (tags "p")))))
+                              ((org-ql-block-header "")
+                               (org-super-agenda-groups '(
+                                                          (:name "Extracurricular:"
+                                                                 :tag "ec"
+                                                                 :order 5)
+                                                          (:name "Personal:"
+                                                                 :tag "p"
+                                                                 :order 10)
+                                                          (:name "Long-Term:"
+                                                                 :todo ("STUDY" "PROJ")
+                                                                 :tag "lt")
+                                                          (:discard (:todo t))))))
+
+
+                )))
+#+end_src
+
+*** Final closing ) for org
+#+begin_src emacs-lisp :tangle yes
+#+end_src
+
+* copilot
+#+begin_src emacs-lisp :tangle yes
+  (use-package copilot
+	:straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+	:hook (prog-mode . copilot-mode)
+  )
+
+  (defun rcool/copilot-tab ()
+	(interactive)
+	(or (copilot-accept-completion)
+		(indent-for-tab-command)))
+
+  (with-eval-after-load 'copilot
+  (evil-define-key 'insert copilot-mode-map
+  (kbd "<tab>") #'rcool/copilot-tab))
+#+end_src
+
+* Dired Rainbow
+#+begin_src emacs-lisp :tangle yes
+(use-package dired-rainbow
+  :config
+  (progn
+    (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
+    (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
+    (dired-rainbow-define xml "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
+    (dired-rainbow-define document "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
+    (dired-rainbow-define markdown "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
+    (dired-rainbow-define database "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
+    (dired-rainbow-define media "#de751f" ("mp3" "mp4" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
+    (dired-rainbow-define image "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
+    (dired-rainbow-define log "#c17d11" ("log"))
+    (dired-rainbow-define shell "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
+    (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
+    (dired-rainbow-define compiled "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
+    (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
+    (dired-rainbow-define compressed "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+    (dired-rainbow-define packaged "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
+    (dired-rainbow-define encrypted "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
+    (dired-rainbow-define fonts "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
+    (dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
+    (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
+    (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")
+    )) 
+
+#+end_src
+
+* File management keybindings
+#+begin_src emacs-lisp :tangle yes
+	(rcool/leader-keys
+  "f" '(:ignore t :wk "Files")
+	"ff" '(find-file :wk "Find File")
+	"fr" '(recentf-open-files :wk "Recent Files")
+	"fs" '(save-buffer :wk "Save")
+	) 
+#+end_src
+
+* Buffer Management keybindings
+#+begin_src emacs-lisp :tangle yes
+	(rcool/leader-keys
+  "b" '(:ignore t :wk "Buffer")
+	"bb" '(counsel-switch-buffer :wk "Switch")
+	"bd" '(evil-delete-buffer :wk "Delete")
+    "br" '(revert-buffer :wk "Revert")
 
 	)
 #+end_src
-*** Tags, Todos, Priorities
-**** Tags:
+
+* Help Keybindings
 #+begin_src emacs-lisp :tangle yes
-  (use-package org
-    :config
-    (setq org-tags-column -1)
-    )
-#+end_src
-**** Todos:
-#+begin_src emacs-lisp :tangle yes
-  (use-package org
-  :config
-  (setq org-todo-keywords '((type
-                             "TODO(t)" "WAITING(h)" "INPROG(i)"
-                             "READ(r)" "PROJ(p)" "DONE(d)" "CANCELLED(C@)")))
-  (setq org-todo-keyword-faces
-        '(("TODO" :inherit (region org-todo) :foreground "DarkOrange1" :weight bold)
-          ("WAITING" :inherit (org-todo region) :foreground "DarkOrange1" :weight bold)
-          ("INPROG" :inherit (org-todo region) :foreground "MediumPurple2" :weight bold)
-          ("READ" :inherit (org-todo region) :foreground "orange3" :weight bold)
-          ("PROJ" :inherit (org-todo region) :foreground "blue3" :weight bold)
-          ("DONE" . "SeaGreen4")
-          ("CANCELLED" . "SeaGreen4")))
-  )
-#+end_src
-**** Priorities
-#+begin_src emacs-lisp :tangle yes
-  (use-package org
-  :config
-   (setq org-lowest-priority ?F)
-   (setq org-default-priority ?E)
+  (rcool/leader-keys
 
-   (setq org-priority-faces
-         '((65 . "red2")
-         (66 . "Gold1")
-         (67 . "DarkOrange1")
-         (68 . "PaleTurquoise3")
-         (69 . "DarkSlateGrey4")
-         (70 . "PaleTurquoise4")))
-  )
-#+end_src
-*** Org-Babel
-#+begin_src emacs-lisp :tangle yes
-  (use-package org
-    :config
+	"h" '(:ignore t :wk "Help/Emacs")
+	"hv" '(counsel-describe-variable :wk "Des. Variable")
+	"hb" '(counsel-descbinds :wk "Des. Bindings")
+	"hM" '(describe-mode :wk "Des. Mode")
+	"hf" '(counsel-describe-function :wk "Des. Function")
+	"hF" '(counsel-describe-face :wk "Des. Face")
+	"hk" '(describe-key :wk "Des. Key")
 
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '( (python . t)
-        (shell . t)
-        (gnuplot . t)
-        (emacs-lisp . t)
-        (js . t)
-        (sql . t)
-        (calc . t)
-        (lua . t)))
-
-    (use-package gnuplot :defer t)
-
-
-    ;; Don't prompt before running code
-    (setq org-confirm-babel-evaluate nil
-          python-shell-completion-native-enable nil)
-
-    ;; How to open the src buffer
-    (setq org-src-window-setup 'current-window)
-    )
-  
-#+end_src
-*** Org Habits
-#+begin_src emacs-lisp :tangle yes
-  (use-package org
-:config
-    (setq org-habit-preceding-days 6
-          org-habit-following-days 6
-          org-habit-show-habits-only-for-today nil
-          org-habit-today-glyph ?⍟
-          org-habit-completed-glyph ?✓
-          org-habit-graph-column 40
-       )   )
-#+end_src
-
-**** Setup org-roam to use org-agenda
-#+begin_src emacs-lisp :tangle yes
-    (defun rcool/project-p ()
-      "Return non-nill if current buffer has any todo entry.
-
-    TODO entries marked as done are ignored, meaning that this function
-    return nils if current buffer contains only completed tasks."
-      (org-element-map
-          (org-element-parse-buffer 'headline)
-          'headline
-        (lambda (h)
-          (eq (org-element-property :todo-type h)
-              'todo))
-        nil 'first-match))
-
-    (defun rcool/buffer-tags-get ()
-      "Return filetags value in current buffer."
-      (rcool/buffer-prop-get-list "filetags" " "))
-
-    (defun rcool/buffer-prop-get-list (name &optional separators)
-      "Get a buffer property NAME as a list using SEPARATORS.
-
-    If SEPARATORS is non-nil, it should be a regular expression
-    matching text that separates, but is not part of, the substrings.
-    If nil it defaults to `split-string-default-separators', normally
-    \"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t."
-      (let ((value (rcool/buffer-prop-get name)))
-        (when (and value (not (string-empty-p value)))
-          (split-string-and-unquote value separators))))
-
-    (defun rcool/buffer-prop-get (name)
-      "Get a buffer property called NAME as string."
-      (org-with-point-at 1
-        (when (re-search-forward (concat "^#\\+" name ": \\(.*\\)")
-                                 (point-max) t)
-          (buffer-substring-no-properties
-           (match-beginning 1)
-           (match-end 1)))))
-
-    (defun rcool/buffer-tags-add (tag)
-      "Add a TAG to filetags in current buffer."
-      (let* ((tags (rcool/buffer-tags-get))
-             (tags (append tags (list tag))))
-        (apply #'rcool/buffer-tags-set tags)))
-
-    (defun rcool/buffer-tags-set (&rest tags)
-      "Set TAGS in current buffer.
-
-    If filetags value is already set, replace it."
-      (rcool/buffer-prop-set "filetags" (string-join tags " ")))
-
-
-    (defun rcool/buffer-prop-set (name value)
-            "Set a file property called NAME to VALUE in buffer file.
-
-       If the property is already set, relace its value."
-
-            (setq name (downcase name))
-            (org-with-point-at 1
-              (let ((case-fold-search t))
-                (if (re-search-forward (concat "^#\\+" name ":\\(*\\)")
-                                       (point-max) t)
-                    (replace-match (concat "#+" name ": " value) 'fixedcase)
-                  (while (and (not (eobp))
-                              (looking-at "^[#:]"))
-                    (if (save-excursion (end-of-line) (eobp))
-                        (progn
-                          (end-of-line)
-                          (insert "\n"))
-                      (forward-line)
-                      (beginning-of-line)))
-                  (insert "#+" name ": " value "\n")))))
-
-
-    (add-hook 'find-file-hook #'rcool/project-update-tag)
-    (add-hook 'before-save-hook #'rcool/project-update-tag)
-
-    (defun rcool/project-update-tag ()
-      "Update PROJECT tag in the current buffer."
-
-      (when (and (not (active-minibuffer-window))
-                 (rcool/buffer-p))
-        (save-excursion
-          (goto-char (point-min))
-          (let* ((tags (rcool/buffer-tags-get))
-                 (original-tags tags))
-            (if (rcool/project-p)
-                (setq tags (cons "project" tags))
-              (setq tags (remove "project" tags)))
-
-            ;; Cleanup Dups
-            (setq tags (seq-uniq tags))
-
-            ;;Update tags if changed
-            (when (or (seq-difference tags original-tags)
-                      (seq-difference original-tags tags))
-              (apply #'rcool/buffer-tags-set tags))))))
-
-    (defun rcool/buffer-p ()
-      "Return non-nill if the currently visited buffer is a note."
-      (and buffer-file-name
-           (string-prefix-p
-            (expand-file-name (file-name-as-directory org-roam-directory))
-            (file-name-directory buffer-file-name))))
-#+end_src
-
-Get project files
-#+begin_src emacs-lisp :tangle yes
-    (defun rcool/project-files ()
-      "Return a list of note files containing 'project' tag."
-      (seq-uniq
-       (seq-map
-        #'car
-        (org-roam-db-query
-         [:select [nodes:file]
-                  :from tags
-                  :left-join nodes
-                  :on (= tags:node-id nodes:id)
-                  :where (like tag (quote "%\"project\"%"))]))))
-
-    (defun rcool/agenda-files-update (&rest _)
-      "Update the value of `org-agenda-files'."
-      (setq org-agenda-files (rcool/project-files)))
-
-    (advice-add 'org-agenda :before #'rcool/agenda-files-update)
-    (advice-add 'org-todo-list :before #'rcool/agenda-files-update) 
+	"hm" '(:ignore t :wk "Switch Mode")
+	"hmt" '(text-mode :wk "Text Mode")
+	"hme" '(emacs-lisp-mode :wk "Elisp Mode")
+	"hmo" '(org-mode :wk "Org Mode")
+	"ht" '(counsel-load-theme :wk "Load Theme")
+  ) 
 #+end_src
 
 
-
-* Smart Parens
+* Ace Window
 #+begin_src emacs-lisp :tangle yes
-  (use-package smartparens
-    :diminish
-    :defer 1
-    :config
-    (require 'smartparens-config)
-    (setq sp-max-prefix-length 25
-          sp-max-pair-length 4
-          sp-highlight-pair-overlay nil
-          sp-highlihgt-wrap-overlay nil
-          sp-highlihgt-wrap-tag-overlap nil)
-
-    (with-eval-after-load 'evil
-      (setq sp-show-pair-from-inside t
-            sp-cancel-autoskip-on-backward-movement nil
-            sp-pair-overlay-keymap (make-sparse-keymap)))
-
-    (let ((unless-list '(sp-point-before-word-p
-                         sp-point-after-word-p
-                         sp-point-before-same-p)))
-      (sp-pair "'" nil :unless unless-list)
-      (sp-pair "\"" nil :unless unless-list))
-
-    (sp-local-pair sp-lisp-modes "(" ")" :unless '(:rem sp-point-before-same-p))
-    (sp-local-pair '(emacs-lisp-mode org-mode markdown-mode gfm-mode)
-                   "[" nil :post-handlers '(:rem ("|" "SPC")))
-    (smartparens-global-mode t))
+	(use-package ace-window
+  :general
+	(rcool/leader-keys
+  "w" '(:ignore t :wk "Window")
+	  "w=" '(balance-windows :wk "Balance")
+	  "wa" '(ace-window :wk "Ace Window")
+	  "wd" '(ace-delete-window :wk "Delete")
+	  "wh" '(evil-window-left :wk "Left Window")
+	  "wj" '(evil-window-down :wk "Down Window")
+	  "wk" '(evil-window-up :wk "Up Window")
+	  "wl" '(evil-window-right :wk "Right Window")
+	  "ws" '(evil-window-split :wk "Split")
+	  "wS" '(ace-swap-window :wk "Swap")
+	  "wu" '(winner-undo :wk "Winner Undo")
+	  "wv" '(evil-window-vsplit :wk "Vsplit")
+  )) 
 #+end_src
-* HL-PROG
+
+* Ivy
 #+begin_src emacs-lisp :tangle yes
-    (use-package hl-prog-extra
-  :commands (hl-prog-extra-mode)
-    :config
-    (setq hl-prog-extra-list
-        (list
-         '("\\<\\(TODO\\|NOTE\\)\\(([^)+]+)\\)?" 0 comment
-           (:weight bold :inherit diff-removed))
-         ;; Match TKs in quotation marks (hl-prog-extra sees them as strings)
-         '("\\(TK\\)+" 0 string '(:weight bold :inherit font-lock-warning-face))
-         ;; Match TKs not in quotation marks
-         '("\\(TK\\)+" 0 nil '(:weight bold :inherit font-lock-warning-face))))
-  (global-hl-prog-extra-mode))
+  (use-package ivy
+	:diminish
+	:config
+	(setq ivy-extra-directories nil
+		  ivy-initial-inputs-alist nil
+		  ivy-fixed-height-minibuffer t)
+	(setq-default ivy-height 10)
+	(ivy-mode 1)
+
+  :general
+  (rcool/leader-keys
+	"s" '(:ignore t :which-key "Search")
+	"ss" '(swiper :which-key "Swiper")
+	))
+
+  (use-package ivy-rich
+	:after counsel
+	:init
+	(ivy-rich-mode 1))
+
+  (use-package ivy-posframe
+	:init
+	(setq ivy-postframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
+	(setq ivy-posframe-parameters
+		  '((left-fringe . 8)
+			(right-fringe . 8)))
+	(ivy-posframe-mode 1))
+#+end_src
+
+* Counsel
+#+begin_src emacs-lisp :tangle yes
+  (use-package counsel
+
+	:custom
+	(counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)
+
+	:config
+	(counsel-mode 1)
+	:general
+	(rcool/leader-keys
+	  ":" '(counsel-M-x :which-key "M-x")
+	  "bi" '(counsel-ibuffer :which-key "ibuffer")
+	  )
+	)
+
+  (use-package smex
+	:defer 1
+	:after counsel)
 #+end_src
