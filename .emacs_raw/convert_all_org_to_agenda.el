@@ -1,0 +1,6 @@
+(dolist (file (org-roam-list-files))
+  (message "processing %s" file)
+  (with-current-buffer (or (find-buffer-visiting file)
+                           (find-file-noselect file))
+    (rcool/project-update-tag)
+    (save-buffer)))

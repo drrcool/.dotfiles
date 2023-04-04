@@ -256,7 +256,7 @@ inhibit-compacting-font-caches t)
   :config
   (setq org-super-agenda-header-map nil)
   (add-hook 'org-agenda-mode-hook
-			#'(lambda () (setq local nobreak-char-display nil)))
+			#'(lambda () (setq-local nobreak-char-display nil)))
   :init
   (org-super-agenda-mode))
 
@@ -400,13 +400,15 @@ inhibit-compacting-font-caches t)
   :keymaps 'org-src-mode-map
   "C-c C-c" 'org-edit-src-exit)
 
+(setq rcool/default-line-spacing 1)
+(setq-default line-spacing rcool/default-line-spacing)
 (defun rcool/org-setup ()
   (org-indent-mode)
   (visual-line-mode 1)
   (centered-cursor-mode)
   (smartparens-mode 0)
   (hl-prog-extra-mode 0)
-  (setq-local line-spacing 3)
+  (setq-local line-spacing (+ rcool/default-line-spacing 2))
   (valign-mode)
   )
 
@@ -536,6 +538,138 @@ inhibit-compacting-font-caches t)
   ;; How to open the src buffer
   (setq org-src-window-setup 'current-window)
   )
+
+(use-package org
+:config
+    (setq org-habit-preceding-days 6
+          org-habit-following-days 6
+          org-habit-show-habits-only-for-today nil
+          org-habit-today-glyph ?⍟
+          org-habit-completed-glyph ?✓
+          org-habit-graph-column 40
+       )   )
+
+(defun rcool/project-p ()
+  "Return non-nill if current buffer has any todo entry.
+
+TODO entries marked as done are ignored, meaning that this function
+return nils if current buffer contains only completed tasks."
+  (org-element-map
+      (org-element-parse-buffer 'headline)
+      'headline
+    (lambda (h)
+      (eq (org-element-property :todo-type h)
+          'todo))
+    nil 'first-match))
+
+(defun rcool/buffer-tags-get ()
+  "Return filetags value in current buffer."
+  (rcool/buffer-prop-get-list "filetags" " "))
+
+(defun rcool/buffer-prop-get-list (name &optional separators)
+  "Get a buffer property NAME as a list using SEPARATORS.
+
+If SEPARATORS is non-nil, it should be a regular expression
+matching text that separates, but is not part of, the substrings.
+If nil it defaults to `split-string-default-separators', normally
+\"[ \f\t\n\r\v]+\", and OMIT-NULLS is forced to t."
+  (let ((value (rcool/buffer-prop-get name)))
+    (when (and value (not (string-empty-p value)))
+      (split-string-and-unquote value separators))))
+
+(defun rcool/buffer-prop-get (name)
+  "Get a buffer property called NAME as string."
+  (org-with-point-at 1
+    (when (re-search-forward (concat "^#\\+" name ": \\(.*\\)")
+                             (point-max) t)
+      (buffer-substring-no-properties
+       (match-beginning 1)
+       (match-end 1)))))
+
+(defun rcool/buffer-tags-add (tag)
+  "Add a TAG to filetags in current buffer."
+  (let* ((tags (rcool/buffer-tags-get))
+         (tags (append tags (list tag))))
+    (apply #'rcool/buffer-tags-set tags)))
+
+(defun rcool/buffer-tags-set (&rest tags)
+  "Set TAGS in current buffer.
+
+If filetags value is already set, replace it."
+  (rcool/buffer-prop-set "filetags" (string-join tags " ")))
+
+
+(defun rcool/buffer-prop-set (name value)
+        "Set a file property called NAME to VALUE in buffer file.
+
+   If the property is already set, relace its value."
+
+        (setq name (downcase name))
+        (org-with-point-at 1
+          (let ((case-fold-search t))
+            (if (re-search-forward (concat "^#\\+" name ":\\(*\\)")
+                                   (point-max) t)
+                (replace-match (concat "#+" name ": " value) 'fixedcase)
+              (while (and (not (eobp))
+                          (looking-at "^[#:]"))
+                (if (save-excursion (end-of-line) (eobp))
+                    (progn
+                      (end-of-line)
+                      (insert "\n"))
+                  (forward-line)
+                  (beginning-of-line)))
+              (insert "#+" name ": " value "\n")))))
+
+
+(add-hook 'find-file-hook #'rcool/project-update-tag)
+(add-hook 'before-save-hook #'rcool/project-update-tag)
+
+(defun rcool/project-update-tag ()
+  "Update PROJECT tag in the current buffer."
+
+  (when (and (not (active-minibuffer-window))
+             (rcool/buffer-p))
+    (save-excursion
+      (goto-char (point-min))
+      (let* ((tags (rcool/buffer-tags-get))
+             (original-tags tags))
+        (if (rcool/project-p)
+            (setq tags (cons "project" tags))
+          (setq tags (remove "project" tags)))
+
+        ;; Cleanup Dups
+        (setq tags (seq-uniq tags))
+
+        ;;Update tags if changed
+        (when (or (seq-difference tags original-tags)
+                  (seq-difference original-tags tags))
+          (apply #'rcool/buffer-tags-set tags))))))
+
+(defun rcool/buffer-p ()
+  "Return non-nill if the currently visited buffer is a note."
+  (and buffer-file-name
+       (string-prefix-p
+        (expand-file-name (file-name-as-directory org-roam-directory))
+        (file-name-directory buffer-file-name))))
+
+(defun rcool/project-files ()
+  "Return a list of note files containing 'project' tag."
+  (seq-uniq
+   (seq-map
+    #'car
+    (org-roam-db-query
+     [:select [nodes:file]
+              :from tags
+              :left-join nodes
+              :on (= tags:node-id nodes:id)
+              :where (like tag (quote "%\"project\"%"))]))))
+
+(defun rcool/agenda-files-update (&rest _)
+  "Update the value of `org-agenda-files'."
+  (setq org-agenda-files (rcool/project-files)))
+
+(advice-add 'org-agenda :before #'rcool/agenda-files-update)
+(advice-add 'org-todo-list :before #'rcool/agenda-files-update)
 
 (use-package smartparens
   :diminish
