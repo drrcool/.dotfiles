@@ -495,7 +495,7 @@ to `split-string-default-separators'."
   "Set TAGS in current buffer.
 
 If filetags value is already set, replace it."
-  (rcool-buffer-prop-set "filetags" (string-join tags " ")))
+  (rcool-buffer-prop-set "filetags" (string-join tags " ")  ))
 
 (defun rcool-buffer-prop-set (name value)
   "Set a file property called NAME to VALUE in buffer file.
@@ -1247,9 +1247,6 @@ returns nil if current buffer contains only completed tasks."
 
 (rcool/leader-keys
   "oE" '(eshell :wk "Eshell (Non-Toggle)"))
-
-(use-package fish-completion
-  :hook (eshell-mode . fish-completion-mode))
 
 (use-package eshell-syntax-highlighting
   :after esh-mode

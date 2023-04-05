@@ -1,20 +1,23 @@
 
 ;; ----- smex-history -----
 (
- magit
- org-agenda
  eval-buffer
+ eww
+ org-agenda
+ counsel-org-tag
+ magit
  org-babel-tangle
  toggle-debug-on-error
- cd
- 5x5
 )
 
 ;; ----- smex-data -----
 (
  (toggle-debug-on-error . 1)
  (org-babel-tangle . 1)
- (org-agenda . 8)
- (eval-buffer . 6)
+ (org-agenda . 13)
+ (eval-buffer . 8)
  (magit . 1)
+ (counsel-org-tag . 1)
+ (rcool-agenda-files-update . 1)
+ (eww . 1)
 )

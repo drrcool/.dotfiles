@@ -610,7 +610,7 @@
     "Set TAGS in current buffer.
 
   If filetags value is already set, replace it."
-    (rcool-buffer-prop-set "filetags" (string-join tags " ")))
+    (rcool-buffer-prop-set "filetags" (string-join tags " ")  ))
 
   (defun rcool-buffer-prop-set (name value)
     "Set a file property called NAME to VALUE in buffer file.
@@ -1462,12 +1462,6 @@
 
   (rcool/leader-keys
     "oE" '(eshell :wk "Eshell (Non-Toggle)"))
-#+end_src
-
-*** fish completion
-#+begin_src emacs-lisp :tangle yes
-  (use-package fish-completion
-    :hook (eshell-mode . fish-completion-mode))
 #+end_src
 
 *** command highlighting
