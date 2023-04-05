@@ -2,5 +2,5 @@
   (message "processing %s" file)
   (with-current-buffer (or (find-buffer-visiting file)
                            (find-file-noselect file))
-    (rcool/project-update-tag)
+    (rcool-project-update-tag)
     (save-buffer)))

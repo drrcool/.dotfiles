@@ -167,28 +167,34 @@
 
 #+begin_src emacs-lisp :tangle yes
   (use-package evil
-	:init
-	(evil-mode 1))
-	:config
-	(setq evil-want-C-i-jump nil
-		  evil-want-C-d-scroll t
-		  evil-want-C-u-scroll t
-		  evil-want-Y-yank-to-eol t
-		  evil-auto-balance-windows t
-		  evil-split-window-below t
-		  evil-split-window-right t
-		  evil-want-fine-undo t
-		  evil-want-keybinding nil
-		  evil-want-fine-undo t
-		  )
+    :init
+    (setq evil-want-C-i-jump nil
+          evil-want-C-d-scroll t
+          evil-want-C-u-scroll t
+          evil-want-Y-yank-to-eol t
+          evil-auto-balance-windows t
+          evil-split-window-below t
+          evil-split-window-right t
+          evil-want-fine-undo t
+          evil-want-keybinding nil
+          evil-want-fine-undo t
+          )
    ;; -- Set cursor colors
   (setq evil-emacs-state-cursor '("#649bce" box)
-		evil-normal-state-cursor '("#4000ff" box)
-		evil-operator-state-cursor '("#ebcb8b" hollow)
-		evil-visual-state-cursor '("#677391" box)
-		evil-insert-state-cursor '("#db8114" box)
-		evil-replace-state-cursor '("#ff0000" (hbar))
-		evil-motion-state-cursor '("#ad8beb" box)) 
+        evil-normal-state-cursor '("#4000ff" box)
+        evil-operator-state-cursor '("#ebcb8b" hollow)
+        evil-visual-state-cursor '("#677391" box)
+        evil-insert-state-cursor '("#db8114" box)
+        evil-replace-state-cursor '("#ff0000" (hbar))
+        evil-motion-state-cursor '("#ad8beb" box)) 
+  (evil-mode 1))
+#+end_src
+*** Evil Collection
+#+begin_src emacs-lisp :tangle yes
+  (use-package evil-collection
+    :after evil
+    :config
+    (evil-collection-init))
 #+end_src
 
 ** Mac bindings
@@ -569,6 +575,135 @@
       )
 
    )
+#+end_src
+
+***  Helper functions for roam and agenda
+
+#+begin_src emacs-lisp :tangle yes
+  (defun rcool-buffer-tags-get ()
+    "Return filetags value in current buffer."
+    (rcool-buffer-prop-get-list "filetags" " "))
+
+  (defun rcool-buffer-prop-get-list (name &optional separators)
+    "Get a buffer property NAME as a list using SEPARATORS.
+
+  If SEPARATORS is non-nil, it should be a regular expression matching text
+  that separates, but is not part of, the substrings.  If nil, it defaults
+  to `split-string-default-separators'."
+    (let ((value (rcool-buffer-prop-get name)))
+      (when (and value (not (string-empty-p value)))
+        (split-string-and-unquote value separators))))
+
+  (defun rcool-buffer-prop-get (name)
+    "Get a buffer property called NAME as a string."
+    (org-with-point-at 1
+      (when (re-search-forward (concat "^#\\+" name ":\\(.*\\)$") (point-max) t)
+        (buffer-substring-no-properties (match-beginning 1) (match-end 1)))))
+
+  (defun rcool-buffer-tags-add (tag)
+    "Add a TAG to filetags in current buffer."
+    (let* ((tags (rcool-buffer-tags-get))
+           (tags (delete tag tags)))
+      (apply #'rcool-buffer-tags-set tags)))
+
+  (defun rcool-buffer-tags-set (&rest tags)
+    "Set TAGS in current buffer.
+
+  If filetags value is already set, replace it."
+    (rcool-buffer-prop-set "filetags" (string-join tags " ")))
+
+  (defun rcool-buffer-prop-set (name value)
+    "Set a file property called NAME to VALUE in buffer file.
+
+  If the property is already set, replace its value."
+    (setq name (downcase name))
+    (org-with-point-at 1
+      (let ((case-fold-search t))
+        (if (re-search-forward (concat "^#\\+" name ":\\(.*\\)$") (point-max) t)
+            (replace-match (concat "#+" name ": " value) 'fixedcase)
+          (while (and (not (eobp))
+                      (looking-at "^[#:]]"))
+            (if (save-excursion (end-of-line) (eobp))
+                (progn
+                  (end-of-line)
+                  (insert "\n"))
+              (forward-line)
+              (beginning-of-line)))
+          (insert "#+" name ": " value "\n")))))
+#+end_src
+
+
+*** Automatically add TODO notes to org-agenda
+#+begin_src emacs-lisp :tangle yes
+  (add-hook 'find-file-hook #'rcool-project-update-tag)
+  (add-hook 'before-save-hook #'rcool-project-update-tag)
+
+  (defun rcool-project-update-tag ()
+    "Update PROJECT tag in the current buffer."
+    (when (and (not (active-minibuffer-window))
+               (rcool-buffer-p))
+      (save-excursion
+        (goto-char (point-min))
+        (let* ((tags (rcool-buffer-tags-get))
+               (original-tags tags))
+          (if (rcool-project-p)
+              (setq tags (cons "project" tags))
+            (setq tags (remove "project" tags)))
+
+          ;; Clean up dups
+          (setq tags (seq-uniq tags))
+
+          ;; update tags
+          (when (or (seq-difference tags original-tags)
+                    (seq-difference original-tags tags))
+            (apply #'rcool-buffer-tags-set tags))))))
+
+  (defun rcool-buffer-p ()
+    "Return non-nil if the currently visited buffer is a note."
+    (and buffer-file-name
+         (string-prefix-p
+          (expand-file-name (file-name-as-directory org-roam-directory))
+  
+          (file-name-directory buffer-file-name))))
+
+
+  (defun rcool-project-p ()
+    "Return non-nil if current buffer has any todo entries.
+
+  TODO entriest marked as done are ignored, meaning that this function
+  returns nil if current buffer contains only completed tasks."
+    (org-element-map
+                 (org-element-parse-buffer 'headline)
+                 'headline
+                 (lambda (h)
+                   (eq (org-element-property :todo-type h)
+                       'todo))
+                 nil 'first-match))
+
+#+end_src
+
+*** Now set org-agenda-list
+#+begin_src emacs-lisp :tangle yes
+  (defun rcool-project-files ()
+    "Return a list of note files containing 'project' tags."
+
+    (seq-uniq
+     (seq-map
+      #'car
+      (org-roam-db-query
+       [:select [nodes:file]
+                :from tags
+                :left-join nodes
+                :on (= tags:node-id nodes:id)
+                :where (like tag (quote "%\"project\"%"))]))))
+
+
+  (defun rcool-agenda-files-update (&rest _)
+    "Update the value of `org-agenda-files',"
+    (setq org-agenda-files (rcool-project-files)))
+
+  (advice-add 'org-agenda :before #'rcool-agenda-files-update)
+  (advice-add 'org-todo-list :before #'rcool-agenda-files-update)
 #+end_src
 
 **  Keybindings
@@ -1012,24 +1147,45 @@
 #+end_src
 
 * Help Keybindings
+** Helpful Help Commands
+#+begin_src emacs-lisp :tangle yes
+  (use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-commpand] . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key] . helpful-key))
+#+end_src
+
+#+RESULTS:
+: helpful-key
+
+*** Keybindings
 #+begin_src emacs-lisp :tangle yes
   (rcool/leader-keys
-
-	"h" '(:ignore t :wk "Help/Emacs")
-	"hv" '(counsel-describe-variable :wk "Des. Variable")
-	"hb" '(counsel-descbinds :wk "Des. Bindings")
-	"hM" '(describe-mode :wk "Des. Mode")
-	"hf" '(counsel-describe-function :wk "Des. Function")
-	"hF" '(counsel-describe-face :wk "Des. Face")
-	"hk" '(describe-key :wk "Des. Key")
-
-	"hm" '(:ignore t :wk "Switch Mode")
-	"hmt" '(text-mode :wk "Text Mode")
-	"hme" '(emacs-lisp-mode :wk "Elisp Mode")
-	"hmo" '(org-mode :wk "Org Mode")
-	"ht" '(counsel-load-theme :wk "Load Theme")
-  ) 
+    "h'" 'describe-char
+    "ha" 'apropos
+    "hc" 'describe-key-briefly
+    "hf" 'describe-function
+    "hF" 'describe-face
+    "hk" 'describe-key
+    "hm" 'describe-mode
+    "ho" 'describe-symbol
+    "hv" 'describe-variable
+    "ht" 'counsel-load-theme
+    "hx" 'describe-command
+    "hb" '(:ignore t :wk "Bindings")
+    "hbb" 'describe-bindings
+    "hbf" 'which-key-show-full-keymap
+    "hbi" 'which-key-show-minor-mode-keymap
+    "hbk" 'which-key-show-keymap
+    "hbm" 'which-key-show-major-mode
+    "hbt" 'which-key-show-top-level)
 #+end_src
+
 
 
 * Ace Window
@@ -1103,3 +1259,614 @@
 	:defer 1
 	:after counsel)
 #+end_src
+
+* Treemacs
+#+begin_src emacs-lisp :tangle yes
+  (use-package treemacs
+    :defer t
+    :init
+    (with-eval-after-load 'winum
+      (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+    :general
+    (rcool/leader-keys
+      "t" '(:ignore t :wk "Toggles")
+      "tt" '(treemacs :wk "Treemacs")
+      )
+    )
+
+  (use-package treemacs-evil
+    :after (treemacs evil))
+
+  (use-package treemacs-projectile
+    :after (treemacs projectile))
+
+  (use-package treemacs-icons-dired
+    :hook (dired-mode . treemacs-icons-dired-enable-once)
+    )
+
+  (use-package treemacs-magit
+    :after (treemacs magit))
+
+  (use-package treemacs-perspective
+    :after (treemacs perspective)
+    :config (treemacs-set-scope-type 'Perspectives))
+#+end_src
+
+* Dired
+** Basic Config
+#+begin_src emacs-lisp :tangle yes
+  (use-package dired
+    :straight (:type built-in)
+    :commands (dired dired-jump)
+    :custom
+    ((dired-listing-switches "-agho --group-directories-first")
+     (insert-directory-program "/opt/homebrew/bin/gls")
+     (delete-by-moving-to-trash t))
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+                                "h" 'dired-single-up-directory
+                                "l" 'dired-single-buffer)
+    :general
+    (rcool/leader-keys
+      "t-" '(dired :wk "Dired")
+      )
+    )
+#+end_src
+** Dired Single
+#+begin_src emacs-lisp :tangle yes
+(use-package dired-single)
+#+end_src
+** All the icons
+#+begin_src emacs-lisp :tangle yes
+  (use-package all-the-icons-dired
+    :hook (dired-mode . all-the-icons-dired-mode))
+#+end_src
+** Hide/Show Dotfiles
+#+begin_src emacs-lisp :tangle yes
+  (use-package dired-hide-dotfiles
+    :hook (dired-mode . dired-hide-dotfiles-mode)
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "H" 'dired-hide-dotfiles-mode))
+
+#+end_src
+* Bufler
+#+begin_src emacs-lisp :tangle yes
+(use-package bufler
+    :ensure t
+    :general
+    (rcool/leader-keys
+      "bb" '(bufler-switch-buffer :wk "Bufler Switch")
+      "bw" '(bufler-workspace-frame-set :wk "Workspace Buffers"))
+    :config
+    (evil-collection-define-key 'normal 'bufler-list-mode-map
+      (kbd "RET") 'bufler-list-buffer-switch
+      (kbd "M-RET") 'bufler-list-buffer-peak
+      (kbd "D")     'bufler-list-buffer-kill)
+
+    (setq bufler-groups
+          (bufler-defgroups
+           ;; Subgroup collecting all named workspaces
+           (group (auto-workspace))
+           ;; Supgroup collecting buffers in a projectile project
+           (group (auto-projectile))
+           ;; Supgroup collecting all `help-mode' and `info-mode' buffers.
+           (group
+            (group-or "Help/Info"
+                      (mode-match "*Help*" (rx bos (or "help-" "helpful-")))
+                      (mode-match "*Info*" (rx bos "info-"))))
+           ;; Supgroup collecting all special buffers (i.e. ones that are not
+           ;; file-backed), except `magit-status-mode' buffers (which are allowed to fall
+           ;; to other groups so they end up grouped with their project buffers).
+           (group
+            (group-and "*Special*"
+                       (name-match "**Special**"
+                                   (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace" "Pinentry") "*"))
+                       (lambda (buffer)
+                         (unless (or (funcall (mode-match "Magit" (rx bos "magit-status"))
+                                              buffer)
+                                     (funcall (mode-match "Dired" (rx bos "dired"))
+                                              buffer)
+                                     (funcall (auto-file) buffer))
+                           "*Special*"))))
+           ;; Group Remaining buffers my major-mode
+           (auto-mode))))
+
+#+end_src
+
+
+** eshell
+*** configure
+#+begin_src emacs-lisp :tangle yes
+  (defun read-file (file-path)
+    (with-temp-buffer
+      (insert-file-contents file-path)
+      (buffer-string)))
+
+  (defun rcool/get-current-package-version ()
+    (interactive)
+    (let ((package-json-file (concat (eshell/pwd) "/package.json")))
+      (when (file-exists-p package-json-file)
+        (let* ((package-json-contents (read-file package-json-file))
+               (package-json (ignore-errors (json-parse-string package-json-contents))))
+          (when package-json
+            (ignore-errors (gethash "version" package-json)))))))
+
+  (defun rcool/get-prompt-path ()
+    (let* ((current-path (eshell/pwd))
+           (git-output (shell-command-to-string "git rev-parse --show-toplevel"))
+           (has-path (not (string-match "^fatal" git-output))))
+      (if (not has-path)
+          (abbreviate-file-name current-path)
+        (string-remove-prefix (file-name-directory git-output) current-path))))
+
+  (defun rcool/eshell-prompt ()
+    (let ((current-branch (magit-get-current-branch))
+          (package-version (rcool/get-current-package-version)))
+      (concat
+       "\n"
+       (propertize (system-name) 'face '(:foreground "#62aeed"))
+       (propertize " ॐ " 'face '(:foreground "white"))
+       (propertize (rcool/get-prompt-path) 'face '(:foreground "#82cfd3"))
+       (when current-branch
+         (concat
+          (propertize " • " 'face '(:foreground "white"))
+          (propertize (concat " " current-branch) 'face '(:foreground "#c475f0"))))
+       (when package-version
+         (concat
+          (propertize " @ " 'face '(:foreground "white"))
+          (propertize package-version 'face '(:foreground "#e8a206"))))
+       (propertize " • " 'face `(:foreground "white"))
+       (propertize (format-time-string "%I:%M:%S %p") 'face `(:foreground "#5a5b7f"))
+       (if (= (user-uid) 0)
+           (propertize "\n#" 'face `(:foreground "red2"))
+         (propertize "\nλ" 'face `(:foreground "#aece4a")))
+       (propertize " " 'face `(:foreground "white")))))
+
+  (defun rcool/configure-eshell ()
+    (require 'evil-collection-eshell)
+    (evil-collection-eshell-setup)
+    (use-package xterm-color)
+    (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+    (add-hook 'eshell-before-prompt-hook
+              (lambda ()
+                (setq xterm-color-preserver-properties t)))
+    (add-hook 'eshell-pre-command-hook
+              '(lambda () (setenv "TERM" "xterm-256color")))
+    (add-hook 'eshell-post-command-hook
+              '(lambda () (setenv "TERM" "dumb")))
+
+    (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)
+
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-beginning-of-input)
+    (evil-normalize-keymaps)
+
+    (setq eshell-history-size 10000
+          eshell-buffer-maximum-lines 10000
+          eshell-prompt-regexp "^λ "
+          eshell-highlight-prompt t
+          eshell-hist-ignoredups t
+          eshell-prompt-function 'rcool/eshell-prompt))
+  (use-package eshell-git-prompt)
+
+  (use-package eshell
+    :hook (eshell-first-time-mode . rcool/configure-eshell)
+    :config
+    (with-eval-after-load 'esh-opt
+      (setq eshell-destroy-buffer-when-process-dies t)
+      (setq eshell-visual-commands '("htop" "zsh" "nvim")))
+    (eshell-git-prompt-use-theme 'powerline))
+
+  (rcool/leader-keys
+    "oE" '(eshell :wk "Eshell (Non-Toggle)"))
+#+end_src
+
+*** fish completion
+#+begin_src emacs-lisp :tangle yes
+  (use-package fish-completion
+    :hook (eshell-mode . fish-completion-mode))
+#+end_src
+
+*** command highlighting
+#+begin_src emacs-lisp :tangle yes
+  (use-package eshell-syntax-highlighting
+    :after esh-mode
+    :config
+    (eshell-syntax-highlighting-global-mode +1))
+#+end_src
+
+*** history autocompletion
+#+begin_src emacs-lisp :tangle yes
+  (use-package esh-autosuggest
+    :hook (eshell-mode . esh-autosuggest-mode)
+    :config
+    (setq esh-autosuggest-use-company-map t)
+    (set-face-foreground 'company-preview-common "#4b5668")
+    (set-face-background 'company-preview nil))
+
+#+end_src
+
+*** eshell toggle
+#+begin_src emacs-lisp :tangle yes
+    (use-package eshell-toggle
+      :general
+      (rcool/leader-keys
+      "oe" '(eshell-toggle :wk "Eshell"))
+      :custom
+      (eshell-toggle-size-function 3)
+      (eshell-toggle-use-projectile-root t)
+      (eshell-toggle-run-command nil))
+#+end_src
+
+* Passowrds
+#+begin_src emacs-lisp :tangle yes
+  (use-package ivy-pass
+      :commands ivy-pass
+      :config
+      (setq password-store-password-length 12)
+      (setq epa-file-cache-passphrase-for-symmetric-encryption nil))
+
+    (use-package auth-source-pass
+      :config
+      (auth-source-pass-enable))
+
+    (rcool/leader-keys
+      "P" '(:ignore t :wk "Passwords")
+      "Pp" '(ivy-pass :wk "Ivy Pass")
+    "Pi" '(password-store-insert :wk "Insert Password")
+    "Pg" '(password-store-generate :wk "Generate Password")
+      )
+#+end_src
+
+* Music
+** Spotify
+#+begin_src emacs-lisp :tangle yes
+  (use-package counsel-spotify
+    :after ivy
+    :config
+    (setq counsel-spotify-client-id (password-store-get "API/Spotify/rcool-emacs-id"))
+    (setq counsel-spotify-client-secret (password-store-get "API/Spotify/rcool-emacs-secret")))
+
+  (rcool/leader-keys
+    "S" '(:ignore t :wk "Counsel Spotify")
+    "Ss" '(:ignore t :wk "Search")
+    "Ssp" '(counsel-spotify-search-playlist :wk "Search Playlist")
+    "Sst" '(counsel-spotify-search-track :wk "Search Track")
+    "Sp" '(counsel-spotify-toggle-play-pause :wk "Toggle Play Pause")
+    "Sa" '(counsel-spotify-search-album :wk "Search Album")
+    "S>" '(counsel-spotify-next :wk "Next")
+    "S<" '(counsel-spotify-previous :wk "Previous")
+    )
+#+end_src
+
+** Youtube
+#+begin_src emacs-lisp :tangle yes
+  (use-package ivy-youtube
+    :config
+    (setq ivy-youtube-key (password-store-get "API/Youtube/rcool-emacs-api-key")))
+
+  (rcool/leader-keys
+    "y" '(ivy-youtube :wk "Ivy Youtube"))
+#+end_src
+
+* Terminal
+** term-mode
+#+begin_src emacs-lisp :tangle yes
+  (use-package term
+    :config
+    (setq explicit-shell-file-name "bash")
+    (setq term-prompt-regexp "^[^#$%>\\n]*[#$%>] *"))
+#+end_src
+
+** colors
+#+begin_src emacs-lisp :tangle yes
+  (use-package eterm-256color
+    :hook (term-mode . eterm-256color-mode))
+#+end_src
+
+** vterm
+#+begin_src emacs-lisp :tangle yes
+    (use-package vterm
+      :commands vterm
+      :config
+      (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
+      (setq vterm-max-scrollback 10000)
+  )
+    (use-package vterm-toggle
+      :after vterm
+      :init
+      (setq vterm-toggle-fullscreen-p nil)
+      (add-to-list 'display-buffer-alist
+                   '((lambda (buffer-or-name _)
+                       (let ((buffer (get-buffer buffer-or-name)))
+                         (with-current-buffer buffer
+                           (or (equal major-mode 'vterm-mode)
+                               (string-prefix-p vterm-buffer-name (buffer-name buffer))))))
+                     (display-buffer-reuse-window display-buffer-in-side-window)
+                     (side . bottom)
+                     (reusable-frames . visible)
+                     (window-height . 0.3)))
+      :general
+      (rcool/leader-keys
+        "ot" '(vterm-toggle-cd :wk "Vterm")))
+#+end_src
+
+* Credential Management
+- =pass= to manage all passwords locally
+- =ivy-pass= to make managing passwords easier in Emacs
+- =auth-source-pass= to store passwords in one place
+
+A primer for using pass to manage passwords: [[https://medium.com/@chasinglogic/the-definitive-guide-to-password-store-c337a8f023a1][link]]
+
+
+  #+begin_src emacs-lisp :tangle yes
+    (use-package ivy-pass
+      :commands ivy-pass
+      :config
+      (setq password-store-password-length 12)
+      (setq epa-file-cache-passphrase-for-symmetric-encryption nil))
+
+    (use-package auth-source-pass
+      :config
+      (auth-source-pass-enable))
+
+    (rcool/leader-keys
+      "P" '(:ignore t :wk "Passwords")
+      "Pp" '(ivy-pass :wk "Ivy Pass")
+    "Pi" '(password-store-insert :wk "Insert Password")
+    "Pg" '(password-store-generate :wk "Generate Password")
+      )
+  #+end_src
+
+** Darkroom
+#+begin_src emacs-lisp :tangle yes
+    (use-package darkroom
+      :commands darkroom-mode
+      :config
+      (setq darkroom-text-scale-increase 0))
+
+    (defun rcool/enter-focus-mode ()
+      (interactive)
+      (darkroom-mode 1)
+      )
+
+    (defun rcool/leave-focus-mode ()
+      (interactive)
+      (darkroom-mode 0)
+      )
+
+    (defun rcool/toggle-focus-mode ()
+      (interactive)
+      (if (symbol-value darkroom-mode)
+        (rcool/leave-focus-mode)
+        (rcool/enter-focus-mode)))
+
+    (rcool/leader-keys
+      "tf" '(rcool/toggle-focus-mode :wk "Focus Mode")
+      )
+
+#+end_src
+
+** Magit
+#+begin_src emacs-lisp :tangle yes
+  (use-package magit
+    :custom
+    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+#+end_src
+
+** Git-gutter
+#+begin_src emacs-lisp :tangle yes
+  (use-package git-gutter-fringe
+    :diminish
+    :config
+    (setq git-gutter:update-interval 2)
+    (setq-default left-fringe-width 5)
+    (set-face-foreground 'git-gutter-fr:added "LightGreen")
+    (fringe-helper-define 'git-gutter-fr:added nil
+      ".XXXXXX."
+      "XX....XX"
+      "X......X"
+      "X......X"
+      "XXXXXXXX"
+      "XXXXXXXX"
+      "X......X"
+      "X......X"
+      )
+    (set-face-foreground 'git-gutter-fr:modified "LightGoldenrod")
+    (fringe-helper-define 'git-gutter-fr:modified nil
+      "XXXXXXXX"
+      "X..XX..X"
+      "X..XX..X"
+      "X..XX..X"
+      "X..XX..X"
+      "X..XX..X"
+      "X..XX..X"
+      "X..XX..X")
+    (set-face-foreground 'git-gutter-fr:deleted "LightCoral")
+    (fringe-helper-define 'git-gutter-fr:deleted nil
+      "XXXXXX.."
+      "XX....X."
+      "XX.....X"
+      "XX.....X"
+      "XX.....X"
+      "XX.....X"
+      "XX....X."
+      "XXXXXX..")
+    ;; These characters are used in terminal mode
+    (setq git-gutter:modified-sign "≡")
+    (setq git-gutter:added-sign "≡")
+    (setq git-gutter:deleted-sign "≡")
+    (set-face-foreground 'git-gutter:added "LightGreen")
+    (set-face-foreground 'git-gutter:modified "LightGoldenrod")
+    (set-face-foreground 'git-gutter:deleted "LightCoral")
+    )
+#+end_src
+
+** Lorem-ipsum
+#+begin_src emacs-lisp :tangle yes
+  (use-package lorem-ipsum
+    :ensure t
+    :config
+    (lorem-ipsum-use-default-bindings))
+#+end_src
+
+** Commenting lines
+#+begin_src emacs-lisp :tangle yes
+    (use-package evil-nerd-commenter
+      :general
+      (rcool/leader-keys
+        "/" '(evilnc-comment-or-uncomment-lines :wk "Comment Lines")))
+    ;; INFO this is a test of the commenter, but not sure we are in prog mode
+    (use-package comment-tags
+      :init
+      (autoload 'comment-tags-mode "comment-tags-mode")
+      (setq comment-tags-keyword-faces
+            `(("TODO" . ,(list :weight 'bold :foreground "#28ABE3"))
+              ("BUG" . ,(list :weight 'bold :foreground "#DB3340"))
+              ("INFO" . ,(list :weight 'bold :foreground "#F7EAC8"))
+              ("DONE" . ,(list :weight 'bold :foreground "#1FDA9A"))))
+      (setq comment-tags-keymap-prefix (kbd "C-c t"))
+      (setq comment-tags-comment-start-only t
+            comment-tags-require-color nil 
+            comment-tags-case-sensitive t
+            comment-tags-show-faces t
+            comment-tags-lighter nil)
+      :config
+      (add-hook 'prog-mode-hook 'comment-tags-mode))
+#+end_src
+
+
+** flycheck
+#+begin_src emacs-lisp :tangle yes
+  (use-package flycheck
+    :defer t
+    :hook (lsp-mode . flycheck-mode))
+
+#+end_src
+
+
+* Development
+** Languages
+*** Language Server
+**** Basic Setup
+#+begin_src emacs-lisp :tangle yes
+  (defun rcool/lsp-mode-setup ()
+    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+    (lsp-headerline-breadchrump-mode)
+    (lsp))
+
+  (use-package lsp-mode
+    :ensure t
+    :bind (:map lsp-mode-map
+                ("TAB" . completion-at-point))
+    :commands (lsp lsp-deferred)
+    :hook (lsp-mode . rcool/lsp-mode-setup)
+    :init
+    (setq lsp-keymap-prefix "C-c s-p")
+    :config
+    (lsp-enable-which-key-integration t))
+#+end_src
+
+**** LSP UI
+#+begin_src emacs-lisp :tangle yes
+  (use-package lsp-ui
+    :hook (lsp-mode . lsp-ui-mode)
+    :custom
+    (lsp-io-doc-position 'bottom))
+#+end_src
+
+**** LSP Ivy
+#+begin_src emacs-lisp :tangle yes
+  (use-package lsp-ivy)
+#+end_src
+
+
+*** Dap Mode
+#+begin_src emacs-lisp :tangle yes
+  (use-package dap-mode)
+#+end_src
+
+*** Programming Languages
+**** typescript
+#+begin_src emacs-lisp :tangle yes
+  (use-package typescript-mode
+    :mode "\\.ts\\'"
+    :hook (typescript-mode . lsp-deferred)
+    :config
+    (setq typescript-indent-level 2))
+#+end_src
+
+**** javascript
+#+begin_src emacs-lisp :tangle yes
+  (defun rcool/set-js-indentation ()
+    (setq js-indent-level 2)
+    (setq evil-shift-width js-indent-level)
+    (setq-default tab-width 2))
+
+  (use-package js2-mode
+    :mode "\\.js\\'"
+    :hook (js2-mode . lsp-deferred)
+    :config
+    (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
+    (setq js-mode-show-strict-warnings nil)
+    (add-hook 'js2-mode-hook #'rcool/set-js-indentation)
+    (add-hook 'json-mode-hook #'rcool/set-js-indentation)
+    (require 'dap-node)
+    (dap-node-setup))
+
+  (use-package prettier-js
+    :hook ((js2-mode . prettier-js-mode)
+           (typescript-mode . prettier-js-mode)
+           (web-mode . prettier-js-mode))
+    :config
+    (setq prettier-js-show-errors nil))
+#+end_src
+
+**** html
+#+begin_src emacs-lisp :tangle yes
+  (use-package web-mode
+    :mode "(\\.\\(html?\\|ejs\\|tsx\\|js[x]?\\|edge\\)\\'"
+    :hook (web-mode . lsp-deferred)
+    :config
+    (setq-default web-mode-code-indent-offset 2)
+    (setq-default web-mode-markup-indent-offset 2)
+    (setq-default web-mode-attribute-indent-offset 2))
+
+  (use-package impatient-mode
+    :ensure t)
+
+  (use-package skewer-mode
+    :ensure t)
+#+end_src
+
+**** css
+#+begin_src emacs-lisp :tangle yes
+  (use-package css-mode
+    :mode "\\.css\\'"
+    :hook (css-mode . lsp-deferred)
+    :config
+    (setq css-indent-offset 2))
+#+end_src
+
+**** python
+#+begin_src emacs-lisp :tangle yes
+  (use-package python-mode
+    :ensure t
+    :hook (python-mode . lsp-deferred)
+    :custom
+    (python-shell-interpreter "python3"))
+
+#+end_src
+
+**** yaml
+#+begin_src emacs-lisp :tangle yes
+  (use-package yaml-mode
+    :hook (yaml-mode . lsp-deferred)
+    :mode "\\.ya?ml\\'")
+
+#+end_src
+
