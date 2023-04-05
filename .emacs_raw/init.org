@@ -713,6 +713,7 @@
   (general-def
     :states 'normal
     :keymaps 'org-mode-map
+  
     "t" 'org-todo
     "<return>" 'org-open-at-point-global
     "K" 'org-shiftup
@@ -793,10 +794,58 @@
 *** Initialization
 #+begin_src emacs-lisp :tangle yes
   (use-package org
-	   :hook (org-mode . rcool/org-setup)
-	   :hook (org-mode . rcool/prettify-symbols-setup)
-	   :hook (org-capture-mode . evil-insert-state)
-  )
+    :hook (org-mode . rcool/org-setup)
+    :hook (org-mode . rcool/prettify-symbols-setup)
+    :hook (org-capture-mode . evil-insert-state)
+
+    :general
+    (rcool/leader-keys
+      "oA" '(org-archive-subtree-default :wk "Archive")
+      "oa" '(org-agenda :wk  "Agenda")
+      "o6" '(org-sort :wk "Sort")
+      "oc" '(org-capture :wk "Capture")
+      "os" '(org-schedule :wk "Schedule")
+      "od" '(org-deadline :wk "Deadline")
+      "og" '(counsel-org-goto :wk "Goto Heading")
+      "ot" '(counsel-org-tag :wk "Set Tags")
+      "oT" '(org-todo :wk "Todo States")
+      "op" '(org-set-priority :wk "Set Priority")
+      "or" '(org-refile :wk "Refile")
+      "oe" '(org-export-dispatch :wk "Export")
+      "o." '(org-narrow-to-subtree :wk "Narrow to Subtree")
+      "o1" '(org-toggle-link-display :wk "Toggle Link Display")
+      "o2" '(org-toggle-inline-images :wk "Toggle  Images")
+
+      "oi" '(:ignore t :wk "Insert")
+      "oil" '(org-insert-link :wk "Insert Link")
+      "oiL" '(counsel-org-link :wk "Insert Link (Counsel)")
+
+      "c" '(:ignore t :wk "Clock")
+      "ci" '(org-clock-in :wk "Clock In")
+      "co" '(org-clock-out :wk "Clock Out")
+      "cj" '(org-clock-goto :wk "Clock Goto")
+
+      )
+
+    (general-define-key
+     :prefix ","
+     :states 'motion
+     :keymaps '(org-agenda-mode-map)
+     "" nil
+     "a" '(org-agenda :which-key "org agenda")
+     "c" '(org-capture :which-key "org-capture")
+     "s" '(org-agenda-schedule :which-key "schedule")
+     "," '(org-agenda-schedule :which-key "schedule") ;; quick access
+     "d" '(org-agenda-deadline :which-key "deadline")
+     "t" '(org-agenda-set-tags :which-key "set tags")
+     ;; clocking
+     "c" '(nil :which-key "clocking")
+     "ci" '(org-agenda-clock-in :which-key "clock in")
+     "co" '(org-agenda-clock-out :which-key "clock out")
+     "cj" '(org-clock-goto :which-key "jump to clock")
+     )
+
+    )
 #+end_src
 *** Visuals
 #+begin_src emacs-lisp :tangle yes
@@ -1137,13 +1186,14 @@
 
 * Buffer Management keybindings
 #+begin_src emacs-lisp :tangle yes
-	(rcool/leader-keys
+    (rcool/leader-keys
   "b" '(:ignore t :wk "Buffer")
-	"bb" '(counsel-switch-buffer :wk "Switch")
-	"bd" '(evil-delete-buffer :wk "Delete")
-    "br" '(revert-buffer :wk "Revert")
-
-	)
+    "bb" '(counsel-switch-buffer :wk "Switch")
+    "bd" '(evil-delete-buffer :wk "Delete")
+  "br" '(revert-buffer :wk "Revert")
+  "bn" '(evil-next-buffer :wk "Next")
+  "bp" '(evil-prev-buffer :wk "Previous")
+    )
 #+end_src
 
 * Help Keybindings

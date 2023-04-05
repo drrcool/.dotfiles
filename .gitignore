@@ -24,3 +24,6 @@ yarn-error.log*
 .emacs_from_scratch_drrcool/bookmarks~
 .emacs_raw/straight
 .emacs_raw/eln-cache/30.0.50-e82136db
+.emacs_raw/.cache
+.emacs_raw/.extension/vscode/ms-vscode.node-debug2
+.emacs_raw/auto-save-list
