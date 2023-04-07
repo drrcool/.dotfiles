@@ -62,3 +62,4 @@
 (package! org-modern)
 (package! tsi
           :recipe (:host github :repo "orzechowskid/tsi.el"))
+(package! dired-rainbow)

@@ -26,12 +26,42 @@
       mac-right-control-modifier 'control)
 
 (use-package! copilot
-  :hook (prog-mode . copilot-mode)
-  :bind (:map copilot-completion-map
-              ("<tab>" . 'copilot-accept-completion)
-              ("TAB" . 'copilot-accept-completion  )
-              ("C-TAB" . 'copilot-accept-completion-by-word)
-              ("C-<tab>" . 'copilor-accept-completion-by-word)))
+      :hook (prog-mode . copilot-mode)
+)
+
+(defun rcool/copilot-tab ()
+      (interactive)
+      (or (copilot-accept-completion)
+	      (indent-for-tab-command)))
+
+(with-eval-after-load 'copilot
+(evil-define-key 'insert copilot-mode-map
+(kbd "<tab>") #'rcool/copilot-tab))
+
+(use-package! dired-rainbow
+  :config
+  (progn
+    (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
+    (dired-rainbow-define html "#eb5286" ("css" "less" "sass" "scss" "htm" "html" "jhtm" "mht" "eml" "mustache" "xhtml"))
+    (dired-rainbow-define xml "#f2d024" ("xml" "xsd" "xsl" "xslt" "wsdl" "bib" "json" "msg" "pgn" "rss" "yaml" "yml" "rdata"))
+    (dired-rainbow-define document "#9561e2" ("docm" "doc" "docx" "odb" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub" "odp" "ppt" "pptx"))
+    (dired-rainbow-define markdown "#ffed4a" ("org" "etx" "info" "markdown" "md" "mkd" "nfo" "pod" "rst" "tex" "textfile" "txt"))
+    (dired-rainbow-define database "#6574cd" ("xlsx" "xls" "csv" "accdb" "db" "mdb" "sqlite" "nc"))
+    (dired-rainbow-define media "#de751f" ("mp3" "mp4" "MP3" "MP4" "avi" "mpeg" "mpg" "flv" "ogg" "mov" "mid" "midi" "wav" "aiff" "flac"))
+    (dired-rainbow-define image "#f66d9b" ("tiff" "tif" "cdr" "gif" "ico" "jpeg" "jpg" "png" "psd" "eps" "svg"))
+    (dired-rainbow-define log "#c17d11" ("log"))
+    (dired-rainbow-define shell "#f6993f" ("awk" "bash" "bat" "sed" "sh" "zsh" "vim"))
+    (dired-rainbow-define interpreted "#38c172" ("py" "ipynb" "rb" "pl" "t" "msql" "mysql" "pgsql" "sql" "r" "clj" "cljs" "scala" "js"))
+    (dired-rainbow-define compiled "#4dc0b5" ("asm" "cl" "lisp" "el" "c" "h" "c++" "h++" "hpp" "hxx" "m" "cc" "cs" "cp" "cpp" "go" "f" "for" "ftn" "f90" "f95" "f03" "f08" "s" "rs" "hi" "hs" "pyc" ".java"))
+    (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
+    (dired-rainbow-define compressed "#51d88a" ("7z" "zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+    (dired-rainbow-define packaged "#faad63" ("deb" "rpm" "apk" "jad" "jar" "cab" "pak" "pk3" "vdf" "vpk" "bsp"))
+    (dired-rainbow-define encrypted "#ffed4a" ("gpg" "pgp" "asc" "bfe" "enc" "signature" "sig" "p12" "pem"))
+    (dired-rainbow-define fonts "#6cb2eb" ("afm" "fon" "fnt" "pfb" "pfm" "ttf" "otf"))
+    (dired-rainbow-define partition "#e3342f" ("dmg" "iso" "bin" "nrg" "qcow" "toast" "vcd" "vmdk" "bak"))
+    (dired-rainbow-define vc "#0074d9" ("git" "gitignore" "gitattributes" "gitmodules"))
+    (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*")
+    ))
 
 (use-package doct
   :commands (doct))
@@ -219,7 +249,8 @@
 
 )
 
-(use-package! org-roam
+(use-package org-roam
+
   :init
   (setq org-roam-v2-ack t)
 
@@ -229,171 +260,154 @@
                  (direction . right)
                  (window-width . 0.33)
                  (window-height . fit-window-to-buffer)))
+
   (org-roam-db-autosync-mode)
-  (setq org-roam-capture-templates
-          '(("d" "default" plain
-           ""
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "${title}\n\n")
-           :unnarrowed t)
-          ("a" "area" plain
-           "#+filetags: Area\n\n* Goals\n\n%^{Goals}\n\n* Tasks\n\n** TODO %?"
-           :if-new (file+head "%<%<%Y%m%d%H%M%S>-${slug}.org" "${title}")
-           :unnarrowed t)
-          ("j" "project" plain
-           "#+filetags: Project\n\n* Goals\n\n%^{{Goals}\n\n* Tasks\n\n TODO %?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "${title}")
-           :unnarrowed t)
-          ("p" "people" plain
-           "#+filetags: People CRM\n\n* Contacts\n\nRelationship: %^{Relationship}\nPhone:\nAddress\nBirthday\n\n* Notes\n\n %?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "${title}")
-           :unnarrowed t)
-          ("i" "institution" plain
-           "#+filetags: Institution CRM\n\n* Contracts\n\nRelationship: %^{Relationship}\nPhone:\nAddress\n\n* Notes\n\n %?"
-           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "${title}")
-           :unnarrowed t)
-          ))
+
   :custom
-  (org-roam-directory (file-truename "~/org/roam"))
-  (org-roam-dailies-directory "daily/")
-  (org-roam-complete-everywhere t)
+  (org-roam-directory (file-truename "~/org"))
+  (org-roam-dailies-directory "roam/daily/")
+  (org-roam-completion-everywhere t)
 
-  )
+  :general
+  (rcool/leader-keys
+    "n" '(:ignore t :wk "Notes")
+    "nd" '(:ignore t :wk "By date")
+    "nd-" '(org-roam-dailies-find-directory :wk "Find Directory")
+    "ndy" '(org-roam-dailies-goto-yesterday :wk "Goto Yesterday")
+    "ndT" '(org-roam-dailies-capture-today :wk "Capture Today")
+    "ndt" '(org-roam-dailies-goto-today :wk "Goto Today")
+    "ndY" '(org-roam-dailies-capture-yesterday :wk "Capture Yesterday")
+    "ndf" '(org-roam-dailies-goto-next-note :wk "Next Note")
+    "ndd" '(org-roam-dailies-goto-date :wk "Goto Date")
+    "nf" '(org-roam-node-find :wk "Find")
+    "ni" '(org-roam-node-insert :wk "Insert")
+    "no" '(org-roam-node-open :wk "Open")
+    "nn" '(org-roam-capture :wk "Capture to node")
+    "ng" '(org-roam-graph :wk "Show graph")
+    "nF" '(org-roam-ref-find :wk "Find Ref")
+    "ns" '(org-roam-db-sync :wk "Sync database")
 
-(defun rcool/org-journal-find-location()
-  "Open today's journal, but specify a non-nill prefix arguement in order to
-   inhibit inserting the heading;"
-  (org-journal-new-entry t)
-  (unless (eq org-journal-file-type 'daily)
-              (org-narrow-to-subtree))
-    (goto-char (point-max)))
 
-(defun rcool/define-agenda-files ()
-  (interactive)
-  "Return a list of note files containing 'HasTodo' tag.  I use this to denote files with tasks for org-agenda"
+    )
+
+ )
+
+(defun rcool-buffer-tags-get ()
+  "Return filetags value in current buffer."
+  (rcool-buffer-prop-get-list "filetags" " "))
+
+(defun rcool-buffer-prop-get-list (name &optional separators)
+  "Get a buffer property NAME as a list using SEPARATORS.
+
+If SEPARATORS is non-nil, it should be a regular expression matching text
+that separates, but is not part of, the substrings.  If nil, it defaults
+to `split-string-default-separators'."
+  (let ((value (rcool-buffer-prop-get name)))
+    (when (and value (not (string-empty-p value)))
+      (split-string-and-unquote value separators))))
+
+(defun rcool-buffer-prop-get (name)
+  "Get a buffer property called NAME as a string."
+  (org-with-point-at 1
+    (when (re-search-forward (concat "^#\\+" name ":\\(.*\\)$") (point-max) t)
+      (buffer-substring-no-properties (match-beginning 1) (match-end 1)))))
+
+(defun rcool-buffer-tags-add (tag)
+  "Add a TAG to filetags in current buffer."
+  (let* ((tags (rcool-buffer-tags-get))
+         (tags (delete tag tags)))
+    (apply #'rcool-buffer-tags-set tags)))
+
+(defun rcool-buffer-tags-set (&rest tags)
+  "Set TAGS in current buffer.
+
+If filetags value is already set, replace it."
+  (rcool-buffer-prop-set "filetags" (string-join tags " ")  ))
+
+(defun rcool-buffer-prop-set (name value)
+  "Set a file property called NAME to VALUE in buffer file.
+
+If the property is already set, replace its value."
+  (setq name (downcase name))
+  (org-with-point-at 1
+    (let ((case-fold-search t))
+      (if (re-search-forward (concat "^#\\+" name ":\\(.*\\)$") (point-max) t)
+          (replace-match (concat "#+" name ": " value) 'fixedcase)
+        (while (and (not (eobp))
+                    (looking-at "^[#:]]"))
+          (if (save-excursion (end-of-line) (eobp))
+              (progn
+                (end-of-line)
+                (insert "\n"))
+            (forward-line)
+            (beginning-of-line)))
+        (insert "#+" name ": " value "\n")))))
+
+(add-hook 'find-file-hook #'rcool-project-update-tag)
+(add-hook 'before-save-hook #'rcool-project-update-tag)
+
+(defun rcool-project-update-tag ()
+  "Update PROJECT tag in the current buffer."
+  (when (and (not (active-minibuffer-window))
+             (rcool-buffer-p))
+    (save-excursion
+      (goto-char (point-min))
+      (let* ((tags (rcool-buffer-tags-get))
+             (original-tags tags))
+        (if (rcool-project-p)
+            (setq tags (cons "project" tags))
+          (setq tags (remove "project" tags)))
+
+        ;; Clean up dups
+        (setq tags (seq-uniq tags))
+
+        ;; update tags
+        (when (or (seq-difference tags original-tags)
+                  (seq-difference original-tags tags))
+          (apply #'rcool-buffer-tags-set tags))))))
+
+(defun rcool-buffer-p ()
+  "Return non-nil if the currently visited buffer is a note."
+  (and buffer-file-name
+       (string-prefix-p
+        (expand-file-name (file-name-as-directory org-roam-directory))
+
+        (file-name-directory buffer-file-name))))
+
+
+(defun rcool-project-p ()
+  "Return non-nil if current buffer has any todo entries.
+
+TODO entriest marked as done are ignored, meaning that this function
+returns nil if current buffer contains only completed tasks."
+  (org-element-map
+               (org-element-parse-buffer 'headline)
+               'headline
+               (lambda (h)
+                 (eq (org-element-property :todo-type h)
+                     'todo))
+               nil 'first-match))
+
+(defun rcool-project-files ()
+  "Return a list of note files containing 'project' tags."
+
   (seq-uniq
    (seq-map
     #'car
     (org-roam-db-query
      [:select [nodes:file]
-      :from tags
-      :left-join nodes
-      :on (= tags:node-id nodes:id)
-      ])))
+              :from tags
+              :left-join nodes
+              :on (= tags:node-id nodes:id)
+              :where (like tag (quote "%\"project\"%"))]))))
 
-  )
-(defun rcool/set-agenda-files ()
-  (interactive)
-  (setq org-agenda-files (rcool/define-agenda-files)))
-(map! :leader
-      :desc "Refresh Agenda Files" "n A" #'rcool/set-agenda-files )
-(defun rcool/buffer-prop-get (name)
-  "Get a buffer property called NAME as a string."
-  (org-with-point-at 1
-    (when (re-search-forward (concat "^#\\+" name ": \\(.*\\)")
-                             (point-max) t)
-      (buffer-substring-no-properties
-       (match-beginning 1)
-       (match-end 1)))))
 
-(defun rcool/agenda-category (&optional len)
-  "Get category of item at point for agenda."
-  (let* ((file-name (when buffer-file-name
-                      (file-name-sans-extension
-                       (file-name-nondirectory buffer-file-name))))
-         (title (rcool/buffer-prop-get "title"))
-         (category (org-get-category))
-         (result
-          (or (if (and
-                   title
-                   (string-equal category file-name))
-                  title
-                category)
-              "")))
-    (if (numberp len)
-        (s-truncate len (s-pad-right len " " result))
-      result)))
+(defun rcool-agenda-files-update (&rest _)
+  "Update the value of `org-agenda-files',"
+  (setq org-agenda-files (rcool-project-files)))
 
-(setq org-agenda-prefix-format
-      '((agenda . " %i %(rcool/agenda-category 32)%?-32t% s")
-        (todo . " %i %(rcool/agenda-category 32) ")
-        (tags . " %i %(rcool/agenda-category 32) ")
-        (search . " %i %(rcool/agenda-category 32) ")))
-
-(use-package! org-super-agenda
-  :after org-agenda
-  :init
-  (setq org-agenda-dim-blocked-tasks nil))
-
-;;Dashboard View
-(setq org-super-agenda-groups
-      '((:name "Priority"
-               :priority "A")
-        (:name "Inbox"
-               :tag ("Inbox" "Daily"))
-        (:name "Next Actions for Work"
-               :and (
-                     :todo ("NEXT")
-                           :tag ("Active")
-                           :tag ("@work")))
-        (:name "Next Actions at Home"
-               :and (
-                     :todo ("NEXT")
-                           :tag ("Active")
-                           :tag ("@home")))
-        (:name "Waiting"
-               :todo "WAIT")
-        (:name "Home"
-               :tag "@home")
-        (:name "Work"
-               :tag "@work")
-        (:name "Productivity"
-               :tag "Productivity")))
-(org-super-agenda-mode)
-
-(setq org-agenda-custom-commands
-      '(("d" "Dashboard"
-         ((agenda "" ((org-deadline-warning-days 7)))
-          (todo "TODO"
-                ((org-agenda-overriding-header "TODO Tasks")))
-          (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
-        ("n" "TODO Tasks"
-         ((todo "TODO"
-                ((org-agenda-overriding-header "Todo Tasks")))))
-        ("h" "Home Tasks" tags-todo "+@home")
-        ("w" "Work Tasks" tags-todo "+@work")
-        ("u" "Computer Tasks" tags-todo "+#computer")
-        ("r" "Recovery Tasks" tags-todo "+@recovery")
-        ;; Low-effort next actions
-        ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
-         ((org-agenda-overriding-header "Low Effort Taskss")
-          (org-agenda-max-todos 20)
-          (org-agenda-files org-agenda-files)))
-
-        ("w" "Workflow Status"
-         ((todo "WAIT"
-                ((org-agenda-overriding-header "Waiting on External")
-                 (org-agenda-files org-agenda-files)))
-          (todo "REVIEW"
-                ((org-agenda-overriding-header "In Review")
-                 (org-agenda-files org-agenda-files)))
-          (todo "PLAN"
-                ((org-agenda-overriding-header "In Planning")
-                 (org-agenda-files org-agenda-files)))
-          (todo "BACKLOG"
-                ((org-agenda-overriding-header "Project Backlog")
-                 (org-agenda-files org-agenda-files)))
-          (todo "READY"
-                ((org-agenda-overriding-header "Ready for Work")
-                 (org-agenda-files org-agenda-files)))
-          (todo "ACTIVE"
-                ((org-agenda-overriding-header "Active Projects")
-                 (org-agenda-files org-agenda-files)))
-          (todo "COMPLETED"
-                ((org-agenda-overriding-header "Completed Projects")
-                 (org-agenda-files org-agenda-files)))
-          (todo "CANC"
-                ((org-agenda-overriding-header "Cancelled Projects")
-                 (org-agenda-files org-agenda-files)))))))
+(advice-add 'org-agenda :before #'rcool-agenda-files-update)
+(advice-add 'org-todo-list :before #'rcool-agenda-files-update)
 
 (setf (alist-get 'height +org-capture-frame-parameters) 15)
 (setq +org-capture-fn
@@ -539,3 +553,258 @@
 (use-package! web-mode
   :hook (web-mode-hook . lsp)
                 )
+
+(defun rcool/org-babel-tangle-config ()
+  (let ((org-confirm-babel-evaluate nil))
+    (org-babel-tangle)))
+(add-hook 'org-mode-hook '(lambda() (add-hook 'after-save-hook #'rcool/org-babel-tangle-config)))
+
+(use-package!
+    :diminish
+    :functions (all-the-icons-favicon
+                all-the-icons-material
+                all-the-icons-octicon
+                all-the-icons-alltheicon)
+    :hook (company-mode . company-box-mode)
+    :init (setq company-box-enable-icon (display-graphic-p))
+    :config
+    (setq company-box-backend-colors nil)
+    )
+
+(setq display-time-default-load-average nil)
+(line-number-mode)
+(column-number-mode)
+(display-time-mode)
+(size-indication-mode 0)
+
+(use-package! hide-mode-line
+      :commands (hide-mode-line-mode))
+
+(use-package! doom-modeline
+      :init
+      (doom-modeline-mode)
+
+      :config
+      (setq doom-modeline-buffer-file-name-style 'relative-from-project
+		doom-modeline-enable-word-count nil
+		doom-modeline-buffer-encoding nil
+		doom-modeline-icon t
+		doom-modeline-modal-icon t
+		doom-modeline-major-mode-icon t
+		doom-modeline-major-mode-color-icon t
+		doom-modeline-bar-width 3
+		doom-modeline-height 28))
+
+(use-package! org-superstar
+      :config
+      (setq org-superstar-leading-bullet " "
+		org-superstart-special-todo-items t
+		org-superstar-todo-bullet-alist '(("TODO" . 9744)
+										      ("INPROG" . 9744)
+									      ("NEXT" . 9744)
+										      ("READ" . 9744)
+										      ("CANCELLED" . 9745)
+										      ("DONE" . 9745)
+										      ))
+      :hook (org-mode . org-superstar-mode)
+      )
+
+(use-package! org-modern
+      :hook (org-mode . org-modern-mode)
+      :config
+      (setq
+       org-modern-star '( "⌾" "✸" "◈" "◇")
+       org-modern-list '((42 . "◦") (43 . "•") (45 . "–"))
+       org-modern-tag nil
+       org-modern-priority nil
+       org-modern-todo nil
+       org-modern-table nil))
+
+(setq org-todo-keywords '((type
+                           "TODO(t)" "WAITING(h)" "INPROG-TODO(i)" "WORK(w)"
+                           "STUDY(s)" "SOMEDAY" "READ(r)" "PROJ(p)" "CONTACT(c)"
+                           "AUDIO(a)" "VIDEO(v)"
+                           "|" "DONE(d)" "CANCELLED(C@)")))
+
+(setq org-todo-keyword-faces
+      '(("TODO"  :inherit (region org-todo) :foreground "DarkOrange1"   :weight bold)
+        ("WORK"  :inherit (org-todo region) :foreground "DarkOrange1"   :weight bold)
+        ("READ"  :inherit (org-todo region) :foreground "MediumPurple2" :weight bold)
+        ("VIDEO"  :inherit (org-todo region) :foreground "MediumPurple2" :weight bold)
+        ("AUDIO"  :inherit (org-todo region) :foreground "MediumPurple2" :weight bold)
+        ("PROJ"  :inherit (org-todo region) :foreground "orange3"     :weight bold)
+        ("STUDY" :inherit (region org-todo) :foreground "plum3"       :weight bold)
+        ("DONE" . "SeaGreen4")))
+
+(setq org-tags-column -1)
+
+(setq org-lowest-priority ?F)  ;; Gives us priorities A through F
+(setq org-default-priority ?E) ;; If an item has no priority, it is considered [#E].
+
+(setq org-priority-faces
+      '((65 . "red2")
+        (66 . "Gold1")
+        (67 . "Goldenrod2")
+        (68 . "PaleTurquoise3")
+        (69 . "DarkSlateGray4")
+        (70 . "PaleTurquoise4")))
+
+;; custom time stamp format. I don't use this.
+(setq org-time-stamp-custom-formats '("<%A, %B %d, %Y" . "<%m/%d/%y %a %I:%M %p>"))
+
+(setq org-agenda-restore-windows-after-quit t)
+
+(setq org-agenda-window-setup 'current-window)
+
+;; Only show upcoming deadlines for the next X days. By default it shows
+;; 14 days into the future, which seems excessive.
+(setq org-deadline-warning-days 3)
+;; If something is done, don't show its deadline
+(setq org-agenda-skip-deadline-if-done t)
+;; If something is done, don't show when it's scheduled for
+(setq org-agenda-skip-scheduled-if-done t)
+;; If something is scheduled, don't tell me it is due soon
+(setq org-agenda-skip-deadline-prewarning-if-scheduled t)
+
+;; use AM-PM and not 24-hour time
+(setq org-agenda-timegrid-use-ampm 1)
+
+;; A new day is 3am (I work late into the night)
+(setq org-extend-today-until 3)
+
+;; (setq org-agenda-time-grid '((daily today require-timed)
+;;                              (1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000 2100 2200)
+;;                              "        " "----------------"))
+
+(setq org-agenda-time-grid nil)
+
+(setq org-agenda-span 'day)
+
+;; (setq org-agenda-block-separator ?-)
+(setq org-agenda-current-time-string "<----------------- Now")
+
+(setq org-agenda-block-separator nil)
+
+(setq org-agenda-scheduled-leaders '("Plan | " "Sched.%2dx: ") ; ⇛
+      org-agenda-deadline-leaders '("Due: " "Due in %1d d. | " "Due %1d d. ago: "))
+
+(setq org-agenda-prefix-format '((agenda . "  %-6:T %t%s")
+                                 (todo . "  %-6:T %t%s")
+                                 (tags . " %i %-12:c")
+                                 (search . " %i %-12:c")))
+
+(add-hook 'org-agenda-mode-hook
+          #'(lambda () (setq-local line-spacing 6)))
+
+(add-hook 'org-agenda-mode-hook
+          #'(lambda () (hide-mode-line-mode)))
+
+(setq org-agenda-custom-commands nil)
+(add-to-list '
+ org-agenda-custom-commands
+ '("c" "Day View"
+   ((agenda "" ((org-agenda-overriding-header "Productivity View")
+                (org-agenda-span 'day)
+                (org-super-agenda-groups '(
+                                           (:name "Today's Tasks:"
+                                                  :scheduled t
+                                                  :order 2)
+                                           (:name "Unscheduled Tasks Due Soon:"
+                                                  :deadline t
+                                                  :order 3)
+                                           (:name "Today's Schedule:"
+                                                  :time-grid t
+                                                  :discard (:deadline t)
+                                                  :order 1)))))
+
+    ;; (org-ql-block '(and (not (tags "defer")) (or (todo "PROJ" "STUDY") (and (todo) (or (tags "ec" "lt") (tags "p")))))
+    ;;               ((org-ql-block-header "")
+    ;;                (org-super-agenda-groups '(
+    ;;                                           (:name "Extracurricular:"
+    ;;                                                  :tag "ec"
+    ;;                                                  :order 5)
+    ;;                                           (:name "Personal:"
+    ;;                                                  :tag "p"
+    ;;                                                  :order 10)
+    ;;                                           (:name "Long-Term:"
+    ;;                                                  :todo ("STUDY" "PROJ")
+    ;;                                                  :tag "lt")
+    ;;                                           (:discard (:todo t))))))
+
+    ;; (todo "TODO"
+    ;; 		(
+    ;; 		 ;;(org-agenda-prefix-format "[ ] %T: ")
+    ;; 		 (org-agenda-sorting-strategy '(tag-up priority-down))
+    ;; 		 ;; (org-agenda-todo-keyword-format "")
+    ;; 		 (org-agenda-overriding-header "\n Todos: ")))
+    ;; (todo "PROJ"
+    ;; 		((org-agenda-overriding-header "")))
+
+    (alltodo "" ((org-agenda-overriding-header "")
+             ;; (org-agenda-prefix-format "  %-6:T   ")
+                 ;; (org-agenda-sorting-strategy '(tag-up priority-down))
+                 (org-super-agenda-groups
+                  '(
+                    (:discard (:tag "defer"))
+                    (:name "Extracurricular:"
+                           :tag "ec"
+                           :order 5)
+                    (:name "Personal:"
+                           :tag "p"
+                           :order 10)
+                    (:name "Study:"
+                           :todo "STUDY")
+                    (:name "Projects:"
+                           :todo "PROJ")
+                    (:discard (:todo t))
+                    ))))
+
+    )))
+
+(add-to-list 'org-agenda-custom-commands
+             '("v" "Day View No Agenda"
+               ((org-ql-block '(todo)
+                              ((org-super-agenda-groups '((:name "Today's Tasks"
+                                                                 :scheduled today
+                                                                 :deadline today)
+                                                          (:discard (:tag "defer"))
+                                                          (:name "Extracurricular:"
+                                                                 :tag "ec"
+                                                                 :order 10)
+                                                          (:name "Personal:"
+                                                                 :tag "p"
+                                                                 :order 5)
+                                                          (:name "Projects"
+                                                                 :todo ("STUDY" "PROJ")
+                                                                 :tag "lt")
+                                                          (:discard (:todo t)))))))))
+
+(add-to-list 'org-agenda-custom-commands
+             '("w" "Six-Day View"
+               ((agenda ""
+                        ((org-agenda-span 6)
+                         (org-agenda-entry-types '(:deadline :scheduled))
+                         (org-agenda-start-on-weekday nil)
+                         (org-deadline-warning-days 0)))
+                ;; (todo "PROJ"
+                ;; 	  (
+                ;; 	   ;; (org-agenda-skip-function
+                ;; 	   ;; 	'(org-agenda-skip-entry-if 'deadline))
+                ;; 	   (org-agenda-prefix-format "%s ")
+                ;; 	   (org-agenda-overriding-header "\Long-term:")))
+                (org-ql-block '(and (not (tags "defer")) (or (todo "PROJ" "STUDY") (and (todo) (or (tags "ec" "lt") (tags "p")))))
+                              ((org-ql-block-header "")
+                               (org-super-agenda-groups '(
+                                                          (:name "Extracurricular:"
+                                                                 :tag "ec"
+                                                                 :order 5)
+                                                          (:name "Personal:"
+                                                                 :tag "p"
+                                                                 :order 10)
+                                                          (:name "Long-Term:"
+                                                                 :todo ("STUDY" "PROJ")
+                                                                 :tag "lt")
+                                                          (:discard (:todo t))))))
+
+
+                )))

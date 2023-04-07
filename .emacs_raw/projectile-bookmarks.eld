@@ -1,1 +1,1 @@
-("~/.dotfiles/" "~/org/" "~/Dropbox/org/")
+("~/.dotfiles/" "~/richardcoolDotCom/" "~/personal_website/" "~/org/" "~/Dropbox/org/")
