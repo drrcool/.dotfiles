@@ -808,3 +808,36 @@ returns nil if current buffer contains only completed tasks."
 
 
                 )))
+
+(use-package! apheleia :config
+  ;; Setup Prettier
+  (setf (alist-get 'prettier apheleia-formatters)
+        '(npx "prettier"
+              "--trailing-comma" "es5"
+              "--bracket-spacing" "true"
+              "--single-quote" "true"
+              "--semi" "true"
+              "--print-width" "120"
+              "--tab-width" "4"
+              file))
+  (add-to-list 'apheleia-mode-alist '(rjsx-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(js2-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(js-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(typescript-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(web-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(css-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(scss-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(less-css-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(json-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(graphql-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(yaml-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(vue-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(nxml-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(html-mode . prettier))
+  (add-to-list 'apheleia-mode-alist '(php-mode . prettier))
+
+
+
+
+  (apheleia-global-mode t))

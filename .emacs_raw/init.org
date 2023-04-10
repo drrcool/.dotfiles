@@ -1836,8 +1836,7 @@ A primer for using pass to manage passwords: [[https://medium.com/@chasinglogic/
 
 *** Formatting with Apheleia
 #+begin_src emacs-lisp :tangle yes
-  (use-package apheleia
-    :config
+  (use-package apheleia :config
     ;; Setup Prettier
     (setf (alist-get 'prettier apheleia-formatters)
           '(npx "prettier"
@@ -1845,7 +1844,8 @@ A primer for using pass to manage passwords: [[https://medium.com/@chasinglogic/
                 "--bracket-spacing" "true"
                 "--single-quote" "true"
                 "--semi" "true"
-                "--print-width" "80"
+                "--print-width" "120"
+                "--tab-width" "4"
                 file))
     (add-to-list 'apheleia-mode-alist '(rjsx-mode . prettier))
     (add-to-list 'apheleia-mode-alist '(js2-mode . prettier))
@@ -1863,7 +1863,7 @@ A primer for using pass to manage passwords: [[https://medium.com/@chasinglogic/
     (add-to-list 'apheleia-mode-alist '(nxml-mode . prettier))
     (add-to-list 'apheleia-mode-alist '(html-mode . prettier))
     (add-to-list 'apheleia-mode-alist '(php-mode . prettier))
-  
+
 
 
 
