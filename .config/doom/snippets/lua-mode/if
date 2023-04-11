@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: if ... then ... end
+# --
+if ${1:true} then
+   `yas-selected-text`$0
+end

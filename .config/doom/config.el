@@ -841,3 +841,10 @@ returns nil if current buffer contains only completed tasks."
 
 
   (apheleia-global-mode t))
+
+(use-package! yasnippet
+  :init
+  (yas-global-mode 1)
+  :config
+  (setq yas-snippet-dirs '("~/.config/doom/snippets")))
+  (yas-reload-all)

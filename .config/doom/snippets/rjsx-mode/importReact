@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: importReact
+# uuid: importReact
+# key: react
+# condition: t
+# --
+import React from "react"

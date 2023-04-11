@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: init
+# key: init
+# uuid: init
+# --
+#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+$0
+#+end_src

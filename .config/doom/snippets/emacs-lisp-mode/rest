@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: &rest ...
+# --
+&rest `yas-selected-text`$0

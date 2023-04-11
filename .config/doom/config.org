@@ -967,3 +967,12 @@ This block is designed for the Dygma raise
     (apheleia-global-mode t))
 
 #+end_src
+* Yassnippet
+#+begin_src emacs-lisp :tangle yes
+(use-package! yasnippet
+  :init
+  (yas-global-mode 1)
+  :config
+  (setq yas-snippet-dirs '("~/.config/doom/snippets")))
+  (yas-reload-all)
+#+end_src

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: import vitest
+# key: vitest
+# uuid: vitest
+# --
+import { describe, test, it, expect } from "vitest"

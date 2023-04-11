@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: or
+# --
+(or `yas-selected-text`$0)

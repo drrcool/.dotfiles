@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: require("...")
+# uuid: require
+# --
+require(`yas-selected-text`$0)`(if (eolp) ";")`

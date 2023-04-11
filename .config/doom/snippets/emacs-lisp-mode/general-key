@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: general-key
+# uuid: gk
+# key: gk
+# --
+"${1:keybind}" '(${2:function} :which-key "${3:description}")

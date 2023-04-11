@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: if
+# --
+if $1; then
+   `yas-selected-text`$0
+fi

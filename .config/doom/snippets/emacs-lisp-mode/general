@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: general-define-key
+# uuid: gen
+# key: gen
+# --
+(general-define-key
+  :prefix "${1: SPC}"
+  :states '${2: motion}
+  :keymaps ${3}
+
+
+)

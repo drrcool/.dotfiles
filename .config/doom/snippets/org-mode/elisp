@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: elisp
+# key: elisp
+# uuid: elisp
+# --
+#+begin_src emacs-lisp 
+`yas-selected-text`$0
+#+end_src

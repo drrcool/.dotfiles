@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: print
+# key: p
+# uuid: p
+# --
+print(`yas-selected-text`$1)

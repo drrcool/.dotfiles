@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: try-catch block
+# --
+try {
+    `yas-selected-text`$0
+} catch (${1:err}) {
+    ${2:// Do something}
+}
