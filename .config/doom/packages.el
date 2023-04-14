@@ -64,3 +64,4 @@
           :recipe (:host github :repo "orzechowskid/tsi.el"))
 (package! dired-rainbow)
 (package! apheleia)
+(package! ef-themes)

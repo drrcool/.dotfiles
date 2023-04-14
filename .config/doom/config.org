@@ -7,7 +7,6 @@
   :config
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
-  (load-theme 'doom-Iosvkem t)
   (doom-themes-neotree-config)
   (setq doom-themes-treemacs-theme "doom-atom")
   (doom-themes-treemacs-config)
@@ -300,28 +299,6 @@ This block is designed for the Dygma raise
     (org-roam-dailies-directory "roam/daily/")
     (org-roam-completion-everywhere t)
 
-    :general
-    (rcool/leader-keys
-      "n" '(:ignore t :wk "Notes")
-      "nd" '(:ignore t :wk "By date")
-      "nd-" '(org-roam-dailies-find-directory :wk "Find Directory")
-      "ndy" '(org-roam-dailies-goto-yesterday :wk "Goto Yesterday")
-      "ndT" '(org-roam-dailies-capture-today :wk "Capture Today")
-      "ndt" '(org-roam-dailies-goto-today :wk "Goto Today")
-      "ndY" '(org-roam-dailies-capture-yesterday :wk "Capture Yesterday")
-      "ndf" '(org-roam-dailies-goto-next-note :wk "Next Note")
-      "ndd" '(org-roam-dailies-goto-date :wk "Goto Date")
-      "nf" '(org-roam-node-find :wk "Find")
-      "ni" '(org-roam-node-insert :wk "Insert")
-      "no" '(org-roam-node-open :wk "Open")
-      "nn" '(org-roam-capture :wk "Capture to node")
-      "ng" '(org-roam-graph :wk "Show graph")
-      "nF" '(org-roam-ref-find :wk "Find Ref")
-      "ns" '(org-roam-db-sync :wk "Sync database")
-
-
-      )
-
    )
 #+end_src
 
@@ -560,8 +537,9 @@ This block is designed for the Dygma raise
 
 * Fonts
 #+begin_src emacs-lisp :tangle yes
-(setq doom-font (font-spec :family "Spleen32x64 Nerd Font" :size 20 :Weight 'light))
-(setq doom-variable-pitch-font (font-spec :family "Spleen32x64 Nerd Font" :size 16))
+;; (setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 20 :Weight 'light))
+(setq doom-font (font-spec :family "OperatorMonoLig Nerd Font" :size 20 :Weight 'light))
+(setq doom-variable-pitch-font (font-spec :family "JuliaMono" :size 16))
 #+end_src
 
 
@@ -975,4 +953,43 @@ This block is designed for the Dygma raise
   :config
   (setq yas-snippet-dirs '("~/.config/doom/snippets")))
   (yas-reload-all)
+#+end_src
+
+* Ef-Themes
+#+begin_src emacs-lisp
+(use-package! ef-themes
+
+  :init
+  (setq ef-themes-to-toggle '(ef-frost ef-dark))
+  (map! :leader
+        :desc "Toggle Ef Themes" "te" 'ef-themes-toggle)
+  (setq ef-themes-headings ; read the manual's entry or the doc string
+        '((0 . (variable-pitch light 1.9))
+          (1 . (variable-pitch light 1.8))
+          (2 . (variable-pitch regular 1.7))
+          (3 . (variable-pitch regular 1.6))
+          (4 . (variable-pitch regular 1.5))
+          (5 . (variable-pitch 1.4)) ; absence of weight means `bold'
+          (6 . (variable-pitch 1.3))
+          (7 . (variable-pitch 1.2))
+          (t . (variable-pitch 1.1))))
+
+  (setq ef-themes-mixed-fonts t
+        ef-themes-variable-pitch-ui t)
+
+  (setq ef-theme-region '(intense neutral))
+
+  ;; Disable all other themes to avoid awkward blending
+  (mapc #'disable-theme custom-enabled-themes)
+
+  (ef-themes-select 'ef-dark)
+  )
+
+#+end_src
+
+* Some keybinds
+#+begin_src emacs-lisp :tangle yes
+(map! :leader
+      :desc "Ace Swap Windows" "wa" #'ace-swap-window)
+
 #+end_src

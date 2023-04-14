@@ -5,11 +5,11 @@
  ;; If there is more than one, they won't work right.
  '(ignored-local-variable-values
    '((eval add-hook 'after-save-hook
-           (lambda nil
-             (progn
-               (lc/org-add-ids-to-headlines-in-file)
-               (lc/tangle-config)))
-           nil t))))
+      (lambda nil
+        (progn
+          (lc/org-add-ids-to-headlines-in-file)
+          (lc/tangle-config)))
+      nil t))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
