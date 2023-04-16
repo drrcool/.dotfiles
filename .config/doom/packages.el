@@ -65,3 +65,4 @@
 (package! dired-rainbow)
 (package! apheleia)
 (package! ef-themes)
+(package! magit-todos)
