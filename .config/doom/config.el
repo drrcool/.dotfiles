@@ -16,6 +16,8 @@
 (defvar rcool/teal-color "#5FB3B3")
 (defvar rcool/light-grey-color "#C0C5CE")
 (defvar rcool/dark-grey-color "#65737E")
+(defvar rcool/qoedash-color "#B533FF")
+(defvar rcool/sessionwiz-color "#338AFF")
 
 (setq mac-command-modifier 'super
       mac-right-command-modifier 'control
@@ -234,6 +236,8 @@
         '(("Inbox" . ?i)
           ("@home" . ?h)
           ("@work" . ?w)
+          ("#qoedash" . ?Q)
+          ("#sessionwiz" . ?S)
           ("@recovery" . ?r)
           ("@Manny" . ?m)
           ("@car" . ?c)
@@ -244,6 +248,8 @@
           ("@car" . ,rcool/purple-color)
           ("@work" . ,rcool/red-color)
           ("Inbox" . ,rcool/teal-color)
+          ("#qoedash" . ,rcool/qoedash-color)
+          ("#sessionwiz" . ,rcool/sessionwiz-color)
           ("@recovery" . ,rcool/blue-color)))
 
 )

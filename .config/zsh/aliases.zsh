@@ -24,7 +24,8 @@ alias reset_bluetooth="sudo pkill bluetoothd"
 
 alias pylon='ssh root@rcool.pylon.prod.container.dataeng.netflix.net'
 alias ls='exa  --group --icons --group-directories-first --binary'
-alias ec='emacsclient -c'
+alias es='emacs --daemon &'
+alias ec='emacsclient -c & '
 alias killemacs='emacsclient -e "(kill-emacs)"'
 
 alias vpn='/opt/pulsesecure/bin/pulseUI'

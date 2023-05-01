@@ -23,6 +23,8 @@
 (defvar rcool/teal-color "#5FB3B3")
 (defvar rcool/light-grey-color "#C0C5CE")
 (defvar rcool/dark-grey-color "#65737E")
+(defvar rcool/qoedash-color "#B533FF")
+(defvar rcool/sessionwiz-color "#338AFF")
 #+end_src
 * Mac Specific Bindings
 This block is designed for the Dygma raise
@@ -261,6 +263,8 @@ This block is designed for the Dygma raise
         '(("Inbox" . ?i)
           ("@home" . ?h)
           ("@work" . ?w)
+          ("#qoedash" . ?Q)
+          ("#sessionwiz" . ?S)
           ("@recovery" . ?r)
           ("@Manny" . ?m)
           ("@car" . ?c)
@@ -271,6 +275,8 @@ This block is designed for the Dygma raise
           ("@car" . ,rcool/purple-color)
           ("@work" . ,rcool/red-color)
           ("Inbox" . ,rcool/teal-color)
+          ("#qoedash" . ,rcool/qoedash-color)
+          ("#sessionwiz" . ,rcool/sessionwiz-color)
           ("@recovery" . ,rcool/blue-color)))
 
 )
