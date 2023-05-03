@@ -1,0 +1,5 @@
+# change window focus
+shift + command - h : yabai -m window --focus west
+shift + command - j : yabai -m window --focus south
+shift + command - k : yabai -m window --focus north
+shift + command - l : yabai -m window --focus east
