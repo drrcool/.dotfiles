@@ -26,16 +26,17 @@ return {
     "sindrets/diffview.nvim",
     cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles"},
     config = true
-    |},
-    {
-      "TimUntersberger/neogit",
-      cmd = "Neogit",
-      config = { 
-        integrations = {diffview = true},
-      },
-      keys = {
-        {"<leader>gs", "<cmd>Neogit kind=floating<cr>", desc = "Status" },
-      },
+  },
+  {
+    "TimUntersberger/neogit",
+    cmd = "Neogit",
+    config = { 
+      integrations = {diffview = true},
+    },
+    keys = {
+      {"<leader>gs", "<cmd>Neogit kind=floating<cr>", desc = "Status" },
+    },
+  },
   {
     "monaqa/dial.nvim",
     event = "BufReadPre",
@@ -47,5 +48,5 @@ return {
       vim.api.nvim_set_keymap("v", "g<C-a>", require("dial.map").inc_gvisual(), { noremap = true })
       vim.api.nvim_set_keymap("v", "g<C-x>", require("dial.map").dec_gvisual(), { noremap = true })
     end,
+  }
 }
-
