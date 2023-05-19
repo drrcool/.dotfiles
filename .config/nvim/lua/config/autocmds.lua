@@ -1,47 +1,21 @@
--- See `:help vim.highlight.on_yank()`
-local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })
+-- see `:help vim.highlight.on_yank()`
+local highlight_group = vim.api.nvim_create_augroup("YankHighlight", {clear = true})
 vim.api.nvim_create_autocmd("TextYankPost", {
   callback = function()
     vim.highlight.on_yank()
   end,
-  group = highlight_group,
+  group = highlight_group, 
   pattern = "*",
 })
 
--- Check if we need to reload the file when it changed
+-- Check if we need to reload the file when it changes
 vim.api.nvim_create_autocmd("FocusGained", { command = "checktime" })
-
--- go to last loc when opening a buffer
-vim.api.nvim_create_autocmd("BufReadPost", {
-  callback = function()
-    local mark = vim.api.nvim_buf_get_mark(0, '"')
-    local lcount = vim.api.nvim_buf_line_count(0)
-    if mark[1] > 0 and mark[1] <= lcount then
-      pcall(vim.api.nvim_win_set_cursor, 0, mark)
-    end
-  end,
-})
-
--- Auto toggle hlsearch
-local ns = vim.api.nvim_create_namespace "toggle_hlsearch"
-local function toggle_hlsearch(char)
-  if vim.fn.mode() == "n" then
-    local keys = { "<CR>", "n", "N", "*", "#", "?", "/" }
-    local new_hlsearch = vim.tbl_contains(keys, vim.fn.keytrans(char))
-
-    if vim.opt.hlsearch:get() ~= new_hlsearch then
-      vim.opt.hlsearch = new_hlsearch
-    end
-  end
-end
-vim.on_key(toggle_hlsearch, ns)
 
 -- windows to close
 vim.api.nvim_create_autocmd("FileType", {
   pattern = {
     "OverseerForm",
     "OverseerList",
-    "checkhealth",
     "floggraph",
     "fugitive",
     "git",
@@ -64,18 +38,23 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
-vim.api.nvim_set_hl(0, "TerminalCursorShape", { underline = true })
-vim.api.nvim_create_autocmd("TermEnter", {
+
+-- show cursor line only in active window
+vim.api.nvim_create_autocmd({ "InsertLeave", "WinEnter" }, {
   callback = function()
-    vim.cmd [[setlocal winhighlight=TermCursor:TerminalCursorShape]]
+    local ok, cl = pcall(vim.api.nvim_win_get_var, 0, "auto-cursorline")
+    if ok and cl then
+      vim.wo.cursorline = true
+      vim.api.nvim_win_del_var(0, "auto-cursorline")
+    end
   end,
 })
-
-vim.api.nvim_create_autocmd("VimLeave", {
+vim.api.nvim_create_autocmd({ "InsertEnter", "WinLeave" }, {
   callback = function()
-    vim.cmd [[set guicursor=a:ver100]]
+    local cl = vim.wo.cursorline
+    if cl then
+      vim.api.nvim_win_set_var(0, "auto-cursorline", cl)
+      vim.wo.cursorline = false
+    end
   end,
 })
-
--- don't auto comment new line
-vim.api.nvim_create_autocmd("BufEnter", { command = [[set formatoptions-=cro]] })
