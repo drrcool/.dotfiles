@@ -26,18 +26,18 @@
       mac-control-modifier 'meta
       mac-right-control-modifier 'control)
 
-(use-package! copilot
-      :hook (prog-mode . copilot-mode)
-)
+  (use-package! copilot
+	:hook (prog-mode . copilot-mode)
+  )
 
-(defun rcool/copilot-tab ()
-      (interactive)
-      (or (copilot-accept-completion)
-	      (indent-for-tab-command)))
+  (defun rcool/copilot-tab ()
+	(interactive)
+	(or (copilot-accept-completion)
+		(indent-for-tab-command)))
 
-(with-eval-after-load 'copilot
-(evil-define-key 'insert copilot-mode-map
-(kbd "<tab>") #'rcool/copilot-tab))
+  (with-eval-after-load 'copilot
+  (evil-define-key 'insert copilot-mode-map
+  (kbd "<tab>") #'rcool/copilot-tab))
 
 (use-package! dired-rainbow
   :config
@@ -254,143 +254,143 @@
 
 )
 
-(use-package org-roam
+  (use-package org-roam
 
-  :init
-  (setq org-roam-v2-ack t)
+    :init
+    (setq org-roam-v2-ack t)
 
-  (add-to-list 'display-buffer-alist
-               '("\\*org-roam\\*"
-                 (display-buffer-in-direction)
-                 (direction . right)
-                 (window-width . 0.33)
-                 (window-height . fit-window-to-buffer)))
+    (add-to-list 'display-buffer-alist
+                 '("\\*org-roam\\*"
+                   (display-buffer-in-direction)
+                   (direction . right)
+                   (window-width . 0.33)
+                   (window-height . fit-window-to-buffer)))
 
-  (org-roam-db-autosync-mode)
+    (org-roam-db-autosync-mode)
 
-  :custom
-  (org-roam-directory (file-truename "~/org"))
-  (org-roam-dailies-directory "roam/daily/")
-  (org-roam-completion-everywhere t)
+    :custom
+    (org-roam-directory (file-truename "~/org"))
+    (org-roam-dailies-directory "roam/daily/")
+    (org-roam-completion-everywhere t)
 
- )
+   )
 
-(defun rcool-buffer-tags-get ()
-  "Return filetags value in current buffer."
-  (rcool-buffer-prop-get-list "filetags" " "))
+  (defun rcool-buffer-tags-get ()
+    "Return filetags value in current buffer."
+    (rcool-buffer-prop-get-list "filetags" " "))
 
-(defun rcool-buffer-prop-get-list (name &optional separators)
-  "Get a buffer property NAME as a list using SEPARATORS.
+  (defun rcool-buffer-prop-get-list (name &optional separators)
+    "Get a buffer property NAME as a list using SEPARATORS.
 
-If SEPARATORS is non-nil, it should be a regular expression matching text
-that separates, but is not part of, the substrings.  If nil, it defaults
-to `split-string-default-separators'."
-  (let ((value (rcool-buffer-prop-get name)))
-    (when (and value (not (string-empty-p value)))
-      (split-string-and-unquote value separators))))
+  If SEPARATORS is non-nil, it should be a regular expression matching text
+  that separates, but is not part of, the substrings.  If nil, it defaults
+  to `split-string-default-separators'."
+    (let ((value (rcool-buffer-prop-get name)))
+      (when (and value (not (string-empty-p value)))
+        (split-string-and-unquote value separators))))
 
-(defun rcool-buffer-prop-get (name)
-  "Get a buffer property called NAME as a string."
-  (org-with-point-at 1
-    (when (re-search-forward (concat "^#\\+" name ":\\(.*\\)$") (point-max) t)
-      (buffer-substring-no-properties (match-beginning 1) (match-end 1)))))
+  (defun rcool-buffer-prop-get (name)
+    "Get a buffer property called NAME as a string."
+    (org-with-point-at 1
+      (when (re-search-forward (concat "^#\\+" name ":\\(.*\\)$") (point-max) t)
+        (buffer-substring-no-properties (match-beginning 1) (match-end 1)))))
 
-(defun rcool-buffer-tags-add (tag)
-  "Add a TAG to filetags in current buffer."
-  (let* ((tags (rcool-buffer-tags-get))
-         (tags (delete tag tags)))
-    (apply #'rcool-buffer-tags-set tags)))
+  (defun rcool-buffer-tags-add (tag)
+    "Add a TAG to filetags in current buffer."
+    (let* ((tags (rcool-buffer-tags-get))
+           (tags (delete tag tags)))
+      (apply #'rcool-buffer-tags-set tags)))
 
-(defun rcool-buffer-tags-set (&rest tags)
-  "Set TAGS in current buffer.
+  (defun rcool-buffer-tags-set (&rest tags)
+    "Set TAGS in current buffer.
 
-If filetags value is already set, replace it."
-  (rcool-buffer-prop-set "filetags" (string-join tags " ")  ))
+  If filetags value is already set, replace it."
+    (rcool-buffer-prop-set "filetags" (string-join tags " ")  ))
 
-(defun rcool-buffer-prop-set (name value)
-  "Set a file property called NAME to VALUE in buffer file.
+  (defun rcool-buffer-prop-set (name value)
+    "Set a file property called NAME to VALUE in buffer file.
 
-If the property is already set, replace its value."
-  (setq name (downcase name))
-  (org-with-point-at 1
-    (let ((case-fold-search t))
-      (if (re-search-forward (concat "^#\\+" name ":\\(.*\\)$") (point-max) t)
-          (replace-match (concat "#+" name ": " value) 'fixedcase)
-        (while (and (not (eobp))
-                    (looking-at "^[#:]]"))
-          (if (save-excursion (end-of-line) (eobp))
-              (progn
-                (end-of-line)
-                (insert "\n"))
-            (forward-line)
-            (beginning-of-line)))
-        (insert "#+" name ": " value "\n")))))
+  If the property is already set, replace its value."
+    (setq name (downcase name))
+    (org-with-point-at 1
+      (let ((case-fold-search t))
+        (if (re-search-forward (concat "^#\\+" name ":\\(.*\\)$") (point-max) t)
+            (replace-match (concat "#+" name ": " value) 'fixedcase)
+          (while (and (not (eobp))
+                      (looking-at "^[#:]]"))
+            (if (save-excursion (end-of-line) (eobp))
+                (progn
+                  (end-of-line)
+                  (insert "\n"))
+              (forward-line)
+              (beginning-of-line)))
+          (insert "#+" name ": " value "\n")))))
 
-(add-hook 'find-file-hook #'rcool-project-update-tag)
-(add-hook 'before-save-hook #'rcool-project-update-tag)
+  (add-hook 'find-file-hook #'rcool-project-update-tag)
+  (add-hook 'before-save-hook #'rcool-project-update-tag)
 
-(defun rcool-project-update-tag ()
-  "Update PROJECT tag in the current buffer."
-  (when (and (not (active-minibuffer-window))
-             (rcool-buffer-p))
-    (save-excursion
-      (goto-char (point-min))
-      (let* ((tags (rcool-buffer-tags-get))
-             (original-tags tags))
-        (if (rcool-project-p)
-            (setq tags (cons "project" tags))
-          (setq tags (remove "project" tags)))
+  (defun rcool-project-update-tag ()
+    "Update PROJECT tag in the current buffer."
+    (when (and (not (active-minibuffer-window))
+               (rcool-buffer-p))
+      (save-excursion
+        (goto-char (point-min))
+        (let* ((tags (rcool-buffer-tags-get))
+               (original-tags tags))
+          (if (rcool-project-p)
+              (setq tags (cons "project" tags))
+            (setq tags (remove "project" tags)))
 
-        ;; Clean up dups
-        (setq tags (seq-uniq tags))
+          ;; Clean up dups
+          (setq tags (seq-uniq tags))
 
-        ;; update tags
-        (when (or (seq-difference tags original-tags)
-                  (seq-difference original-tags tags))
-          (apply #'rcool-buffer-tags-set tags))))))
+          ;; update tags
+          (when (or (seq-difference tags original-tags)
+                    (seq-difference original-tags tags))
+            (apply #'rcool-buffer-tags-set tags))))))
 
-(defun rcool-buffer-p ()
-  "Return non-nil if the currently visited buffer is a note."
-  (and buffer-file-name
-       (string-prefix-p
-        (expand-file-name (file-name-as-directory org-roam-directory))
+  (defun rcool-buffer-p ()
+    "Return non-nil if the currently visited buffer is a note."
+    (and buffer-file-name
+         (string-prefix-p
+          (expand-file-name (file-name-as-directory org-roam-directory))
 
-        (file-name-directory buffer-file-name))))
-
-
-(defun rcool-project-p ()
-  "Return non-nil if current buffer has any todo entries.
-
-TODO entriest marked as done are ignored, meaning that this function
-returns nil if current buffer contains only completed tasks."
-  (org-element-map
-               (org-element-parse-buffer 'headline)
-               'headline
-               (lambda (h)
-                 (eq (org-element-property :todo-type h)
-                     'todo))
-               nil 'first-match))
-
-(defun rcool-project-files ()
-  "Return a list of note files containing 'project' tags."
-
-  (seq-uniq
-   (seq-map
-    #'car
-    (org-roam-db-query
-     [:select [nodes:file]
-              :from tags
-              :left-join nodes
-              :on (= tags:node-id nodes:id)
-              :where (like tag (quote "%\"project\"%"))]))))
+          (file-name-directory buffer-file-name))))
 
 
-(defun rcool-agenda-files-update (&rest _)
-  "Update the value of `org-agenda-files',"
-  (setq org-agenda-files (rcool-project-files)))
+  (defun rcool-project-p ()
+    "Return non-nil if current buffer has any todo entries.
 
-(advice-add 'org-agenda :before #'rcool-agenda-files-update)
-(advice-add 'org-todo-list :before #'rcool-agenda-files-update)
+  TODO entriest marked as done are ignored, meaning that this function
+  returns nil if current buffer contains only completed tasks."
+    (org-element-map
+                 (org-element-parse-buffer 'headline)
+                 'headline
+                 (lambda (h)
+                   (eq (org-element-property :todo-type h)
+                       'todo))
+                 nil 'first-match))
+
+  (defun rcool-project-files ()
+    "Return a list of note files containing 'project' tags."
+
+    (seq-uniq
+     (seq-map
+      #'car
+      (org-roam-db-query
+       [:select [nodes:file]
+                :from tags
+                :left-join nodes
+                :on (= tags:node-id nodes:id)
+                :where (like tag (quote "%\"project\"%"))]))))
+
+
+  (defun rcool-agenda-files-update (&rest _)
+    "Update the value of `org-agenda-files',"
+    (setq org-agenda-files (rcool-project-files)))
+
+  (advice-add 'org-agenda :before #'rcool-agenda-files-update)
+  (advice-add 'org-todo-list :before #'rcool-agenda-files-update)
 
 (setf (alist-get 'height +org-capture-frame-parameters) 15)
 (setq +org-capture-fn
@@ -431,26 +431,26 @@ returns nil if current buffer contains only completed tasks."
         :n "g <right>" #'org-down-element
         )
 
-(defun rcool/presentation-setup ()
-  (setq text-scale-mode-amount 3)
-  (org-display-inline-images)
-  (hide-mode-line-mode 1)
-  (text-scale-mode 1))
+  (defun rcool/presentation-setup ()
+    (setq text-scale-mode-amount 3)
+    (org-display-inline-images)
+    (hide-mode-line-mode 1)
+    (text-scale-mode 1))
 
-(defun rcool/presentation-end ()
-  (hide-mode-line-mode 0)
-  (text-scale-mode 0))
+  (defun rcool/presentation-end ()
+    (hide-mode-line-mode 0)
+    (text-scale-mode 0))
 
-(use-package! org-tree-slide
-  :hook ((org-tree-slide-play . rcool/presentation-setup)
-         (org-tree-slide-stop . rcool/presentation-end))
-  :custom
-  (org-tree-slide-in-effect t)
-  (org-tree-slide-activate-message "Presentation Started")
-  (org-tree-slide-deactivate-message "Presentation Ended")
-  (org-tree-slide-header t)
-  (org-tree-slide-breadcrumbs " // ")
-  (org-image-actual-width nil))
+  (use-package! org-tree-slide
+    :hook ((org-tree-slide-play . rcool/presentation-setup)
+           (org-tree-slide-stop . rcool/presentation-end))
+    :custom
+    (org-tree-slide-in-effect t)
+    (org-tree-slide-activate-message "Presentation Started")
+    (org-tree-slide-deactivate-message "Presentation Ended")
+    (org-tree-slide-header t)
+    (org-tree-slide-breadcrumbs " // ")
+    (org-image-actual-width nil))
 
 (use-package! org-appear
   :hook (org-mode . org-appear-mode)
@@ -472,9 +472,11 @@ returns nil if current buffer contains only completed tasks."
         org-startup-indented t
         )
 
-;;(setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 20 :Weight 'light))
+;; (setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 23 :weight 'light))
 ;; (setq doom-font (font-spec :family "Spleen32x64 Nerd Font" :size 20 :weight 'light))
- (setq doom-font (font-spec :family "OperatorMonoLig Nerd Font" :size 17 :Weight 'light))
+ ;; (setq doom-font (font-spec :family "OperatorMonoLig Nerd Font" :size 17 :Weight 'light))
+;; (setq doom-font (font-spec :family "DankMono Nerd Font" :size 23 :weight 'light))
+(setq doom-font (font-spec :family "VictorMono Nerd Font Mono" :size 23 :weight 'light))
 ;; (setq doom-font (font-spec :family "Fira Code" :size 16 :Weight 'light))
 (setq doom-variable-pitch-font (font-spec :family "JuliaMono" :size 14))
 
@@ -557,54 +559,54 @@ returns nil if current buffer contains only completed tasks."
     (setq company-box-backend-colors nil)
     )
 
-(setq display-time-default-load-average nil)
-(line-number-mode)
-(column-number-mode)
-(display-time-mode)
-(size-indication-mode 0)
+  (setq display-time-default-load-average nil)
+  (line-number-mode)
+  (column-number-mode)
+  (display-time-mode)
+  (size-indication-mode 0)
 
-(use-package! hide-mode-line
-      :commands (hide-mode-line-mode))
+  (use-package! hide-mode-line
+	:commands (hide-mode-line-mode))
 
-(use-package! doom-modeline
-      :init
-      (doom-modeline-mode)
+  (use-package! doom-modeline
+	:init
+	(doom-modeline-mode)
 
-      :config
-      (setq doom-modeline-buffer-file-name-style 'relative-from-project
-		doom-modeline-enable-word-count nil
-		doom-modeline-buffer-encoding nil
-		doom-modeline-icon t
-		doom-modeline-modal-icon t
-		doom-modeline-major-mode-icon t
-		doom-modeline-major-mode-color-icon t
-		doom-modeline-bar-width 3
-		doom-modeline-height 28))
+	:config
+	(setq doom-modeline-buffer-file-name-style 'relative-from-project
+		  doom-modeline-enable-word-count nil
+		  doom-modeline-buffer-encoding nil
+		  doom-modeline-icon t
+		  doom-modeline-modal-icon t
+		  doom-modeline-major-mode-icon t
+		  doom-modeline-major-mode-color-icon t
+		  doom-modeline-bar-width 3
+		  doom-modeline-height 28))
 
-(use-package! org-superstar
-      :config
-      (setq org-superstar-leading-bullet " "
-		org-superstart-special-todo-items t
-		org-superstar-todo-bullet-alist '(("TODO" . 9744)
-										      ("INPROG" . 9744)
-									      ("NEXT" . 9744)
-										      ("READ" . 9744)
-										      ("CANCELLED" . 9745)
-										      ("DONE" . 9745)
-										      ))
-      :hook (org-mode . org-superstar-mode)
-      )
+  (use-package! org-superstar
+	:config
+	(setq org-superstar-leading-bullet " "
+		  org-superstart-special-todo-items t
+		  org-superstar-todo-bullet-alist '(("TODO" . 9744)
+											("INPROG" . 9744)
+										("NEXT" . 9744)
+											("READ" . 9744)
+											("CANCELLED" . 9745)
+											("DONE" . 9745)
+											))
+	:hook (org-mode . org-superstar-mode)
+	)
 
-(use-package! org-modern
-      :hook (org-mode . org-modern-mode)
-      :config
-      (setq
-       org-modern-star '( "⌾" "✸" "◈" "◇")
-       org-modern-list '((42 . "◦") (43 . "•") (45 . "–"))
-       org-modern-tag nil
-       org-modern-priority nil
-       org-modern-todo nil
-       org-modern-table nil))
+  (use-package! org-modern
+	:hook (org-mode . org-modern-mode)
+	:config
+	(setq
+	 org-modern-star '( "⌾" "✸" "◈" "◇")
+	 org-modern-list '((42 . "◦") (43 . "•") (45 . "–"))
+	 org-modern-tag nil
+	 org-modern-priority nil
+	 org-modern-todo nil
+	 org-modern-table nil))
 
 (setq org-todo-keywords '((type
                            "TODO(t)" "WAITING(h)" "INPROG-TODO(i)" "WORK(w)"
@@ -622,7 +624,7 @@ returns nil if current buffer contains only completed tasks."
         ("STUDY" :inherit (region org-todo) :foreground "plum3"       :weight bold)
         ("DONE" . "SeaGreen4")))
 
-(setq org-tags-column -1)
+  (setq org-tags-column -1)
 
 (setq org-lowest-priority ?F)  ;; Gives us priorities A through F
 (setq org-default-priority ?E) ;; If an item has no priority, it is considered [#E].
@@ -795,38 +797,32 @@ returns nil if current buffer contains only completed tasks."
 
                 )))
 
-(use-package! apheleia :config
-  ;; Setup Prettier
-  (setf (alist-get 'prettier apheleia-formatters)
-        '(npx "prettier"
-              "--trailing-comma" "es5"
-              "--bracket-spacing" "true"
-              "--single-quote" "true"
-              "--semi" "true"
-              "--print-width" "120"
-              "--tab-width" "4"
-              file))
-  (add-to-list 'apheleia-mode-alist '(rjsx-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(js2-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(js-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(typescript-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(web-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(css-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(scss-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(less-css-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(json-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(graphql-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(yaml-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(vue-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(nxml-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(html-mode . prettier))
-  (add-to-list 'apheleia-mode-alist '(php-mode . prettier))
+  (use-package! apheleia :config
+    ;; Setup Prettier
+    (setf (alist-get 'prettier apheleia-formatters)
+          '(npx "prettier"
+                file))
+    (add-to-list 'apheleia-mode-alist '(rjsx-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(js2-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(js-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(typescript-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(web-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(css-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(scss-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(less-css-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(json-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(graphql-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(yaml-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(markdown-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(vue-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(nxml-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(html-mode . prettier))
+    (add-to-list 'apheleia-mode-alist '(php-mode . prettier))
 
 
 
 
-  (apheleia-global-mode t))
+    (apheleia-global-mode t))
 
 (use-package! yasnippet
   :init
@@ -867,5 +863,5 @@ returns nil if current buffer contains only completed tasks."
       :after evil
       :desc "Ace Swap Windows" "wa" #'ace-swap-window)
 
-(set-frame-parameter (selected-frame) 'alpha '(90 . 90))
-(add-to-list 'default-frame-alist '(alpha . (90 . 90)))
+(set-frame-parameter (selected-frame) 'alpha '(99 . 99))
+(add-to-list 'default-frame-alist '(alpha . (99 . 99)))

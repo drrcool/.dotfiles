@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: dimensionConfig
+# key: ndim
+# uuid: ndim
+# --
+{
+    "name": "${1:dimensionName}",
+    "label": "${2:dimensionLabel}",
+    "family": "${3:dimensionFamily}",
+    "dataSources": [ "${4:dataSources}" ],
+    "definition" : "${5:dimensionDefinition}",
+},

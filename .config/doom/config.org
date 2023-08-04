@@ -543,9 +543,11 @@ This block is designed for the Dygma raise
 
 * Fonts
 #+begin_src emacs-lisp :tangle yes
-;;(setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 20 :Weight 'light))
+;; (setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 23 :weight 'light))
 ;; (setq doom-font (font-spec :family "Spleen32x64 Nerd Font" :size 20 :weight 'light))
- (setq doom-font (font-spec :family "OperatorMonoLig Nerd Font" :size 17 :Weight 'light))
+ ;; (setq doom-font (font-spec :family "OperatorMonoLig Nerd Font" :size 17 :Weight 'light))
+;; (setq doom-font (font-spec :family "DankMono Nerd Font" :size 23 :weight 'light))
+(setq doom-font (font-spec :family "VictorMono Nerd Font Mono" :size 23 :weight 'light))
 ;; (setq doom-font (font-spec :family "Fira Code" :size 16 :Weight 'light))
 (setq doom-variable-pitch-font (font-spec :family "JuliaMono" :size 14))
 #+end_src
@@ -923,12 +925,6 @@ This block is designed for the Dygma raise
     ;; Setup Prettier
     (setf (alist-get 'prettier apheleia-formatters)
           '(npx "prettier"
-                "--trailing-comma" "es5"
-                "--bracket-spacing" "true"
-                "--single-quote" "true"
-                "--semi" "true"
-                "--print-width" "120"
-                "--tab-width" "4"
                 file))
     (add-to-list 'apheleia-mode-alist '(rjsx-mode . prettier))
     (add-to-list 'apheleia-mode-alist '(js2-mode . prettier))
@@ -1005,7 +1001,7 @@ This block is designed for the Dygma raise
 
 * Emacs Window Transparency
 #+begin_src emacs-lisp :tangle yes
-(set-frame-parameter (selected-frame) 'alpha '(90 . 90))
-(add-to-list 'default-frame-alist '(alpha . (90 . 90)))
+(set-frame-parameter (selected-frame) 'alpha '(99 . 99))
+(add-to-list 'default-frame-alist '(alpha . (99 . 99)))
 
 #+end_src
