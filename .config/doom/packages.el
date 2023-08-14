@@ -66,3 +66,4 @@
 (package! apheleia)
 (package! ef-themes)
 (package! magit-todos)
+(package! org :pin "ca873f7")

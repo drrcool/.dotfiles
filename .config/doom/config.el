@@ -5,7 +5,9 @@
   (doom-themes-neotree-config)
   (setq doom-themes-treemacs-theme "doom-atom")
   (doom-themes-treemacs-config)
-  (doom-themes-org-config))
+  (doom-themes-org-config)
+  (load-theme 'doom-material-dark t)
+)
 
 (defvar rcool/black-color "#1F2528")
 (defvar rcool/red-color "#EC5F67")
@@ -473,10 +475,10 @@
         )
 
 ;; (setq doom-font (font-spec :family "PragmataProMonoLiga Nerd Font" :size 23 :weight 'light))
-;; (setq doom-font (font-spec :family "Spleen32x64 Nerd Font" :size 20 :weight 'light))
- ;; (setq doom-font (font-spec :family "OperatorMonoLig Nerd Font" :size 17 :Weight 'light))
-;; (setq doom-font (font-spec :family "DankMono Nerd Font" :size 23 :weight 'light))
-(setq doom-font (font-spec :family "VictorMono Nerd Font Mono" :size 23 :weight 'light))
+;; (setq doom-font (font-spec :family "Spleen32x64 Nerd Font" :size 20 :weight
+;; (setq doom-font (font-spec :family "OperatorMonoLig Nerd Font" :size 17 :Weight 'light))
+;; (setq doom-font (font-spec :family "DankMono Nerd Font" :size 17 :weight 'light))
+(setq doom-font (font-spec :family "AnonymicePro Nerd Font" :size 17 :weight 'light))
 ;; (setq doom-font (font-spec :family "Fira Code" :size 16 :Weight 'light))
 (setq doom-variable-pitch-font (font-spec :family "JuliaMono" :size 14))
 
