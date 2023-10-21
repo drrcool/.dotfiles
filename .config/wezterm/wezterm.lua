@@ -1,6 +1,6 @@
 local wezterm = require("wezterm")
 return {
-	font = wezterm.font("Spleen 32x64"),
+	font = wezterm.font("IosevkaTerm Nerd Font Propo"),
 	font_size = 20,
 	color_scheme = "FarSide (terminal.sexy)",
 	window_background_opacity = 0.98,
