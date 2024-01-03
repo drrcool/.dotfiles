@@ -5,6 +5,36 @@ return {
 		opts = {},
 	},
 	{
+		"zbirenbaum/copilot.lua",
+		cmd = "Copilot",
+		build = ":Copilot auth",
+		event = "InsertEnter",
+		config = function()
+			require("copilot").setup({
+				panel = {
+					enabled = true,
+					auto_refresh = true,
+				},
+				suggestion = {
+					enabled = true,
+					auto_trigger = true,
+					accept = false,
+				},
+			})
+			-- Hide copilot suggestions if the cmp menu is open
+			local cmp_status_ok, cmp = pcall(require, "cmp")
+			if cmp_status_ok then
+				cmp.event:on("menu_opened", function()
+					vim.b.copilot_suggestion_hidden = true
+				end)
+				cmp.event:on("menu_closed", function()
+					vim.b.copilot_suggestion_hidden = false
+				end)
+			end
+		end,
+	},
+
+	{
 		"numToStr/Comment.nvim",
 		dependencies = { "JoosepAlviste/nvim-ts-context-commentstring" },
 		keys = { { "gc", mode = { "n", "v" } }, { "gcc", mode = { "n", "v" } }, { "gbc", mode = { "n", "v" } } },
@@ -83,48 +113,20 @@ return {
 					end,
 				},
 				mapping = cmp.mapping.preset.insert({
-					["<C-b>"] = cmp.mapping.scroll_docs(-4),
-					["<C-f>"] = cmp.mapping.scroll_docs(4),
-					["<C-Space>"] = cmp.mapping.complete(),
-					["<C-e>"] = cmp.mapping.abort(),
-					["<CR>"] = cmp.mapping({
-						i = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false }),
-						c = function(fallback)
-							if cmp.visible() then
-								cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
-							else
-								fallback()
-							end
-						end,
-					}),
-					["<C-j>"] = cmp.mapping(function(fallback)
+					["<CR>"] = vim.NIL,
+					["<Tab>"] = cmp.mapping(function(fallback)
 						if cmp.visible() then
-							cmp.select_next_item()
-						elseif luasnip.expand_or_jumpable() then
+							cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
+						elseif require("copilot.suggestion").is_visible() then
+							require("copilot.suggestion").accept()
+						elseif luasnip.expand_or_locally_jumpable() then
 							luasnip.expand_or_jump()
 						elseif has_words_before() then
 							cmp.complete()
 						else
 							fallback()
 						end
-					end, {
-						"i",
-						"s",
-						"c",
-					}),
-					["<C-k>"] = cmp.mapping(function(fallback)
-						if cmp.visible() then
-							cmp.select_prev_item()
-						elseif luasnip.jumpable(-1) then
-							luasnip.jump(-1)
-						else
-							fallback()
-						end
-					end, {
-						"i",
-						"s",
-						"c",
-					}),
+					end, { "i", "s" }),
 				}),
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp_signature_help", group_index = 1 },
