@@ -1,0 +1,150 @@
+alt_send_esc = true
+live_config_reload = true
+
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[colors.bright]
+black = "0x5e5e5e"
+blue = "0xd5b8ff"
+cyan = "0x93c9ff"
+green = "0x3bd6ff"
+magenta = "0xffa7f6"
+red = "0xff9fc9"
+white = "0xffffff"
+yellow = "0x00ddf4"
+
+[colors.normal]
+black = "0x303030"
+blue = "0x6751a6"
+cyan = "0x0061b1"
+green = "0x006ca5"
+magenta = "0x913e88"
+red = "0xa43261"
+white = "0xc6c6c6"
+yellow = "0x007086"
+
+[colors.primary]
+background = "0x000000"
+foreground = "0x919191"
+
+[cursor]
+style = "Block"
+unfocused_hollow = true
+
+[env]
+TERM = "xterm-256color"
+
+[font]
+AppleFontSmoothing = true
+size = 18.0
+use_this_strokes = true
+
+[font.bold]
+family = "PragmataProMonoLiga Nerd Font"
+
+[font.glyph_offset]
+x = 0
+y = 1
+
+[font.italic]
+family = "PragmataProMonoLiga Nerd Font"
+
+[font.normal]
+family = "PragmataProMonoLiga Nerd Font"
+
+[font.offset]
+x = 0
+y = 1
+
+[[keyboard.bindings]]
+action = "SpawnNewInstance"
+key = "N"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "Paste"
+key = "V"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "Copy"
+key = "C"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "Paste"
+key = "Paste"
+
+[[keyboard.bindings]]
+action = "Copy"
+key = "Copy"
+
+[[keyboard.bindings]]
+action = "Hide"
+key = "H"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "Quit"
+key = "Q"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "Quit"
+key = "W"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "IncreaseFontSize"
+key = "Equals"
+mods = "Shift|Command"
+
+[[keyboard.bindings]]
+action = "DecreaseFontSize"
+key = "Minus"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "ResetFontSize"
+key = "Key0"
+mods = "Command"
+
+[mouse]
+hide_when_typing = true
+
+[[mouse.bindings]]
+action = "PasteSelection"
+mouse = "Right"
+
+[scrolling]
+auto-scroll = true
+history = 10000
+multipler = 3
+
+[selection]
+save_to_clipboard = true
+semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
+
+[shell]
+args = ["--login"]
+program = "/opt/homebrew/bin/zsh"
+
+[visual_bell]
+animation = "Ease"
+color = "0xffffff"
+duration = 0
+
+[window]
+dynamic_padding = false
+dynamic_title = true
+opacity = 0.9
+startup_mode = "Windowed"
+
+[window.dimensions]
+columns = 80
+lines = 30
+
+[window.padding]
+x = 2
+y = 2
