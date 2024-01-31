@@ -1,0 +1,32 @@
+return {
+  {
+    "folke/which-key.nvim",
+    opts = {
+      plugins = { spelling = true },
+      defaults = {
+        mode = { "n", "v" },
+        ["g"] = { name = "+goto" },
+        ["gs"] = { name = "+surround" },
+        ["]"] = { name = "+next" },
+        ["["] = { name = "+prev" },
+        ["<leader><tab>"] = { name = "+tabs" },
+        ["<leader>b"] = { name = "+buffer" },
+        ["<leader>c"] = { name = "+code" },
+        ["<leader>f"] = { name = "+file/find" },
+        ["<leader>g"] = { name = "+git" },
+        ["<leader>gh"] = { name = "+hunks" },
+        ["<leader>q"] = { name = "+quit/session" },
+        ["<leader>s"] = { name = "+search" },
+        ["<leader>u"] = { name = "+ui" },
+        ["<leader>w"] = { name = "+windows" },
+        ["<leader>ws"] = { "<C-w>s", "Split Below" },
+        ["<leader>wv"] = { "<C-w>s", "Split Right" },
+        ["<leader>wh"] = { "<C-w>s", "Move Left" },
+        ["<leader>wl"] = { "<C-w>s", "Move Right" },
+        ["<leader>wj"] = { "<C-w>s", "Move Down" },
+        ["<leader>wk"] = { "<C-w>s", "Move Up" },
+        ["<leader>x"] = { name = "+diagnostics/quickfix" },
+      },
+    },
+  },
+}
