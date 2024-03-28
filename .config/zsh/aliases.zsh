@@ -27,7 +27,7 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATN="$HOME/.fig/bin:$PATH"
 alias reset_bluetooth="sudo pkill bluetoothd"
 
-alias pylon='ssh root@rcool.pylon.prod.container.dataeng.netflix.net'
+alias pylon='ssh pylon-rcool.workbench.prod.netflix.net'
 alias ls='exa  --group --icons --group-directories-first --binary'
 alias es='emacs --daemon &'
 alias ec='emacsclient -c & '

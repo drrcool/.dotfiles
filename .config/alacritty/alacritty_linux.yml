@@ -22,12 +22,12 @@ scrolling:
     multipler: 3
 font:
     normal:
-        family: PragmataProMonoLiga Nerd Font
+      family: MonaspiceKr Nerd Font
     bold:
-        family: PragmataProMonoLiga Nerd Font
+        family: MonaspiceNe Nerd Font  
     italic:
-        family: PragmataProMonoLiga Nerd Font
-    size: 18.0
+        family: MonaspiceXe Nerd Font 
+    size: 14
     AppleFontSmoothing: true
     offset:
         x: 0
