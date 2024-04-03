@@ -36,7 +36,6 @@ vim.o.completeopt = "menuone,noselect"
 
 --Turn on Colors
 vim.o.termguicolors = true
-vim.opt.guicursor = ""
 
 -- Setup tabs
 vim.opt.tabstop = 4
